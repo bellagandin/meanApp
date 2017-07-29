@@ -6,6 +6,9 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const config = require('./config/database');
 
+//img
+const fs = require('fs');
+
 // Connect To Database
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database);
@@ -35,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Body Parser Middleware
 app.use(bodyParser.json());
+app.use(bodyParser({uploadDir:'/path/to/temporary/directory/to/store/uploaded/files'}));
 
 // Passport Middleware
 app.use(passport.initialize());
