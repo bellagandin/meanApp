@@ -12,13 +12,13 @@ router.post('/register', (req, res, next) => {
     last_name: req.body.last_name,
     email: req.body.email,
     password: req.body.password,
-    img_url:"", //TODO: add default img
+    //img_url:"", //TODO: add default img
     gender: req.body.gender,
     birthday: req.body.birthday,
-    bio_description:"",
-    number_of_followers: 0,
-    posts: [],
-    followings:[]
+    //bio_description:"",
+    //number_of_followers: 0,
+    //posts: [],
+    //followings:[]
   });
 
   User.addUser(newUser, (err, user) => {//callback
