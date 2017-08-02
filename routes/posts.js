@@ -3,145 +3,51 @@ const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const Post = require('../models/post');
+const User = require('../models/user');
 const config = require('../config/database');
 
-// Register
+router.get('/', (req, res) => {
+    res.send('Hello');
+});
+
+// Create Post
 router.post('/createPost', (req, res, next) => {
+
     let newPost = new Post({
         time: req.body.time,
         recipe_title: req.body.recipe_title,
         category: req.body.category,
         co_author: req.body.co_author,
         ingredients:req.body.ingredients,
-        gender: req.body.gender,
-        description: req.body.description,
-        amount_of_likes: req.body.amount_of_likes,
-        amount_of_dislike: req.body.amount_of_dislike,
-
+        description: req.body.description,//TODO: deal with img
+        amount_of_likes: 0,
+        amount_of_dislike: 0,
+        comments:[]
     });
 
-    User.addUser(newUser, (err, user) => {//callback
+    Post.addPost( newPost, (err, post) => {//callback
         if(err){
-            res.json({success: false, msg:err});
+            res.json({success: false, msg:"1 " + err});
         } else {
-            res.json({success: true, msg:newUser});
-        }
-    });
-});
-
-// Update password
-router.post('/updatePassword', (req, res, next) => {
-    //res.send('AUTHENTICATE');
-    const email = req.body.email;
-    const oldPassword = req.body.oldPassword;
-    const newPassword = req.body.newPassword;
-    console.log("old password", oldPassword);
-    User.getUserByUsername(email, (err, user) => {
-        if (err) throw err;
-        if (!user) {
-            return res.json({success: false, msg: 'User not found'});
-        }
-        console.log("Good",user.password);
-
-        User.updatePassword(user, newPassword, (err, user) => {
-            if (err) throw err;
-            if (!user) {
-                return res.json({success: false, msg: "can't update password "});
-            }
-            else {
-                return res.json({success: true, msg: user});
-            }
-        });
-
-
-    });
-});
-
-
-// Authenticate
-router.post('/authenticate', (req, res, next) => {
-    //res.send('AUTHENTICATE');
-    const email = req.body.email;
-    const password = req.body.password;
-
-    User.getUserByUsername(email, (err, user) => {
-        if (err) throw err;
-        if (!user) {
-            return res.json({success: false, msg: 'User not found'});
-        }
-
-        User.comparePassword(password, user.password, (err, isMatch) => {
-            if (err) throw err;
-            if (isMatch) {
-                const token = jwt.sign(user, config.secret, {
-                    expiresIn: 10800 // 3 hours
-                });
-
-                res.json({
-                    success: true,
-                    token: 'JWT ' + token,
-                    user: {
-                        id: user._id,
-                        first_name: user.first_name,
-                        last_name: user.last_name,
-                        email: user.email,
-
-                        img_url:user.img_url,
-                        gender: user.gender,
-                        birthday: user.birthday,
-                        bio_description: user.bio_description,
-                        number_of_followers:user.number_of_followers,
-                        posts:user.posts,
+            let userId = req.body.user_id;
+            User.getUserById(userId, (err, user) => {// added post id to list of post of user
+                if(err){
+                    res.json({success: false, msg:"2 " + err});
+                } else {
+                    if(user!=null) {
+                        User.addPost(user, newPost,(err, post) => {
+                            if(err){
+                                res.json({success: false, msg:"1 " + err});
+                            } else {
+                                res.json({success: true, msg:user});
+                            }
+                        });
                     }
-                });
-            } else {
-                return res.json({success: false, msg: 'Wrong password'});
-            }
-
-        });
-    });
-});
-
-
-// Profile
-router.get('/profile',passport.authenticate('jwt', {session:false}), (req, res, next) => {
-    //res.send('PROFILE');
-    res.json({user: req.user});
-});
-
-// Update Profile
-router.post('/updateProfile', (req, res, next) => {
-    //res.send('PROFILE');
-    const email = req.body.email;
-    User.getUserByUsername(email, (err, user) => {
-        if (err) throw err;
-        if (!user) {
-            return res.json({success: false, msg: 'User not found'});
+                }
+            });
         }
-
-        user.first_name= req.body.first_name;
-        user.last_name= req.body.last_name;
-        user.email= req.body.email;
-        user.img_url= req.body.img_url;
-        user.gender= req.body.gender;
-        user.birthday = req.body.birthday;
-        user.bio_description = req.body.bio_description;
-        user.number_of_followers =req.body.number_of_followers;
-        user.posts = req.body.posts;
-        user.followings = req.body.followings;
-
-
-        User.updateProfile(user,req.body, (err, user) => {//callback
-            if (err) {
-                res.json({success: false, msg: err});
-            } else {
-                res.json({success: true, msg: user});
-            }
-
-        });
     });
-
-
 });
+
 
 module.exports = router;

@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const config = require('../config/database');
-
+const User = require('./user');
 // Post Schema
 const PostSchema = mongoose.Schema({
     time: {
-        type: Timestamp,
+        type: Date,
         required: true
     },
     recipe_title: {
@@ -37,23 +37,39 @@ const PostSchema = mongoose.Schema({
     },
     comments: {
         type: Array,
-        required: true
     }
 });
 
 const Post = module.exports = mongoose.model('Post', PostSchema);
 
 module.exports.getPostById = function (id, callback) {
-    User.findById(id, callback);
+    Post.findById(id, callback);
 };
 
-// module.exports.getPostByUsername = function (email, callback) {
-//     const query = {email: email};
-//     User.findOne(query, callback);
+module.exports.getPostByUsername = function (email, callback) {
+    const query = {email: email};
+    Post.findOne(query, callback);
+};
+
+// module.exports.UpdateUserPost = function (userId,newPost, callback) {
+//     console.log(userId);
+//     console.log(newPost);
+//     User.getUserById(userId, (err, user) => {//callback
+//         console.log(user);
+//         if(user!=null) {
+//             console.log(newPost._id);
+//             let updateData = {posts  : user.posts.concat(newPost._id)};
+//             console.log(updateData);
+//             user.update({$set: updateData}, callback);// added post id to list of post of user
+//
+//         }
+//     });
+//
 // };
 
 module.exports.addPost = function (newPost, callback) {
-    newPost.save(callback);
+    console.log(newPost);
+    newPost.save(callback);//save new post post
 };
 
 // module.exports.updatePost = function(user,updateData, callback){

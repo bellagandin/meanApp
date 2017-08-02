@@ -96,3 +96,16 @@ module.exports.comparePassword = function(candidatePassword, hash, callback){
 };
 
 
+module.exports.addPost = function (user, post,callback)
+{
+  let updateData = {posts: user.posts.concat(post._id)};
+  user.update({$set:updateData},callback);
+};
+
+module.exports.addFollowing = function (user, following_id,callback)
+{
+    console.log(following_id);
+    console.log(user);
+    let updateData = {followings: user.followings.concat(following_id)};
+    user.update({$set:updateData},callback);
+};

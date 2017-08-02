@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const Post = require('../models/post');
 const config = require('../config/database');
 
 // Register
@@ -12,7 +13,7 @@ router.post('/register', (req, res, next) => {
     last_name: req.body.last_name,
     email: req.body.email,
     password: req.body.password,
-    img_url:"", //TODO: add default img
+    img_url:"http://localhost:3000/img/profile.png", //TODO: add default img
     gender: req.body.gender,
     birthday: req.body.birthday,
     bio_description:"",
@@ -20,25 +21,21 @@ router.post('/register', (req, res, next) => {
     posts: [],
     followings:[]
   });
-    var tempPath = req.files.file.path,
-        targetPath = path.resolve('./uploads/image.png');
-    if (path.extname(req.files.file.name).toLowerCase() === '.png') {
-        fs.rename(tempPath, targetPath, function(err) {
-            if (err) throw err;
-            console.log("Upload completed!");
-        });
-    } else {
-        fs.unlink(tempPath, function () {
-            if (err) throw err;
-            console.error("Only .png files are allowed!");
-        });
-    }
-  User.addUser(newUser, (err, user) => {//callback
-    if(err){
-      res.json({success: false, msg:err});
-    } else {
-      res.json({success: true, msg:newUser});
-    }
+
+  User.getUserByUsername(newUser.email,(err, user) => {//callback
+      if(err==null) {
+          User.addUser(newUser, (err, user) => {//callback
+              if(err){
+                  res.json({success: false, msg:err});
+              } else {
+                  res.json({success: true, msg:newUser});
+              }
+          });
+      }
+      else
+      {
+          res.json({success: false, msg:err});
+      }
   });
 });
 
@@ -98,13 +95,11 @@ router.post('/authenticate', (req, res, next) => {
             first_name: user.first_name,
             last_name: user.last_name,
             email: user.email,
-
             img_url:user.img_url,
             gender: user.gender,
             birthday: user.birthday,
             bio_description: user.bio_description,
             number_of_followers:user.number_of_followers,
-            posts:user.posts,
           }
         });
       } else {
@@ -156,5 +151,121 @@ router.post('/updateProfile', (req, res, next) => {
 
 
 });
+
+router.post('/getMyPost' , function (req, res){
+    var answer = [];
+    User.getUserById(req.body.user_id, (err, user) => {//callback
+        if(err)
+        {
+            res.json({success: false, msg: err});
+        }
+        else
+        {
+
+            console.log("posts",user.posts);
+            var posts = user.posts;
+            for (var i =0;i<posts.length; i++)
+            {
+                console.log("post",posts[i]);
+                Post.getPostById(posts[i] , (err, post) => {//callback
+                    console.log(post);
+                    if(post==null)
+                    {
+                        res.json({success: false, msg: err});
+                    }
+                    else
+                    {
+
+                        console.log("here",answer);
+                        //answer.concat(post);
+                        //answer += post;
+                        answer.push(post);
+                        console.log("1",answer);
+                    }
+                    console.log("2",answer);
+                });
+                console.log("3",answer);
+            }
+
+            res.json({success: true, msg: answer});
+        }
+    });
+
+});
+
+
+router.post('/getFollPosts' , function (req, res) {
+    User.getUserById(req.body.user_id, (err, user) => {//callback
+        if (err) {
+            res.json({success: false, msg: err});
+        }
+        else {
+            let followings = user.followings;
+            let answer = [];
+            for (let follow_id in followings.posts) {
+                User.getUserById(follow_id, (err, user) => {//callback
+                    if (err) {
+                        res.json({success: false, msg: err});
+                    }
+                    else {
+                        for (let post_id in user.posts) {
+                            Post.getPostById(post_id, (err, post) => {//callback
+                                if (err) {
+                                    res.json({success: false, msg: err});
+                                }
+                                else {
+                                    answer.concat(post);
+                                }
+                            });
+                        }
+                    }
+
+                });
+
+                res.json({success: true, msg: answer});
+            }
+        }
+
+
+    });
+});
+
+router.post("/addFollowing", function (req, res) {
+    let user_id = req.body.user_id;
+    let following_id = req.body.following_id;
+    User.getUserById(user_id, (err, user) => {//find user
+        if (err) {
+            res.json({success: false, msg: err});
+        }
+        else {
+            User.addFollowing(user, following_id, (err, user) => {//callback
+                if (err) {
+                    res.json({success: false, msg: err});
+                }
+                else {
+                    res.json({success: true, msg: user});
+                }
+            });
+        }
+    });
+});
+
+
+// router.post('/upload', function (req, res) {
+//     var tempPath = req.files.file.path,
+//         targetPath = path.resolve('./uploads/image.png');
+//     if (path.extname(req.files.file.name).toLowerCase() === '.png') {
+//         fs.rename(tempPath, targetPath, function(err) {
+//             if (err) throw err;
+//             console.log("Upload completed!");
+//         });
+//     } else {
+//         fs.unlink(tempPath, function () {
+//             if (err) throw err;
+//             console.error("Only .png files are allowed!");
+//         });
+//     }
+//     // ...
+// });
 
 module.exports = router;
