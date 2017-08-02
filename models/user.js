@@ -20,6 +20,9 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  user_name:{
+    type:String,
+  },
   img_url: {
     type: String,
   },

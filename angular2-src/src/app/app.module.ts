@@ -3,7 +3,11 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {RouterModule,Routes} from '@angular/router';
+import {FlashMessagesModule} from 'angular2-flash-messages'
 
+import {ApiService} from './services/api.service'
+import {AuthenticateService} from './services/authenticate.service'
+import {ValidateService} from './services/Validate.service'
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoginComponent } from './components/login/login.component';
@@ -34,10 +38,15 @@ const appRoutes: Routes = [
     BrowserModule,
     FormsModule,
     HttpModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    FlashMessagesModule
 
   ],
-  providers: [],
+  providers: [
+    ApiService,
+    AuthenticateService,
+    ValidateService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
