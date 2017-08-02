@@ -55,11 +55,10 @@ module.exports.getUserById = function (id, callback) {
 
 module.exports.getFollowingsPostsId= function (FollowingsIds, callback) {
     User.find({_id: { $in:FollowingsIds}}, callback);
-        //.map(function(myDoc) {myDoc.posts;});
 };
 
 
-module.exports.getUserByUsername = function (email, callback) {
+module.exports.getUserByEmail = function (email, callback) {
   const query = {email: email};
   User.findOne(query, callback);
 };
@@ -83,7 +82,7 @@ module.exports.updateProfile = function(user,updateData, callback){
 };
 
   module.exports.updatePassword = function(user,newPassword, callback){
-    console.log("new passsword",newPassword);
+    console.log("new password",newPassword);
     bcrypt.genSalt(10, (err, salt) => {//callback
       console.log("salt",salt);
       bcrypt.hash(newPassword, salt, (err, hash) => {
@@ -113,8 +112,34 @@ module.exports.addPost = function (user, post,callback)
 
 module.exports.addFollowing = function (user, following_id,callback)
 {
-    console.log(following_id);
-    console.log(user);
-    let updateData = {followings: user.followings.concat(following_id)};
-    user.update({$set:updateData},callback);
+    console.log(user.followings);
+
+    console.log(user.followings.indexOf(following_id) );
+    if (!(user.followings.indexOf(following_id) > -1)) {
+        let updateData = {followings: user.followings.concat(following_id)};
+        user.update({$set: updateData}, callback);
+    }
+    else {
+        let updateData = {};
+        user.update({$set: updateData}, callback);
+    }
+};
+
+module.exports.removeFollowing = function (user, following_id,callback)
+{
+    console.log(user.followings);
+
+    console.log(user.followings.indexOf(following_id) );
+    let index = user.followings.indexOf(following_id);
+    if (!index > -1) {
+        if (index > -1) {
+            user.followings.splice(index, 1);
+        }
+        let updateData = {followings: user.followings};
+        user.update({$set: updateData}, callback);
+    }
+    else {
+        let updateData = {};
+        user.update({$set: updateData}, callback);
+    }
 };

@@ -47,8 +47,7 @@ module.exports.getPostById = function (id, callback) {
 };
 
 module.exports.getPostByIds = function (ids, callback) {
-
-    Post.findById(ids, callback);
+    Post.find({_id: { $in:ids}}, callback);
 };
 
 module.exports.getPostByUsername = function (email, callback) {

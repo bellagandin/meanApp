@@ -18,10 +18,12 @@
     "express": "*",
     "jsonwebtoken": "*",
     "mongoose": "*",
-    "nodemon": "^1.11.0",
     "passport": "*",
     "passport-jwt": "*"
   },
   "author": "Roy Regev",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
 }

@@ -8,176 +8,185 @@ const config = require('../config/database');
 
 // Register
 router.post('/register', (req, res, next) => {
-  let newUser = new User({
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    password: req.body.password,
-    img_url:"http://localhost:3000/img/profile.png", //TODO: add default img
-    gender: req.body.gender,
-    birthday: req.body.birthday,
-    bio_description:"",
-    number_of_followers: 0,
-    posts: [],
-    followings:[]
-  });
-
-  User.getUserByUsername(newUser.email,(err, user) => {//callback
-      if(err==null) {
-          User.addUser(newUser, (err, user) => {//callback
-              if(err){
-                  res.json({success: false, msg:err});
-              } else {
-                  res.json({success: true, msg:newUser});
-              }
-          });
-      }
-      else
-      {
-          res.json({success: false, msg:err});
-      }
-  });
+    let newUser = new User({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+        password: req.body.password,
+        img_url: "http://localhost:3000/img/profile.png", //TODO: add default img
+        gender: req.body.gender,
+        birthday: req.body.birthday,
+        bio_description: "",
+        number_of_followers: 0,
+        posts: [],
+        followings: []
+    });
+    // Check if there is a user with the same email
+    User.getUserByEmail(req.body.email, (err, user) => {//callback
+        if (user === null) {
+            User.addUser(newUser, (err, user) => {//callback
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    let answer = {
+                        id: user._id,
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        email: user.email,
+                        img_url: user.img_url,
+                        gender: user.gender,
+                        birthday: user.birthday,
+                        bio_description: user.bio_description,
+                        number_of_followers: user.number_of_followers,
+                    };
+                    res.json({success: true, msg: answer});
+                }
+            });
+        }
+        else {
+            res.json({success: false, msg: "There is a user with the same email"});
+        }
+    });
 });
 
 // Update password
 router.post('/updatePassword', (req, res, next) => {
-  //res.send('AUTHENTICATE');
-  const email = req.body.email;
-  const oldPassword = req.body.oldPassword;
-  const newPassword = req.body.newPassword;
-  console.log("old password", oldPassword);
-  User.getUserByUsername(email, (err, user) => {
-    if (err) throw err;
-    if (!user) {
-      return res.json({success: false, msg: 'User not found'});
-    }
-    console.log("Good",user.password);
 
-        User.updatePassword(user, newPassword, (err, user) => {
-          if (err) throw err;
-          if (!user) {
-            return res.json({success: false, msg: "can't update password "});
-          }
-          else {
-            return res.json({success: true, msg: user});
-          }
+    const email = req.body.email;
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    console.log("old password", oldPassword);
+    User.getUserByEmail(email, (err, user) => {
+        if (err) throw err;
+        if (!user) {
+            return res.json({success: false, msg: 'User not found'});
+        }
+        console.log("Good", user.password);
+        // Check if the old password is right
+        User.comparePassword(oldPassword, user.password, (err, isMatch) => {
+            if (err) throw err;
+            if (isMatch) {
+                User.updatePassword(user, newPassword, (err, user) => {
+                    if (err) throw err;
+                    if (!user) {
+                        return res.json({success: false, msg: "can't update password "});
+                    }
+                    else {
+                        return res.json({success: true, msg: user});
+                    }
+                });
+            }
+            else {
+                return res.json({success: false, msg: "Old Password not right"});
+            }
         });
 
-
-  });
+    });
 });
 
 
 // Authenticate
 router.post('/authenticate', (req, res, next) => {
-  //res.send('AUTHENTICATE');
-  const email = req.body.email;
-  const password = req.body.password;
+    //res.send('AUTHENTICATE');
+    const email = req.body.email;
+    const password = req.body.password;
 
-  User.getUserByUsername(email, (err, user) => {
-    if (err) throw err;
-    if (!user) {
-      return res.json({success: false, msg: 'User not found'});
-    }
+    User.getUserByEmail(email, (err, user) => {
+        if (err) throw err;
+        if (!user) {
+            return res.json({success: false, msg: 'User not found'});
+        }
 
-    User.comparePassword(password, user.password, (err, isMatch) => {
-      if (err) throw err;
-      if (isMatch) {
-        const token = jwt.sign(user, config.secret, {
-          expiresIn: 10800 // 3 hours
+        User.comparePassword(password, user.password, (err, isMatch) => {
+            if (err) throw err;
+            if (isMatch) {
+                const token = jwt.sign(user, config.secret, {
+                    expiresIn: 10800 // 3 hours
+                });
+
+                res.json({
+                    success: true,
+                    token: 'JWT ' + token,
+                    user: {
+                        id: user._id,
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        email: user.email,
+                        img_url: user.img_url,
+                        gender: user.gender,
+                        birthday: user.birthday,
+                        bio_description: user.bio_description,
+                        number_of_followers: user.number_of_followers,
+                    }
+                });
+            } else {
+                return res.json({success: false, msg: 'Wrong password'});
+            }
+
         });
-
-        res.json({
-          success: true,
-          token: 'JWT ' + token,
-          user: {
-            id: user._id,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email,
-            img_url:user.img_url,
-            gender: user.gender,
-            birthday: user.birthday,
-            bio_description: user.bio_description,
-            number_of_followers:user.number_of_followers,
-          }
-        });
-      } else {
-        return res.json({success: false, msg: 'Wrong password'});
-      }
-
     });
-  });
 });
 
 
 // Profile
-router.get('/profile',passport.authenticate('jwt', {session:false}), (req, res, next) => {
-  //res.send('PROFILE');
-  res.json({user: req.user});
+router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+    //res.send('PROFILE');
+    res.json({user: req.user});
 });
+
 
 // Update Profile
 router.post('/updateProfile', (req, res, next) => {
-  //res.send('PROFILE');
-  const email = req.body.email;
-  User.getUserByUsername(email, (err, user) => {
-    if (err) throw err;
-    if (!user) {
-      return res.json({success: false, msg: 'User not found'});
-    }
-
-    user.first_name= req.body.first_name;
-    user.last_name= req.body.last_name;
-    user.email= req.body.email;
-    user.img_url= req.body.img_url;
-    user.gender= req.body.gender;
-    user.birthday = req.body.birthday;
-    user.bio_description = req.body.bio_description;
-    user.number_of_followers =req.body.number_of_followers;
-    user.posts = req.body.posts;
-    user.followings = req.body.followings;
+    //res.send('PROFILE');
+    const email = req.body.email;
+    User.getUserByEmail(email, (err, user) => {
+        if (err) throw err;
+        if (!user) {
+            return res.json({success: false, msg: 'User not found'});
+        }
+        user.first_name = req.body.first_name;
+        user.last_name = req.body.last_name;
+        user.email = req.body.email;
+        user.img_url = req.body.img_url;
+        user.gender = req.body.gender;
+        user.birthday = req.body.birthday;
+        user.bio_description = req.body.bio_description;
 
 
-    User.updateProfile(user,req.body, (err, user) => {//callback
-      if (err) {
-        res.json({success: false, msg: err});
-      } else {
-        res.json({success: true, msg: user});
-      }
+        User.updateProfile(user, req.body, (err, user) => {//callback
+            if (err) {
+                res.json({success: false, msg: err});
+            } else {
+                res.json({success: true, msg: user});
+            }
 
+        });
     });
-  });
 
 
 });
 
-router.post('/getMyPost' , function (req, res){
-    var answer = [];
+router.post('/getMyPost', function (req, res) {
+
     User.getUserById(req.body.user_id, (err, user) => {//callback
-        if(err)
-        {
+        if (err) {
             res.json({success: false, msg: err});
         }
-        else
-        {
-            console.log("posts",user.posts);
+        else {
+            console.log("posts", user.posts);
             const posts = user.posts;
-                Post.getPostByIds(posts , (err, detailPosts) => {//callback
-                    console.log("posts",detailPosts);
-                    if(detailPosts==null)
-                    {
-                        res.json({success: false, msg: err});
-                    }
-                    else
-                    {
+            Post.getPostByIds(posts, (err, detailPosts) => {//callback
+                console.log("posts", detailPosts);
+                if (detailPosts === null) {
+                    res.json({success: false, msg: err});
+                }
+                else {
 
-                        answer=detailPosts;
-                        console.log("1",answer);
-                        res.json({success: true, msg: answer});
-                    }
-                });
-
+                    let answer = detailPosts;
+                    console.log("1", answer);
+                    res.json({success: true, msg: answer});
+                }
+            });
 
 
         }
@@ -186,7 +195,7 @@ router.post('/getMyPost' , function (req, res){
 });
 
 
-router.post('/getFollowingsPosts' , function (req, res) {
+router.post('/getFollowingsPosts', function (req, res) {
     User.getUserById(req.body.user_id, (err, user) => {//callback
         if (err) {
             res.json({success: false, msg: err});
@@ -210,7 +219,7 @@ router.post('/getFollowingsPosts' , function (req, res) {
                     let posts_ids = [].concat.apply([], answer);
                     Post.getPostByIds(posts_ids, (err, detailPosts) => {//callback
                         console.log("posts", detailPosts);
-                        if (detailPosts == null) {
+                        if (detailPosts === null) {
                             res.json({success: false, msg: err});
                         }
                         else {
@@ -225,18 +234,52 @@ router.post('/getFollowingsPosts' , function (req, res) {
 
 router.post("/addFollowing", function (req, res) {
     let user_id = req.body.user_id;
-    let following_id = req.body.following_id;
+    let following_email = req.body.following_email;
     User.getUserById(user_id, (err, user) => {//find user
         if (err) {
             res.json({success: false, msg: err});
         }
         else {
-            User.addFollowing(user, following_id, (err, user) => {//callback
+            User.getUserByEmail(following_email, (err, following_user) => {//find following user
                 if (err) {
                     res.json({success: false, msg: err});
                 }
                 else {
-                    res.json({success: true, msg: user});
+                    User.addFollowing(user, following_user._id, (err, user2) => {//callback
+                        if (err) {
+                            res.json({success: false, msg: err});
+                        }
+                        else {
+                            res.json({success: true, msg: user2});
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+router.post("/removeFollowing", function (req, res) {
+    let user_id = req.body.user_id;
+    let following_email = req.body.following_email;
+    User.getUserById(user_id, (err, user) => {//find user
+        if (err) {
+            res.json({success: false, msg: err});
+        }
+        else {
+            User.getUserByEmail(following_email, (err, following_user) => {//find following user
+                if (err) {
+                    res.json({success: false, msg: err});
+                }
+                else {
+                    User.removeFollowing(user, following_user._id, (err, user2) => {//callback
+                        if (err) {
+                            res.json({success: false, msg: err});
+                        }
+                        else {
+                            res.json({success: true, msg: user2});
+                        }
+                    });
                 }
             });
         }
