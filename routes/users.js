@@ -232,29 +232,17 @@ router.post('/getFollowingsPosts', function (req, res) {
     });
 });
 
+
 router.post("/addFollowing", function (req, res) {
     let user_id = req.body.user_id;
     let following_email = req.body.following_email;
-    User.getUserById(user_id, (err, user) => {//find user
-        if (err) {
+    //find user
+    User.getUserById(user_id, (err, user) => {
+        if (user===null || err) {
             res.json({success: false, msg: err});
         }
         else {
-            User.getUserByEmail(following_email, (err, following_user) => {//find following user
-                if (err) {
-                    res.json({success: false, msg: err});
-                }
-                else {
-                    User.addFollowing(user, following_user._id, (err, user2) => {//callback
-                        if (err) {
-                            res.json({success: false, msg: err});
-                        }
-                        else {
-                            res.json({success: true, msg: user2});
-                        }
-                    });
-                }
-            });
+            add_following_function(user,following_email,res);
         }
     });
 });
@@ -272,16 +260,31 @@ router.post("/removeFollowing", function (req, res) {
                     res.json({success: false, msg: err});
                 }
                 else {
-                    User.removeFollowing(user, following_user._id, (err, user2) => {//callback
+                    User.removeFollowing(user, following_user, (err, user2) => {//callback
                         if (err) {
                             res.json({success: false, msg: err});
                         }
                         else {
-                            res.json({success: true, msg: user2});
+                            User.removeFollower(user, following_user, (err, user2) => {//callback
+                                    if (err) {
+                                        res.json({success: false, msg: err});
+                                    }
+                                    else {
+                                        res.json({success: true, msg: user2});
+                                    }
+                                },//end callback
+                                (() => {res.json({success: false, msg: "the user not following me."});})
+                            );
                         }
-                    });
+                        },//end callback
+                        (() => {res.json({success: false, msg: "the user already follows."});})
+                    );
+
                 }
-            });
+            },(err) => {
+
+                }
+                );
         }
     });
 });
@@ -305,3 +308,39 @@ router.post("/removeFollowing", function (req, res) {
 // });
 
 module.exports = router;
+
+
+const add_following_function = function (user,following_email,res) {
+    User.getUserByEmail(following_email, (err, following_user) => {
+        if (following_user===null || err) {
+            res.json({success: false, msg: err});
+        }
+        else {
+            User.addFollowing(user, following_user, (err, user2) => {//callback
+                    if (err) {
+                        res.json({success: false, msg: err});
+                    }
+                    else {
+                        add_follower_function(user, following_user,res);
+                    }
+                },//end callback
+                ((err, user2) => {res.json({success: false, msg: "the user already following."});})
+            );
+        }
+    });
+};
+
+var add_follower_function = function(user, following_user,res)
+{
+    //add follower
+    User.addFollower(user, following_user, (err, user) => {//callback
+            if (err) {
+                res.json({success: false, msg: err});
+            }
+            else {
+                res.json({success: true, msg: user});
+            }
+        },//end callback
+        (() => {res.json({success: false, msg: "the user already follows."});})
+    );
+};

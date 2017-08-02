@@ -36,8 +36,8 @@ const UserSchema = mongoose.Schema({
   bio_description: {
     type: String,
   },
-  number_of_followers: {
-  type: Number,
+  followers: {
+  type: Array,
 },
   posts: {
     type: Array,
@@ -110,36 +110,66 @@ module.exports.addPost = function (user, post,callback)
   user.update({$set:updateData},callback);
 };
 
-module.exports.addFollowing = function (user, following_id,callback)
+module.exports.addFollowing = function (user, following,callback)
 {
     console.log(user.followings);
 
-    console.log(user.followings.indexOf(following_id) );
-    if (!(user.followings.indexOf(following_id) > -1)) {
-        let updateData = {followings: user.followings.concat(following_id)};
+    console.log(user.followings.indexOf(following._id) );
+    if (user.followings.indexOf(following._id) === -1) {
+        let updateData = {followings: user.followings.concat(following._id)};
         user.update({$set: updateData}, callback);
     }
     else {
         let updateData = {};
         user.update({$set: updateData}, callback);
+    }
+
+};
+
+module.exports.removeFollowing = function (follower, followed,success,failure)
+{
+    console.log(follower.followings);
+    console.log(followed._id);
+
+    console.log(user.followings.indexOf(following._id) );
+    let index = user.followings.indexOf(following._id);
+    if (index > -1) {
+
+        user.followings.splice(index, 1);
+
+        let updateData = {followings: user.followings};
+        user.update({$set: updateData}, success);
+    }
+    else {
+        failure();
     }
 };
 
-module.exports.removeFollowing = function (user, following_id,callback)
-{
-    console.log(user.followings);
 
-    console.log(user.followings.indexOf(following_id) );
-    let index = user.followings.indexOf(following_id);
-    if (!index > -1) {
-        if (index > -1) {
-            user.followings.splice(index, 1);
-        }
-        let updateData = {followings: user.followings};
-        user.update({$set: updateData}, callback);
+module.exports.addFollower = function (follower, followed,success,failure)
+{
+    let index = followed.followers.indexOf(follower._id);
+    if (index === -1) {
+        let updateData = {followers: followed.followers.concat(follower._id)};
+        followed.update({$set: updateData}, success);
     }
     else {
-        let updateData = {};
-        user.update({$set: updateData}, callback);
+        //let updateData = {};
+        //followed.update({$set: updateData}, callback);
+        failure();
+    }
+};
+
+module.exports.removeFollower = function (follower, followed,success,failure)
+{
+    let index = followed.followers.indexOf(follower._id);
+    if (index > -1) {
+        followed.followers.splice(index, 1);
+        let updateData = {followers: followed.followers};
+        followed.update({$set: updateData}, success);
+    }
+    else {
+
+        failure();
     }
 };
