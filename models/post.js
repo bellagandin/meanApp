@@ -24,7 +24,7 @@ const PostSchema = mongoose.Schema({
         required: true
     },
     description: {
-        type: String,
+        type: Array,
         required: true
     },
     amount_of_likes: {
@@ -55,33 +55,18 @@ module.exports.getPostByUsername = function (email, callback) {
     Post.findOne(query, callback);
 };
 
-// module.exports.UpdateUserPost = function (userId,newPost, callback) {
-//     console.log(userId);
-//     console.log(newPost);
-//     User.getUserById(userId, (err, user) => {//callback
-//         console.log(user);
-//         if(user!=null) {
-//             console.log(newPost._id);
-//             let updateData = {posts  : user.posts.concat(newPost._id)};
-//             console.log(updateData);
-//             user.update({$set: updateData}, callback);// added post id to list of post of user
-//
-//         }
-//     });
-//
-// };
-
 module.exports.addPost = function (newPost, callback) {
     console.log(newPost);
     newPost.save(callback);//save new post post
 };
 
-// module.exports.updatePost = function(user,updateData, callback){
-//     delete  updateData._id;
-//     console.log(updateData);
-//     console.log(user);
-//     user.update({$set:updateData},callback);
-// };
+module.exports.updatePost = function(post,updateData, callback){
+    delete  updateData._id;
+    //updateData.splice(0, 1);
+    console.log(updateData);
+    console.log(post);
+    Post.update({$set:updateData},callback);
+};
 //
 // module.exports.updatePassword = function(user,newPassword, callback){
 //     console.log("new passsword",newPassword);

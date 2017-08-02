@@ -76,13 +76,13 @@ module.exports.addUser = function (newUser, callback) {
 
 module.exports.updateProfile = function(user,updateData, callback){
   delete  updateData._id;
+    //updateData.splice(0, 1);
   console.log(updateData);
   console.log(user);
   user.update({$set:updateData},callback);
 };
 
   module.exports.updatePassword = function(user,newPassword, callback){
-    console.log("new password",newPassword);
     bcrypt.genSalt(10, (err, salt) => {//callback
       console.log("salt",salt);
       bcrypt.hash(newPassword, salt, (err, hash) => {

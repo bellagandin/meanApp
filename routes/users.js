@@ -146,14 +146,14 @@ router.post('/updateProfile', (req, res, next) => {
         if (!user) {
             return res.json({success: false, msg: 'User not found'});
         }
-        user.first_name = req.body.first_name;
-        user.last_name = req.body.last_name;
-        user.email = req.body.email;
-        user.user_name= req.body.user_name,
-        user.img_url = req.body.img_url;
-        user.gender = req.body.gender;
-        user.birthday = req.body.birthday;
-        user.bio_description = req.body.bio_description;
+        // user.first_name = req.body.first_name;
+        // user.last_name = req.body.last_name;
+        // user.email = req.body.email;
+        // user.user_name= req.body.user_name;
+        // user.img_url = req.body.img_url;
+        // user.gender = req.body.gender;
+        // user.birthday = req.body.birthday;
+        // user.bio_description = req.body.bio_description;
 
 
         User.updateProfile(user, req.body, (err, user) => {//callback
