@@ -53,6 +53,12 @@ module.exports.getUserById = function (id, callback) {
   User.findById(id, callback);
 };
 
+module.exports.getFollowingsPostsId= function (FollowingsIds, callback) {
+    User.find({_id: { $in:FollowingsIds}}, callback);
+        //.map(function(myDoc) {myDoc.posts;});
+};
+
+
 module.exports.getUserByUsername = function (email, callback) {
   const query = {email: email};
   User.findOne(query, callback);

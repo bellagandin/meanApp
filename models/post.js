@@ -46,6 +46,11 @@ module.exports.getPostById = function (id, callback) {
     Post.findById(id, callback);
 };
 
+module.exports.getPostByIds = function (ids, callback) {
+
+    Post.findById(ids, callback);
+};
+
 module.exports.getPostByUsername = function (email, callback) {
     const query = {email: email};
     Post.findOne(query, callback);

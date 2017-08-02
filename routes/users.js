@@ -161,72 +161,65 @@ router.post('/getMyPost' , function (req, res){
         }
         else
         {
-
             console.log("posts",user.posts);
-            var posts = user.posts;
-            for (var i =0;i<posts.length; i++)
-            {
-                console.log("post",posts[i]);
-                Post.getPostById(posts[i] , (err, post) => {//callback
-                    console.log(post);
-                    if(post==null)
+            const posts = user.posts;
+                Post.getPostByIds(posts , (err, detailPosts) => {//callback
+                    console.log("posts",detailPosts);
+                    if(detailPosts==null)
                     {
                         res.json({success: false, msg: err});
                     }
                     else
                     {
 
-                        console.log("here",answer);
-                        //answer.concat(post);
-                        //answer += post;
-                        answer.push(post);
+                        answer=detailPosts;
                         console.log("1",answer);
+                        res.json({success: true, msg: answer});
                     }
-                    console.log("2",answer);
                 });
-                console.log("3",answer);
-            }
 
-            res.json({success: true, msg: answer});
+
+
         }
     });
 
 });
 
 
-router.post('/getFollPosts' , function (req, res) {
+router.post('/getFollowingsPosts' , function (req, res) {
     User.getUserById(req.body.user_id, (err, user) => {//callback
         if (err) {
             res.json({success: false, msg: err});
         }
         else {
             let followings = user.followings;
+            console.log("followings", followings);
             let answer = [];
-            for (let follow_id in followings.posts) {
-                User.getUserById(follow_id, (err, user) => {//callback
-                    if (err) {
-                        res.json({success: false, msg: err});
-                    }
-                    else {
-                        for (let post_id in user.posts) {
-                            Post.getPostById(post_id, (err, post) => {//callback
-                                if (err) {
-                                    res.json({success: false, msg: err});
-                                }
-                                else {
-                                    answer.concat(post);
-                                }
-                            });
+            User.getFollowingsPostsId(followings, (err, result) => {//get all documents of followings
+                console.log("result", result);
+                if (err) {
+                    res.json({success: false, msg: err});
+                }
+                else {
+                    //get posts id of followings
+                    answer = result.map(function (item) {
+                        return item.posts;
+                    });
+                    console.log(answer);
+                    //flatten array of posts id
+                    let posts_ids = [].concat.apply([], answer);
+                    Post.getPostByIds(posts_ids, (err, detailPosts) => {//callback
+                        console.log("posts", detailPosts);
+                        if (detailPosts == null) {
+                            res.json({success: false, msg: err});
                         }
-                    }
-
-                });
-
-                res.json({success: true, msg: answer});
-            }
+                        else {
+                            res.json({success: true, msg: detailPosts});
+                        }
+                    });
+                }
+            });
         }
-
-
     });
 });
 
