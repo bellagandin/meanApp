@@ -13,6 +13,7 @@ router.post('/register', (req, res, next) => {
         last_name: req.body.last_name,
         email: req.body.email,
         password: req.body.password,
+        user_name: req.body.user_name,
         img_url: "http://localhost:3000/img/profile.png", //TODO: add default img
         gender: req.body.gender,
         birthday: req.body.birthday,
@@ -33,6 +34,7 @@ router.post('/register', (req, res, next) => {
                         first_name: user.first_name,
                         last_name: user.last_name,
                         email: user.email,
+                        user_name: req.body.user_name,
                         img_url: user.img_url,
                         gender: user.gender,
                         birthday: user.birthday,
@@ -147,6 +149,7 @@ router.post('/updateProfile', (req, res, next) => {
         user.first_name = req.body.first_name;
         user.last_name = req.body.last_name;
         user.email = req.body.email;
+        user.user_name= req.body.user_name,
         user.img_url = req.body.img_url;
         user.gender = req.body.gender;
         user.birthday = req.body.birthday;
