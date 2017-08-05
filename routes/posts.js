@@ -15,8 +15,10 @@ router.post('/createPost', (req, res, next) => {
         recipe_title: req.body.recipe_title,
         category: req.body.category,
         co_author: req.body.co_author,
+        main_img: req.body.main_img,
         ingredients: req.body.ingredients,
         description: req.body.description,
+        instructions: req.body.instructions,
         likes: [],
         comments: [],
         id_generator: 0

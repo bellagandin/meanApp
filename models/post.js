@@ -20,11 +20,18 @@ const PostSchema = mongoose.Schema({
         type: Array,
         required: true
     },
+    main_img: {
+        type: String,
+    },
+    description:{
+        type: String,
+        required: true
+    },
     ingredients: {
         type: Array,
         required: true
     },
-    description: {
+    instructions: {
         type: Array,
         required: true
     },
