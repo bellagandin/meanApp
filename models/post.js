@@ -27,16 +27,14 @@ const PostSchema = mongoose.Schema({
         type: Array,
         required: true
     },
-    amount_of_likes: {
-        type: Number,
-        required: true
-    },
-    amount_of_dislike: {
-        type: Number,
-        required: true
+    likes: {
+        type: Array,
     },
     comments: {
         type: Array,
+    },
+    id_generator: {
+        type: Number,
     }
 });
 
@@ -47,7 +45,7 @@ module.exports.getPostById = function (id, callback) {
 };
 
 module.exports.getPostByIds = function (ids, callback) {
-    Post.find({_id: { $in:ids}}, callback);
+    Post.find({_id: {$in: ids}}, callback);
 };
 
 module.exports.getPostByUsername = function (email, callback) {
@@ -56,38 +54,53 @@ module.exports.getPostByUsername = function (email, callback) {
 };
 
 module.exports.addPost = function (newPost, callback) {
-    console.log(newPost);
+    console.log("addPost",newPost);
     newPost.save(callback);//save new post post
 };
 
-module.exports.updatePost = function(post,updateData, callback){
+module.exports.updatePost = function (post, updateData, callback) {
     delete  updateData._id;
     //updateData.splice(0, 1);
     console.log(updateData);
     console.log(post);
-    Post.update({$set:updateData},callback);
+    Post.update({$set: updateData}, callback);
 };
-//
-// module.exports.updatePassword = function(user,newPassword, callback){
-//     console.log("new passsword",newPassword);
-//     bcrypt.genSalt(10, (err, salt) => {//callback
-//         console.log("salt",salt);
-//     bcrypt.hash(newPassword, salt, (err, hash) => {
-//         if (err) throw err;
-//     let newPass = hash;
-//     console.log("newPass",newPass);
-//     let updateData = {password:newPass};
-//     console.log(updateData);
-//     user.update({$set:updateData},callback);
-// });
-// });
-// };
 
-module.exports.comparePassword = function(candidatePassword, hash, callback){
-    bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
-        if(err) throw err;
-    callback(null, isMatch);
-});
+module.exports.addCommentToPost = function (comment, post, callback) {
+    let addComment = {comments: post.comments.concat(comment), id_generator: post.id_generator + 1};
+    console.log("comment", addComment);
+    Post.update({$set: addComment}, callback);
 };
 
 
+module.exports.removeCommentFromPost = function (comment_id, post, success) {
+
+    let newCommentList = post.comments.filter((item) => {
+        return item.comment_id !== comment_id;
+    });
+    console.log(newCommentList);
+    let updateData = {comments: newCommentList};
+    Post.update({$set: updateData}, success);
+
+};
+
+module.exports.addLike = function ( post,user, callback) {
+    console.log("post.likes",post.likes);
+    console.log("user._id",user._id);
+    let addLike = {likes: post.likes.concat(user._id)};
+    console.log("comment", addLike);
+    Post.update({$set: addLike}, callback);
+
+};
+
+
+module.exports.removeLike = function ( post,user, callback) {
+    console.log("post.likes",post.likes);
+    console.log("user._id",user._id);
+    let newCommentList = post.likes.filter((item) => {
+        return item.likes !== user._id;
+    });
+    console.log("newCommentList", newCommentList);
+    Post.update({$set: newCommentList}, callback);
+
+};

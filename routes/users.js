@@ -20,6 +20,7 @@ router.post('/register', (req, res, next) => {
         bio_description: "",
         number_of_followers: 0,
         posts: [],
+        liked_posts: [],
         followings: []
     });
     // Check if there is a user with the same email
@@ -40,6 +41,7 @@ router.post('/register', (req, res, next) => {
                         birthday: user.birthday,
                         bio_description: user.bio_description,
                         number_of_followers: user.number_of_followers,
+                        liked_posts: user.liked_posts
                     };
                     res.json({success: true, msg: answer});
                 }
@@ -63,7 +65,6 @@ router.post('/updatePassword', (req, res, next) => {
         if (!user) {
             return res.json({success: false, msg: 'User not found'});
         }
-        console.log("Good", user.password);
         // Check if the old password is right
         User.comparePassword(oldPassword, user.password, (err, isMatch) => {
             if (err) throw err;
@@ -119,6 +120,7 @@ router.post('/authenticate', (req, res, next) => {
                         birthday: user.birthday,
                         bio_description: user.bio_description,
                         number_of_followers: user.number_of_followers,
+                        liked_posts: user.liked_posts
                     }
                 });
             } else {
@@ -146,21 +148,26 @@ router.post('/updateProfile', (req, res, next) => {
         if (!user) {
             return res.json({success: false, msg: 'User not found'});
         }
-        // user.first_name = req.body.first_name;
-        // user.last_name = req.body.last_name;
-        // user.email = req.body.email;
-        // user.user_name= req.body.user_name;
-        // user.img_url = req.body.img_url;
-        // user.gender = req.body.gender;
-        // user.birthday = req.body.birthday;
-        // user.bio_description = req.body.bio_description;
-
-
         User.updateProfile(user, req.body, (err, user) => {//callback
             if (err) {
                 res.json({success: false, msg: err});
             } else {
-                res.json({success: true, msg: user});
+
+                res.json({
+                    success: true,
+                    user: {
+                        id: user._id,
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        email: user.email,
+                        img_url: user.img_url,
+                        gender: user.gender,
+                        birthday: user.birthday,
+                        bio_description: user.bio_description,
+                        number_of_followers: user.number_of_followers,
+                        liked_posts: user.liked_posts
+                    }
+                });
             }
 
         });
