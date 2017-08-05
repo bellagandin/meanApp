@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const config = require('../config/database');
 const User = require('./user');
+
 // Post Schema
 const PostSchema = mongoose.Schema({
     time: {
@@ -38,6 +39,7 @@ const PostSchema = mongoose.Schema({
     }
 });
 
+const ObjectId = mongoose.Schema.ObjectId;
 const Post = module.exports = mongoose.model('Post', PostSchema);
 
 module.exports.getPostById = function (id, callback) {
@@ -56,6 +58,13 @@ module.exports.getPostByUsername = function (email, callback) {
 module.exports.addPost = function (newPost, callback) {
     console.log("addPost",newPost);
     newPost.save(callback);//save new post post
+};
+
+module.exports.removePost = function (post_id, callback) {
+    console.log("removePost",post_id);
+    var udp = {_id: post_id};
+    console.log(udp);
+    Post.remove(udp,callback);//save new post post
 };
 
 module.exports.updatePost = function (post, updateData, callback) {
@@ -98,9 +107,10 @@ module.exports.removeLike = function ( post,user, callback) {
     console.log("post.likes",post.likes);
     console.log("user._id",user._id);
     let newCommentList = post.likes.filter((item) => {
-        return item.likes !== user._id;
+        return item !== user._id;
     });
     console.log("newCommentList", newCommentList);
-    Post.update({$set: newCommentList}, callback);
-
+    let update = {likes:newCommentList};
+    console.log("update", update);
+    Post.update({$set: update}, callback);
 };

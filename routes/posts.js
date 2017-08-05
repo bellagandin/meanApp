@@ -68,8 +68,31 @@ router.post('/editPost', (req, res) => {
 });
 
 
-router.post("/delPost", (req, res) => {
-
+router.post("/removePost", (req, res) => {
+    const post_id = req.body._id;
+    const user_email = req.body.user_email;
+    Post.removePost(post_id, (err, post) => {
+        if (err) {
+            res.json({success: false, msg: err});
+        } else {
+            // get object user
+            User.getUserByEmail(user_email, (err, user) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    console.log("user",user);
+                    User.removePost(user, post_id, (err, upd) => {
+                        if (err) {
+                            res.json({success: false, msg: err});
+                        } else {
+                            res.json({success: true, msg: upd});
+                        }
+                    });
+                }
+            });
+           // res.json({success: true, msg: "hey"});
+        }
+    });
 });
 
 
@@ -142,7 +165,7 @@ router.post("/likedPost", (req, res) => {
                     res.json({success: false, msg: err});
                 } else {
                     //add like to post
-                    Post.addLike(post,user, (err, _) => {
+                    Post.addLike(post, user, (err, _) => {
                         if (err) {
                             res.json({success: false, msg: err});
                         } else {
@@ -175,7 +198,7 @@ router.post("/disLike", (req, res) => {
                     res.json({success: false, msg: err});
                 } else {
                     //add like to post
-                    Post.removeLike(post,user, (err, _) => {
+                    Post.removeLike(post, user, (err, _) => {
                         if (err) {
                             res.json({success: false, msg: err});
                         } else {

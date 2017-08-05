@@ -112,6 +112,17 @@ module.exports.addPost = function (user, post, callback) {
     user.update({$set: updateData}, callback);
 };
 
+
+module.exports.removePost = function (user, post_id, callback) {
+    let newPostList = user.posts.filter((item) => {
+        console.log(">>>>",item,post_id,item != post_id);
+        return item != post_id;
+    });
+    console.log("newPostList",newPostList);
+    let updateData = {posts: newPostList};
+    user.update({$set: updateData}, callback);
+};
+
 module.exports.addFollowing = function (user, following, callback) {
     console.log(user.followings);
 
@@ -180,8 +191,10 @@ module.exports.addLikeToPost = function (post, user, callback) {
 
 module.exports.removeLikeFromPost = function (post, user, callback) {
     let newCommentList = post.liked_posts.filter((item) => {
-        return item.liked_posts !== post._id;
+        return item!== post._id;
     });
-    console.log(newCommentList);
-    user.update({$set: newCommentList}, callback);
+    console.log("newCommentList",newCommentList);
+    let upd = {liked_posts:newCommentList};
+    console.log("upd",upd);
+    user.update({$set: upd}, callback);
 };
