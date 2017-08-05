@@ -1,8 +1,47 @@
-<div *ngIf="user">
-  <h2 class="page-header">{{user.first_name}} {{user.last_name}}</h2>
-  <ul class="list-group">
-    <li class="list-group-item">{{user.gender}}</li>
-    <li class="list-group-item">email: {{user.email}}</li>
-  </ul>
+<div class="mainbody container-fluid" *ngIf="user">
+  <div class="row">
+    <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="media">
+                <div align="center">
+                    <img class="thumbnail img-responsive" src={{user.img_url}} width="300px" height="300px">
+                </div>
+                <div class="media-body">
+                    <hr>
+                    <h3><strong>Bio</strong></h3>
+                    <p>{{user.bio_description}}</p>
+                    <hr>
+                    <h3><strong>user name:</strong></h3>
+                    <p>{{user.user_name}}</p>
+                    <hr>
+                    <h3><strong>Gender</strong></h3>
+                    <p>{{user.gender}}</p>
+                    <hr>
+                    <h3><strong>Birthday</strong></h3>
+                    <p>{{user.birthday}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <span>
+                <h1 class="panel-title pull-left" style="font-size:30px;">{{user.first_name}} {{user.last_name}} <small>{{user.email}}</small> <i class="fa fa-check text-success" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="John Doe is sharing with you"></i></h1>
+                <div class="dropdown pull-right">
+                    <button class="btn btn-success" type="button" id="dropdownMenu1" aria-haspopup="true" >
+                        Follow
+                        <span class="caret"></span>
+                    </button>
+                </div>
+            </span>
+            <hr>
+        </div>
+    </div>
+    <hr>
+    <!-- here will insert the post compnents. -->
 
+  </div>
 </div>

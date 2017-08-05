@@ -43,6 +43,7 @@ app.use(bodyParser.json());
 // Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static('./public/img'));
 
 require('./config/passport')(passport);
 
