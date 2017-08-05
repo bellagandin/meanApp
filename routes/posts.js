@@ -150,7 +150,23 @@ router.post("/removeComment", (req, res) => {
 });
 
 router.post("/editComment", (req, res) => {
+    const comment = req.body.comment;
+    const post_id = req.body._id;
+    Post.getPostById(post_id,(err, post) => {
+        if (err) {
+            res.json({success: false, msg: err});
+        } else {
+            console.log("test",post);
+            Post.editComment(comment, post, (err, upd) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
 
+                    res.json({success: true, msg: upd});
+                }
+            });
+        }
+    });
 });
 
 router.post("/likedPost", (req, res) => {
