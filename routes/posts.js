@@ -15,10 +15,11 @@ router.post('/createPost', (req, res, next) => {
         recipe_title: req.body.recipe_title,
         category: req.body.category,
         co_author: req.body.co_author,
-        main_img: req.body.main_img,
+        main_img: req.body.main_img,//TODO: "add"
         ingredients: req.body.ingredients,
         description: req.body.description,
         instructions: req.body.instructions,
+        photos: req.body.photos,
         likes: [],
         comments: [],
         id_generator: 0
@@ -234,5 +235,42 @@ router.post("/disLike", (req, res) => {
         }
     });
 });
+
+router.post("/search", (req, res) => {
+    const type = req.body.type;
+    switch (type){
+        case "user":
+            let email = req.body.email;
+            User.getUserByEmail(email, (err, user) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    res.json({success: true, msg: user});
+                }
+            });
+            break;
+        case "title":
+            let title = req.body.title;
+            Post.getPostsByTitle(title, (err, posts) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    res.json({success: true, msg: posts});
+                }
+            });
+            break;
+        case "text":
+            // let text = req.body.text;
+            // Post.getPostsByText(title, (err, posts) => {
+            //     if (err) {
+            //         res.json({success: false, msg: err});
+            //     } else {
+            //         res.json({success: true, msg: posts});
+            //     }
+            // });
+            break;
+    }
+});
+
 
 module.exports = router;
