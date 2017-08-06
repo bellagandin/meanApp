@@ -29,12 +29,12 @@ export class AuthenticateService {
   }
   
   
-  getProfile(){
+  getProfile(user_Name: String){
     let headers = new Headers();
     this.getToken();
     headers.append('Content-Type','application/json');
     headers.append('Authorization',this.authToken);
-    return this.http.get(AppConfig.API_ENDPOINT+'users/profile',{headers: headers})
+    return this.http.get(AppConfig.API_ENDPOINT+'users/profile/'+user_Name,{headers: headers})
       .map(res=>res.json());
   }
 
@@ -62,6 +62,12 @@ export class AuthenticateService {
     this.authToken=null;
     this.user=null;
     localStorage.clear();
+  }
+  getLoggedInUser(){
+    return this.user;
+  }
+  getLoggedInUserName(){
+    return this.user.user_name;
   }
 
 }

@@ -11,6 +11,9 @@ import {Router } from '@angular/router';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+  searchQuery: String;
+
+
 
   constructor(private auth: AuthenticateService,
               private flash: FlashMessagesService,
@@ -24,8 +27,12 @@ export class NavbarComponent implements OnInit {
     this.flash.show("Loged out from RecipeMe",{cssClass:'alert-success',timeout:3000});
     this.router.navigate(['/login']);
     return false;
-
-
+  }
+  getLoggedInUSer(){
+    return JSON.parse(localStorage.getItem('user'));
+  }
+  search(){
+    this.router.navigate(['searchResault']);
   }
 
 }

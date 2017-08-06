@@ -65,6 +65,10 @@ module.exports.getUserByEmail = function (email, callback) {
     const query = {email: email};
     User.findOne(query, callback);
 };
+module.exports.getUserByUserName = function (user_name, callback) {
+    const query = {user_name: user_name};
+    User.findOne(query, callback);
+};
 
 module.exports.addUser = function (newUser, callback) {
 

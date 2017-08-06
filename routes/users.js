@@ -116,6 +116,7 @@ router.post('/authenticate', (req, res, next) => {
                         last_name: user.last_name,
                         email: user.email,
                         img_url: user.img_url,
+                        user_name:user.user_name,
                         gender: user.gender,
                         birthday: user.birthday,
                         bio_description: user.bio_description,
@@ -133,9 +134,31 @@ router.post('/authenticate', (req, res, next) => {
 
 
 // Profile
-router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+router.get('/profile/:user_name', passport.authenticate('jwt', {session: false}), (req, res, next) => {
     //res.send('PROFILE');
-    res.json({user: req.user});
+    User.getUserByUserName(req.param("user_name"),(err,user)=>{
+        if(err) throw ree;
+        if(!user){
+            return res.json({success: false, msg: 'User not found'});
+        }
+
+        res.json({
+                    success: true,
+                    user: {
+                        id: user._id,
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        email: user.email,
+                        img_url: user.img_url,
+                        user_name:user.user_name,
+                        gender: user.gender,
+                        birthday: user.birthday,
+                        bio_description: user.bio_description,
+                        number_of_followers: user.number_of_followers,
+                        liked_posts: user.liked_posts
+                    }
+                });
+    });
 });
 
 
