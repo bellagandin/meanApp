@@ -14,7 +14,7 @@ router.post('/register', (req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         user_name: req.body.user_name,
-        img_url: "http://localhost:3000/img/profile.png", //TODO: add default img
+        img_url: "http://localhost:3001/img/profile.png", //TODO: add default img
         gender: req.body.gender,
         birthday: req.body.birthday,
         bio_description: "",
