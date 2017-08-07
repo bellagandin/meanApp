@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const jwt = require('jsonwebtoken');
 const Post = require('../models/post');
+const fs = require('fs');
 const User = require('../models/user');
 const config = require('../config/database');
 const multer = require('multer');
@@ -12,6 +12,8 @@ const upload = multer({dest: DIR}).single('photo');
 
 // Create Post
 router.post('/createPost', (req, res, next) => {
+
+
     let newPost = new Post({
         time: req.body.time,
         recipe_title: req.body.recipe_title,
@@ -21,7 +23,7 @@ router.post('/createPost', (req, res, next) => {
         ingredients: req.body.ingredients,
         description: req.body.description,
         instructions: req.body.instructions,
-        photos: req.body.photos,
+        photos: [],
         likes: [],
         comments: [],
         id_generator: 0
@@ -32,11 +34,14 @@ router.post('/createPost', (req, res, next) => {
             res.json({success: false, msg: "1 " + err});
         } else {
             let userId = req.body.user_id;
+            console.log("here");
             User.getUserById(userId, (err, user) => {// added post id to list of post of user
                 if (err) {
                     res.json({success: false, msg: "2 " + err});
                 } else {
+                    console.log("here");
                     if (user != null) {
+
                         User.addPost(user, newPost, (err, post) => {
                             if (err) {
                                 res.json({success: false, msg: "1 " + err});
@@ -44,6 +49,9 @@ router.post('/createPost', (req, res, next) => {
                                 res.json({success: true, msg: {"post_id": newPost._id}});
                             }
                         });
+                    }
+                    else {
+                        res.json({success: false, msg: "the user not exits"});
                     }
                 }
             });
@@ -240,10 +248,9 @@ router.post("/disLike", (req, res) => {
 
 
 
-router.post('/uploadMainImg', function (req, res, next) {
+router.post('/uploadPhotos', function (req, res, next) {
     console.log("start");
     var path = '';
-    console.log(req.file);
     upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
@@ -251,14 +258,38 @@ router.post('/uploadMainImg', function (req, res, next) {
             res.status(422).send("an Error occured")
         }
         // No error occured.
+        console.log("oldPath",req.file);
+        var oldPath = req.file.path;
+        console.log("oldPath",oldPath);
         let file = req.file.mimetype.split("/");
-        path = req.file.path + "."+file[1];
 
+        path = req.file.path + "."+file[1];
+        fs.rename
         console.log("path",path);
         console.log("req.file.mimetype",req.file.mimetype);
         console.log("req",req);
-       // let json = {"main_img": path};
-        res.send({success: true, msg: "Upload Completed for " + path});
+        fs.rename(oldPath, path, function(err) {
+            if ( err ) console.log('ERROR: ' + err);
+        });
+        res.json({success: true, msg: "good!"});
+
+        //let json = {"main_img": path};
+        //upload main img
+        // Post.updatePost(post,json,(err, user) => {
+        // if (err) {
+        //     res.json({success: false, msg: err});
+        // } else {
+        //
+        //     Post.updatePost(post,_,(err, user) => {
+        //         if (err) {
+        //             res.json({success: false, msg: err});
+        //         } else {
+        //             res.json({success: true, msg: "good!"});
+        //         }
+        //     });
+        //
+        // }});
+
 
 
     });

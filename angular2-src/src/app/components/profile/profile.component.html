@@ -7,6 +7,12 @@
                 <div align="center">
                     <img class="thumbnail img-responsive" src={{user.img_url}} width="300px" height="300px">
                 </div>
+              <div align="center">
+                <input *ngIf="showInput"  type="file" name="myPicture" />
+                <br>
+                <button *ngIf="!showInput" class="btn-primary" (click)="changePic()" >change picture</button>
+                <button *ngIf="showInput" class="btn-primary" (click)="upload()"  >Upload</button>
+              </div>
                 <div class="media-body">
                     <hr>
                     <h3><strong>Bio</strong></h3>
@@ -44,4 +50,5 @@
     <!-- here will insert the post compnents. -->
 
   </div>
+</div>
 </div>
