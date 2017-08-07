@@ -8,14 +8,10 @@
               <input type="text" class="form-control" id="title">
           </div>
           <div class="col-md-6 form-group">
-            <!-- File input for upload without using the plugin. -->
-            <input id="photo" type="file" />
-            <!-- button to trigger the file upload when submitted -->
-            <button type="button" class="btn btn-success btn-s" (click)="upload()">
-              Upload with method 2
-            </button>
-        </div>
-
+              <label for="titleImage">title Image: </label>
+              <input type="file" class="form-control" id="alterEgo">
+          </div>
+          
         </div>
         <div class="row" style="padding:20px">
           <div id="des" class="col-md-12 form-group center-block">
@@ -41,11 +37,11 @@
         </div>
         <div class="row">
           <div class="col-md-1"></div>
-          <button type="btn" (click)="AddIngridient()">Add Inngridient</button>
+          <button type="button" class="btn btn-primary buttuns" (click)="AddIngridient()">Add Inngridient</button>
         </div>
         <hr>
         <div  class="row" style="padding:20px">
-          <div class="col-md-12 form-group" *ngFor="let st of steps">
+          <div class="col-md-12 form-group" *ngFor="let st of steps" style="padding:3px">
             <h5>Step {{st.stepNumber}}:</h5>
             <textarea id="description" name="st.description" [(ngModel)]="st.description" >
             </textarea>
@@ -53,20 +49,20 @@
         </div>
         <div class="row">
           <div class="col-md-1"></div>
-          <button type="btn" (click)="AddStep()">Add Step</button>
+          <button type="button" class="btn btn-primary buttuns" (click)="AddStep()">Add Step</button>
         </div>
         <hr>
         <div class="row">
-          <input type="file"
-       ngFileSelect
-       [options]="options"
-       (onUpload)="handleUpload($event)"
-       (beforeUpload)="beforeUpload($event)">
-
+            <div class="col-md-4" *ngFor="let img of images">
+              <input type="file" id = "{{imageId[getimageID(img)]}}" style="padding:2px;" />
+            </div>
         </div>
-
+        <div class="row" style="padding-top:20px">
+          <div class="col-md-1"></div>
+            <button id="addPhothobtn" type="button" class="btn btn-primary buttuns" (click)="addPhoto()">Add Photo</button>
+        </div>
         <div style="padding:20px" class="row">
-          <button type="submit" class="btn btn-success">Submit</button>
+          <button type="submit" class="btn btn-success" (click)="publishPost()">Submit</button>
         </div>
       </div>
     </form>

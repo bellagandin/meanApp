@@ -10,3 +10,8 @@ step_des{
     width: 60px;
     height: 70px;
 }
+
+.buttuns{
+    width:150px;
+    border:1px solid black;
+}
