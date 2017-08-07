@@ -33,7 +33,7 @@ export class NewPostComponent implements OnInit {
     this.stepN++;
   }
     public addPhoto(){
-      this.imageId.push("photo "+this.imageN);
+      this.imageId.push("photo"+this.imageN);
       this.imageN++;
       this.images.push(new FileUploader({url:AppConfig.UPLOADS_PATH,itemAlias:"photo"}));
       this.images[this.images.length-1].onAfterAddingFile = (file)=> { file.withCredentials = false; };
@@ -49,11 +49,13 @@ export class NewPostComponent implements OnInit {
   public publishPost(){
     
     let formData = new FormData();
-    formData.append("postnumber","1q22e3eeer");
-
-    for(var i=1;i<this.imageId.length-1;i++){
+    let mainphEl: HTMLInputElement = this.el.nativeElement.querySelector('#mainImage');
+    if(mainphEl.files.length>0)
+      formData.append('photos',mainphEl.files.item(0),mainphEl.files.item(0).name);
+    console.log(this.imageId.length);
+    for(var i=1;i<=this.imageId.length;i++){
     //locate the file element meant for the file upload.
-        let inputEl: HTMLInputElement = this.el.nativeElement.querySelector('#photo '+i);
+        let inputEl: HTMLInputElement = this.el.nativeElement.querySelector('#photo'+i);
     //get the total amount of files attached to the file input.
         let fileCount: number = inputEl.files.length;
     //create a new fromdata instance
@@ -61,13 +63,13 @@ export class NewPostComponent implements OnInit {
     //check if the filecount is greater than zero, to be sure a file was selected.
         if (fileCount > 0) { // a file was selected
             //append the key name 'photo' with the first file in the element
-                formData.append('photo '+i, inputEl.files.item(0));
+                formData.append('photos', inputEl.files.item(0),inputEl.files.item(0).name);
             //call the angular http method
           }
         }
         this.http
         //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-        .post(AppConfig.UPLOADS_PATH, formData).map((res:Response) => res.json()).subscribe(
+        .post(AppConfig.API_ENDPOINT+"posts/uploadMainImg/"+'59887d06809f8456d9d49b66', formData).map((res:Response) => res.json()).subscribe(
                 //map the success function and alert the response
                  (success) => {
                          alert(success._body);
