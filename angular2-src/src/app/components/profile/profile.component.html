@@ -1,54 +1,60 @@
 <div class="mainbody container-fluid" *ngIf="user">
   <div class="row">
     <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
-    <div class="panel panel-default">
+      <div class="panel panel-default">
         <div class="panel-body">
-            <div class="media">
-                <div align="center">
-                    <img class="thumbnail img-responsive" src={{user.img_url}} width="300px" height="300px">
-                </div>
-              <div align="center">
-                <input *ngIf="showInput"  type="file" name="myPicture" />
-                <br>
-                <button *ngIf="!showInput" class="btn-primary" (click)="changePic()" >change picture</button>
-                <button *ngIf="showInput" class="btn-primary" (click)="upload()"  >Upload</button>
-              </div>
-                <div class="media-body">
-                    <hr>
-                    <h3><strong>Bio</strong></h3>
-                    <p>{{user.bio_description}}</p>
-                    <hr>
-                    <h3><strong>user name:</strong></h3>
-                    <p>{{user.user_name}}</p>
-                    <hr>
-                    <h3><strong>Gender</strong></h3>
-                    <p>{{user.gender}}</p>
-                    <hr>
-                    <h3><strong>Birthday</strong></h3>
-                    <p>{{user.birthday | amDateFormat:'LL'}} <p>
-                </div>
+          <div class="media">
+            <div align="center">
+              <img class="thumbnail img-responsive" src={{user.img_url}} width="300px" height="300px">
             </div>
+            <div align="center">
+              <input *ngIf="showInput" type="file" name="myPicture"/>
+              <br>
+              <button *ngIf="!showInput" class="btn-primary" (click)="changePic()">change picture</button>
+              <button *ngIf="showInput" class="btn-primary" (click)="upload()">Upload</button>
+            </div>
+            <div class="media-body">
+              <hr>
+              <h3><strong>Bio</strong></h3>
+              <p>{{user.bio_description}}</p>
+              <hr>
+              <h3><strong>user name:</strong></h3>
+              <p>{{user.user_name}}</p>
+              <hr>
+              <h3><strong>Gender</strong></h3>
+              <p>{{user.gender}}</p>
+              <hr>
+              <h3><strong>Birthday</strong></h3>
+              <p>{{user.birthday | amDateFormat:'LL'}}
+              <hr>
+              <h3><strong>Number of followers</strong></h3>
+              <p>{{user.followers.Count}}</p>
+              <hr>
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
     </div>
     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-    <div class="panel panel-default">
+      <div class="panel panel-default">
         <div class="panel-body">
             <span>
-                <h1 class="panel-title pull-left" style="font-size:30px;">{{user.first_name}} {{user.last_name}} <small>{{user.email}}</small> <i class="fa fa-check text-success" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="John Doe is sharing with you"></i></h1>
+                <h1 class="panel-title pull-left" style="font-size:30px;">{{user.first_name}} {{user.last_name}} <small>{{user.email}}</small> <i
+                  class="fa fa-check text-success" aria-hidden="true" data-toggle="tooltip" data-placement="bottom"
+                  title="John Doe is sharing with you"></i></h1>
                 <div class="dropdown pull-right">
-                    <button class="btn btn-success" type="button" id="dropdownMenu1" aria-haspopup="true" >
+                    <button class="btn btn-success" type="button" id="dropdownMenu1" aria-haspopup="true">
                         Follow
                         <span class="caret"></span>
                     </button>
                 </div>
             </span>
-            <hr>
+          <hr>
         </div>
-    </div>
-    <hr>
-    <!-- here will insert the post compnents. -->
+      </div>
+      <hr>
+      <!-- here will insert the post compnents. -->
 
+    </div>
   </div>
-</div>
 </div>

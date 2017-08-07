@@ -43,11 +43,11 @@ export class NewPostComponent implements OnInit {
   }
 
   getimageID(img){
-    
+
     return this.images.indexOf(img);
   }
   public publishPost(){
-    
+
     let formData = new FormData();
     let mainphEl: HTMLInputElement = this.el.nativeElement.querySelector('#mainImage');
     if(mainphEl.files.length>0)
@@ -59,7 +59,7 @@ export class NewPostComponent implements OnInit {
     //get the total amount of files attached to the file input.
         let fileCount: number = inputEl.files.length;
     //create a new fromdata instance
-      
+
     //check if the filecount is greater than zero, to be sure a file was selected.
         if (fileCount > 0) { // a file was selected
             //append the key name 'photo' with the first file in the element
@@ -69,7 +69,7 @@ export class NewPostComponent implements OnInit {
         }
         this.http
         //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-        .post(AppConfig.API_ENDPOINT+"posts/uploadMainImg/"+'59887d06809f8456d9d49b66', formData).map((res:Response) => res.json()).subscribe(
+        .post(AppConfig.API_ENDPOINT+"posts/uploadMainImg/"+'5988818faa41ff1e28cb2a17', formData).map((res:Response) => res.json()).subscribe(
                 //map the success function and alert the response
                  (success) => {
                          alert(success._body);
