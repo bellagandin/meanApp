@@ -1,13 +1,11 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const passport = require('passport');
 const mongoose = require('mongoose');
 const config = require('./config/database');
-
-//img
-const fs = require('fs');
 
 // Connect To Database
 mongoose.Promise = global.Promise;
@@ -33,6 +31,7 @@ const port = 3001;
 
 // CORS Middleware
 app.use(cors());
+
 
 // Set Static Folder
 app.use(express.static(path.join(__dirname, 'public')));

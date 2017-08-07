@@ -263,9 +263,8 @@ router.post('/getFollowingsPosts', function (req, res) {
     //         });
     //     }
     // });
-    let result = getAllPostOfFollowed(req);
-    console.log(">>>>>",getAllPostOfFollowed(req));
-    res.json(result);
+    getAllPostOfFollowed(req, (result)=> {res.json(result);});
+
 });
 
 
@@ -343,6 +342,44 @@ router.post("/removeFollowing", function (req, res) {
 //     // ...
 // });
 
+
+router.post("/search", (req, res) => {
+    const type = req.body.type;
+    switch (type) {
+        case "user":
+            let email = req.body.email;
+            User.getUserByEmail(email, (err, user) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    res.json({success: true, msg: user});
+                }
+            });
+            break;
+        case "title":
+            let title = req.body.title;
+            Post.getPostsByTitle(title, (err, posts) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    res.json({success: true, msg: posts});
+                }
+            });
+            break;
+        case "text":
+            const text = req.body.text;
+            getAllPostOfFollowed(req, (result)=> {
+                console.log(result);
+                result.filter((post)=>{return ((post.description.includes(text) )||
+                    post.instructions.forEach(function(entry) {
+                    entry["ins"].includes(text);
+                } ))
+                });
+                res.json(result);});
+            break;
+    }
+});
+
 module.exports = router;
 
 
@@ -381,11 +418,11 @@ var add_follower_function = function(user, following_user,res)
     );
 };
 
-var getAllPostOfFollowed = function (req) {
+var getAllPostOfFollowed = function (req, callback) {
     const user_id = req.body.user_id;
     User.getUserById(user_id, (err, user) => {//callback
         if (err) {
-            return {success: false, msg: err};
+            callback({success: false, msg: err});
         }
         else {
             let followings = user.followings;
@@ -394,7 +431,7 @@ var getAllPostOfFollowed = function (req) {
             User.getFollowingsPostsId(followings, (err, result) => {//get all documents of followings
                 console.log("result", result);
                 if (err) {
-                    return {success: false, msg: err};
+                    callback({success: false, msg: err});
                 }
                 else {
                     //get posts id of followings
@@ -407,10 +444,10 @@ var getAllPostOfFollowed = function (req) {
                     Post.getPostByIds(posts_ids, (err, detailPosts) => {//callback
                         console.log("posts", detailPosts);
                         if (detailPosts === null) {
-                            return {success: false, msg: err};
+                            callback({success: false, msg: err});
                         }
                         else {
-                            return {success: true, msg: detailPosts};
+                            callback({success: true, msg: detailPosts});
                         }
 
                     });

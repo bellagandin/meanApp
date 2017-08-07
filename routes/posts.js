@@ -5,17 +5,19 @@ const jwt = require('jsonwebtoken');
 const Post = require('../models/post');
 const User = require('../models/user');
 const config = require('../config/database');
+const multer = require('multer');
+const DIR = './public/uploads/';
+const upload = multer({dest: DIR}).single('photo');
 
 
 // Create Post
 router.post('/createPost', (req, res, next) => {
-
     let newPost = new Post({
         time: req.body.time,
         recipe_title: req.body.recipe_title,
         category: req.body.category,
         co_author: req.body.co_author,
-        main_img: req.body.main_img,//TODO: "add"
+        main_img: '',//TODO: "add img"
         ingredients: req.body.ingredients,
         description: req.body.description,
         instructions: req.body.instructions,
@@ -39,7 +41,7 @@ router.post('/createPost', (req, res, next) => {
                             if (err) {
                                 res.json({success: false, msg: "1 " + err});
                             } else {
-                                res.json({success: true, msg: newPost});
+                                res.json({success: true, msg: {"post_id": newPost._id}});
                             }
                         });
                     }
@@ -83,7 +85,7 @@ router.post("/removePost", (req, res) => {
                 if (err) {
                     res.json({success: false, msg: err});
                 } else {
-                    console.log("user",user);
+                    console.log("user", user);
                     User.removePost(user, post_id, (err, upd) => {
                         if (err) {
                             res.json({success: false, msg: err});
@@ -93,7 +95,7 @@ router.post("/removePost", (req, res) => {
                     });
                 }
             });
-           // res.json({success: true, msg: "hey"});
+            // res.json({success: true, msg: "hey"});
         }
     });
 });
@@ -153,11 +155,11 @@ router.post("/removeComment", (req, res) => {
 router.post("/editComment", (req, res) => {
     const comment = req.body.comment;
     const post_id = req.body._id;
-    Post.getPostById(post_id,(err, post) => {
+    Post.getPostById(post_id, (err, post) => {
         if (err) {
             res.json({success: false, msg: err});
         } else {
-            console.log("test",post);
+            console.log("test", post);
             Post.editComment(comment, post, (err, upd) => {
                 if (err) {
                     res.json({success: false, msg: err});
@@ -236,41 +238,27 @@ router.post("/disLike", (req, res) => {
     });
 });
 
-router.post("/search", (req, res) => {
-    const type = req.body.type;
-    switch (type){
-        case "user":
-            let email = req.body.email;
-            User.getUserByEmail(email, (err, user) => {
-                if (err) {
-                    res.json({success: false, msg: err});
-                } else {
-                    res.json({success: true, msg: user});
-                }
-            });
-            break;
-        case "title":
-            let title = req.body.title;
-            Post.getPostsByTitle(title, (err, posts) => {
-                if (err) {
-                    res.json({success: false, msg: err});
-                } else {
-                    res.json({success: true, msg: posts});
-                }
-            });
-            break;
-        case "text":
-            // let text = req.body.text;
-            // Post.getPostsByText(title, (err, posts) => {
-            //     if (err) {
-            //         res.json({success: false, msg: err});
-            //     } else {
-            //         res.json({success: true, msg: posts});
-            //     }
-            // });
-            break;
-    }
-});
 
+
+router.post('/uploadMainImg', function (req, res, next) {
+    console.log("start");
+    var path = '';
+    console.log(req.file);
+    upload(req, res, function (err) {
+        if (err) {
+            // An error occurred when uploading
+            console.log(err);
+            res.status(422).send("an Error occured")
+        }
+        // No error occured.
+        path = req.file.path;
+        console.log("path",path);
+        console.log("req",req);
+       // let json = {"main_img": path};
+        res.send({success: true, msg: "Upload Completed for " + path});
+
+
+    });
+});
 
 module.exports = router;

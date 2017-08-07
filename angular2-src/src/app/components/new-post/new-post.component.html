@@ -8,10 +8,14 @@
               <input type="text" class="form-control" id="title">
           </div>
           <div class="col-md-6 form-group">
-              <label for="titleImage">title Image: </label>
-              <input type="file" class="form-control" id="alterEgo">
-          </div>
-          
+            <!-- File input for upload without using the plugin. -->
+            <input id="photo" type="file" />
+            <!-- button to trigger the file upload when submitted -->
+            <button type="button" class="btn btn-success btn-s" (click)="upload()">
+              Upload with method 2
+            </button>
+        </div>
+
         </div>
         <div class="row" style="padding:20px">
           <div id="des" class="col-md-12 form-group center-block">
@@ -60,7 +64,7 @@
        (beforeUpload)="beforeUpload($event)">
 
         </div>
-        
+
         <div style="padding:20px" class="row">
           <button type="submit" class="btn btn-success">Submit</button>
         </div>
