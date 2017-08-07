@@ -251,8 +251,11 @@ router.post('/uploadMainImg', function (req, res, next) {
             res.status(422).send("an Error occured")
         }
         // No error occured.
-        path = req.file.path;
+        let file = req.file.mimetype.split("/");
+        path = req.file.path + "."+file[1];
+
         console.log("path",path);
+        console.log("req.file.mimetype",req.file.mimetype);
         console.log("req",req);
        // let json = {"main_img": path};
         res.send({success: true, msg: "Upload Completed for " + path});
