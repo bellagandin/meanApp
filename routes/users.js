@@ -14,7 +14,7 @@ router.post('/register', (req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         user_name: req.body.user_name,
-        img_url: "http://localhost:3000/img/profile.png", //TODO: add default img
+        img_url: "http://localhost:3001/img/profile.png", //TODO: add default img
         gender: req.body.gender,
         birthday: req.body.birthday,
         bio_description: "",
@@ -229,48 +229,50 @@ router.post('/getMyPost', function (req, res) {
 
 
 router.post('/getFollowingsPosts', function (req, res) {
-    User.getUserById(req.body.user_id, (err, user) => {//callback
-        if (err) {
-            res.json({success: false, msg: err});
-        }
-        else {
-            let followings = user.followings;
-            console.log("followings", followings);
-            let answer = [];
-            User.getFollowingsPostsId(followings, (err, result) => {//get all documents of followings
-                console.log("result", result);
-                if (err) {
-                    res.json({success: false, msg: err});
-                }
-                else {
-                    //get posts id of followings
-                    answer = result.map(function (item) {
-                        return item.posts;
-                    });
-                    console.log(answer);
-                    //flatten array of posts id
-                    let posts_ids = [].concat.apply([], answer);
-                    Post.getPostByIds(posts_ids, (err, detailPosts) => {//callback
-                        console.log("posts", detailPosts);
-                        if (detailPosts === null) {
-                            res.json({success: false, msg: err});
-                        }
-                        else {
-                            res.json({success: true, msg: detailPosts});
-                        }
-                    });
-                }
-            });
-        }
-    });
+    // User.getUserById(req.body.user_id, (err, user) => {//callback
+    //     if (err) {
+    //         res.json({success: false, msg: err});
+    //     }
+    //     else {
+    //         let followings = user.followings;
+    //         console.log("followings", followings);
+    //         let answer = [];
+    //         User.getFollowingsPostsId(followings, (err, result) => {//get all documents of followings
+    //             console.log("result", result);
+    //             if (err) {
+    //                 res.json({success: false, msg: err});
+    //             }
+    //             else {
+    //                 //get posts id of followings
+    //                 answer = result.map(function (item) {
+    //                     return item.posts;
+    //                 });
+    //                 console.log(answer);
+    //                 //flatten array of posts id
+    //                 let posts_ids = [].concat.apply([], answer);
+    //                 Post.getPostByIds(posts_ids, (err, detailPosts) => {//callback
+    //                     console.log("posts", detailPosts);
+    //                     if (detailPosts === null) {
+    //                         res.json({success: false, msg: err});
+    //                     }
+    //                     else {
+    //                         res.json({success: true, msg: detailPosts});
+    //                     }
+    //                 });
+    //             }
+    //         });
+    //     }
+    // });
+    getAllPostOfFollowed(req, (result)=> {res.json(result);});
+
 });
 
 
 router.post("/addFollowing", function (req, res) {
-    let user_id = req.body.user_id;
+    let user_id = req.body.email;
     let following_email = req.body.following_email;
     //find user
-    User.getUserById(user_id, (err, user) => {
+    User.getUserByEmail(user_id, (err, user) => {
         if (user===null || err) {
             res.json({success: false, msg: err});
         }
@@ -340,6 +342,44 @@ router.post("/removeFollowing", function (req, res) {
 //     // ...
 // });
 
+
+router.post("/search", (req, res) => {
+    const type = req.body.type;
+    switch (type) {
+        case "user":
+            let email = req.body.email;
+            User.getUserByEmail(email, (err, user) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    res.json({success: true, msg: user});
+                }
+            });
+            break;
+        case "title":
+            let title = req.body.title;
+            Post.getPostsByTitle(title, (err, posts) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    res.json({success: true, msg: posts});
+                }
+            });
+            break;
+        case "text":
+            const text = req.body.text;
+            getAllPostOfFollowed(req, (result)=> {
+                console.log(result);
+                result.filter((post)=>{return ((post.description.includes(text) )||
+                    post.instructions.forEach(function(entry) {
+                    entry["ins"].includes(text);
+                } ))
+                });
+                res.json(result);});
+            break;
+    }
+});
+
 module.exports = router;
 
 
@@ -376,4 +416,43 @@ var add_follower_function = function(user, following_user,res)
         },//end callback
         (() => {res.json({success: false, msg: "the user already follows."});})
     );
+};
+
+var getAllPostOfFollowed = function (req, callback) {
+    const user_id = req.body.user_id;
+    User.getUserById(user_id, (err, user) => {//callback
+        if (err) {
+            callback({success: false, msg: err});
+        }
+        else {
+            let followings = user.followings;
+            console.log("followings", followings);
+            let answer = [];
+            User.getFollowingsPostsId(followings, (err, result) => {//get all documents of followings
+                console.log("result", result);
+                if (err) {
+                    callback({success: false, msg: err});
+                }
+                else {
+                    //get posts id of followings
+                    answer = result.map(function (item) {
+                        return item.posts;
+                    });
+                    console.log(answer);
+                    //flatten array of posts id
+                    let posts_ids = [].concat.apply([], answer);
+                    Post.getPostByIds(posts_ids, (err, detailPosts) => {//callback
+                        console.log("posts", detailPosts);
+                        if (detailPosts === null) {
+                            callback({success: false, msg: err});
+                        }
+                        else {
+                            callback({success: true, msg: detailPosts});
+                        }
+
+                    });
+                }
+            });
+        }
+    });
 };

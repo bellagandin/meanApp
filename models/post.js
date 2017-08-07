@@ -35,6 +35,9 @@ const PostSchema = mongoose.Schema({
         type: Array,
         required: true
     },
+    photos:{
+      type: Array,
+    },
     likes: {
         type: Array,
     },
@@ -116,4 +119,13 @@ module.exports.editComment = function ( comment,post, callback) {
     let editComment = {comments: newCommentList.concat(comment)};
     console.log("editComment", editComment);
     Post.update({$set: editComment}, callback);
+};
+
+module.exports.getPostsByTitle = function ( title, callback) {
+    Post.find({"recipe_title":title}, callback);
+};
+
+
+module.exports.getPostsByText = function ( text, callback) {
+    Post.find({"username" : {$regex : ".*son.*"}});
 };
