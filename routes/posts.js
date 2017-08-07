@@ -6,8 +6,8 @@ const Post = require('../models/post');
 const User = require('../models/user');
 const config = require('../config/database');
 const multer = require('multer');
-const DIR = './public/uploads/';
-const upload = multer({dest: DIR}).single('photo');
+
+ 
 
 
 // Create Post
@@ -240,22 +240,62 @@ router.post("/disLike", (req, res) => {
 
 
 
-router.post('/uploadMainImg', function (req, res, next) {
+router.post('/uploadMainImg/:postnumber', function (req, res, next) {
     console.log("start");
+    let postDest='./public/uploads/'+req.param('postnumber');
+    let storage = multer.diskStorage({
+    destination: postDest,
+    filename: function (req, file, cb) {
+        let extArray = file.mimetype.split("/");
+        let extension = extArray[extArray.length - 1];
+        cb(null, file.fieldname + '-' + Date.now()+ '.' +extension);
+    }
+    })
+
+
+    let upload = multer({storage: storage}).array('photos',10);
     var path = '';
-    console.log(req.file);
     upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
             console.log(err);
             res.status(422).send("an Error occured")
         }
+        console.log("req",req.files);
         // No error occured.
-        path = req.file.path;
-        console.log("path",path);
-        console.log("req",req);
-       // let json = {"main_img": path};
-        res.send({success: true, msg: "Upload Completed for " + path});
+        //path = req.files.path;
+        //console.log("path",path);
+        //console.log("req",req);
+        let json = {"main_img": path};
+        const post_id = req.param('postnumber');
+        Post.getPostById(post_id, (err, post) => {
+                                if (err) {
+                                    res.json({success: false, msg: err});
+                                } else {
+                                    let updateData = {"main_img": postDest+'/'+ req.files[0].filename};
+                                    console.log(updateData);
+                                    Post.updatePost(post,updateData, (err,udp) => {
+                                        if (err) {
+                                    res.json({success: false, msg: err});
+                                } else {
+                                    console.log("udp",udp);
+                                    let temp =req.files.slice(1);
+                                    let names = temp.map((x)=>{return postDest+'/'+x.filename});
+                                    console.log("posy",names);
+                                    let updateData = {"photos":post.photos.concat(names)};
+                                    console.log(updateData);
+                                     Post.updatePost(post,updateData, (err, post) => {
+                                        if (err) {
+                                    res.json({success: false, msg: err});
+                                } else {
+                                            res.send({success: true, msg: "Upload Completed for " + path});
+                                }
+                                     });
+                                }
+                                    });
+                                }
+        });
+
 
 
     });
