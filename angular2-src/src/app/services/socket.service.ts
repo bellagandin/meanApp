@@ -7,6 +7,7 @@ export class Server {
   private socket;
 
   sendMessage(key){
+    console.log("help!!!",key,this.socket);
     this.socket.emit(key);
   }
 

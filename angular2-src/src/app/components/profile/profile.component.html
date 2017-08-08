@@ -49,20 +49,27 @@
                 </div>
 
               <!-- Trigger the modal with a button -->
+              <div class="dropdown pull-right">
+                <div *ngIf="!auth.checkLogoedInUser(user.user_name)" >
+              <button *ngIf="!follow" class="btn btn-success" type="button" id="dropdownMenu1" aria-haspopup="true" (click)="addFollow()">
+              Follow
+              </button>
+                  <button *ngIf="follow" class="btn btn-success" type="button" id="dropdownMenu2" aria-haspopup="true">
+              UnFollow
+              </button>
+                  </div>
+                <button *ngIf="auth.checkLogoedInUser(user.user_name)" type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>
+              </div>
 
-              <!--<div class="dropdown pull-right">-->
-              <!--<button class="btn btn-success" type="button" id="dropdownMenu1" aria-haspopup="true">-->
-              <!--Follow-->
-              <!--<span class="caret"></span>-->
-              <!--</button>-->
-              <!--</div>-->
+
+
             </span>
         </div>
       </div>
       <hr>
       <!-- here will insert the post compnents. -->
 
-      <button type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>
+      <!--<button type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>-->
       <div *ngIf="edit">
         <!--<form (submit)="onSubmit()">-->
         <!--<div class="form-group">-->
@@ -103,7 +110,7 @@
         <!--<input type="submit" class="btn btn-primary" value="עדכן" (click)="onUpdateSubmit()" >-->
         <!--</form>-->
 
-          <app-register [edit]=true [firstName]="user.first_name" [lastName]="user.last_name"
+          <app-register (updt)="ischildUpdate($event)" [edit]=true [firstName]="user.first_name" [lastName]="user.last_name"
                         [userName]="user.user_name" [email]="user.email" [birthDate]="user.birthday | date:'yyyy-MM-dd'"
                         [gender]="user.gender" [self_description]="user.self_description"></app-register>
 

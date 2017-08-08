@@ -44,7 +44,8 @@ router.post('/register', (req, res, next) => {
                                 birthday: user.birthday,
                                 self_description: user.self_description,
                                 followers: user.followers,
-                                liked_posts: user.liked_posts
+                                liked_posts: user.liked_posts,
+                                followings: user.followings,
                             };
                             res.json({success: true, msg: answer});
                         }
@@ -131,7 +132,8 @@ router.post('/authenticate', (req, res, next) => {
                         birthday: user.birthday,
                         self_description: user.self_description,
                         followers: user.followers,
-                        liked_posts: user.liked_posts
+                        liked_posts: user.liked_posts,
+                        followings: user.followings
                     }
                 });
             } else {
@@ -165,7 +167,8 @@ router.get('/profile/:user_name', passport.authenticate('jwt', {session: false})
                 birthday: user.birthday,
                 self_description: user.self_description,
                 followers: user.followers,
-                liked_posts: user.liked_posts
+                liked_posts: user.liked_posts,
+                followings: user.followings
             }
         });
     });
@@ -278,10 +281,10 @@ router.post('/getFollowingsPosts', function (req, res) {
 
 
 router.post("/addFollowing", function (req, res) {
-    let user_id = req.body.email;
+    let username = req.body.username;
     let following_email = req.body.following_email;
     //find user
-    User.getUserByEmail(user_id, (err, user) => {
+    User.getUserByUserName(username, (err, user) => {
         if (user === null || err) {
             res.json({success: false, msg: err});
         }

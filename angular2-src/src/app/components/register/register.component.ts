@@ -1,4 +1,4 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input,Output,EventEmitter} from '@angular/core';
 import {User} from '../../shared/User';
 import {ValidateService} from '../../services/Validate.service';
 import {FlashMessagesService} from 'angular2-flash-messages';
@@ -31,33 +31,33 @@ export class RegisterComponent implements OnInit {
   @Input()
   edit: boolean = false;
   connection;
+  @Output() updt: EventEmitter<boolean> = new EventEmitter<boolean>();
+
 
   constructor(private validator: ValidateService,
               private flasher: FlashMessagesService,
               private auth: AuthenticateService,
               private server: Server,
-              private router: Router) {
+              private router: Router) { }
 
-  }
+
   sendMessage(key){
     console.log(key);
     this.server.sendMessage(key);
 
   }
-  ngOnInit() {
-    this.connection = this.server.getMessages('updateProfile').subscribe(message => {
-      //location.reload();
-      this.auth.getProfile(this.userName).subscribe(
-        profile=>{
-          console.log(profile.user);
-          this.userName=profile.user;
-        },
-        err=>{
-          console.log(err);
-        });
-    });
-  }
 
+
+  ngOnInit() {
+    this.connection = this.server.getMessages('profile').subscribe(message => {
+      console.log("registare: get emit from the server");
+
+    });
+      }
+
+  toUpdate(){
+    this.updt.next(true);
+  }
   onRegisterSubmit() {
     var user = {
       first_name: this.firstName,
@@ -76,10 +76,13 @@ export class RegisterComponent implements OnInit {
       this.auth.update(user).subscribe(
         data => {
           if (data.success) {
+            console.log('send amit updateProfile ');
+            this.sendMessage('profile');
             this.flasher.show("You are now update your profile", {cssClass: 'alert-success', timeout: 3000});
-            this.edit=false;
             // this.router.navigate(['/']);
-            this.sendMessage('updateProfile');
+            this.toUpdate();
+
+
           }
           else {
             this.flasher.show("Something went wrong", {cssClass: 'alert-danger', timeout: 3000});

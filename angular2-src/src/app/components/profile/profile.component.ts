@@ -1,12 +1,12 @@
-import { Component, OnInit,HostBinding,OnDestroy,ElementRef} from '@angular/core';
-import { AuthenticateService} from '../../services/authenticate.service';
+import {Component, OnInit, HostBinding, OnDestroy, ElementRef} from '@angular/core';
+import {AuthenticateService} from '../../services/authenticate.service';
 import {Router} from '@angular/router';
-import {Http,Response} from '@angular/http';
+import {Http, Response} from '@angular/http';
 import {Post} from '../../shared/post';
 import {DateFormatPipe} from 'angular2-moment';
 import {changeBG} from '../../services/changeBG.service'
-import { ActivatedRoute } from '@angular/router';
-import {  FileUploader } from 'ng2-file-upload/ng2-file-upload';
+import {ActivatedRoute} from '@angular/router';
+import {FileUploader} from 'ng2-file-upload/ng2-file-upload';
 import {AppConfig} from "../../shared/AppConfig";
 import {FlashMessagesService} from 'angular2-flash-messages';
 import {Server} from "../../services/socket.service";
@@ -17,29 +17,31 @@ import {Server} from "../../services/socket.service";
   styleUrls: ['./profile.component.css'],
   providers: [Server],
 })
-export class ProfileComponent implements OnInit,OnDestroy {
+export class ProfileComponent implements OnInit, OnDestroy {
   user: Object;
   currPost: Post;
   @HostBinding('style.background-color')
   bgColor;
   connection;
   desiredUser: String;
-  showInput : Boolean= false;
-  api: string=AppConfig.API_ENDPOINT;
-  uploader:FileUploader = new FileUploader({url: "add", itemAlias: 'myPicture'});
-  edit : Boolean = false;
+  showInput: Boolean = false;
+  api: string = AppConfig.API_ENDPOINT;
+  uploader: FileUploader = new FileUploader({url: "add", itemAlias: 'myPicture'});
+  edit: Boolean = false;
+  follow: Boolean = false;
 
 
-  constructor(private auth : AuthenticateService,
-              private router : Router,
+  constructor(private auth: AuthenticateService,
+              private router: Router,
               private http: Http,
-              private changer : changeBG,
+              private changer: changeBG,
               private el: ElementRef,
               private flasher: FlashMessagesService,
               private server: Server,
-            private route: ActivatedRoute) { }
+              private route: ActivatedRoute) {
+  }
 
-  sendMessage(key){
+  sendMessage(key) {
     console.log(key);
     this.server.sendMessage(key);
 
@@ -50,31 +52,34 @@ export class ProfileComponent implements OnInit,OnDestroy {
     this.connection = this.server.getMessages('profile').subscribe(message => {
       console.log("get emit from the server");
       this.auth.getProfile(this.desiredUser).subscribe(
-        profile=>{
+        profile => {
           console.log(profile.user);
-          this.user=profile.user;
+          this.user = profile.user;
         },
-        err=>{
+        err => {
           console.log(err);
         });
     });
-    this.uploader.onAfterAddingFile = (file)=> { file.withCredentials = false; };
-    this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
+
+    this.uploader.onAfterAddingFile = (file) => {
+      file.withCredentials = false;
+    };
+    this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       console.log("ImageUpload:uploaded:", item, status, response);
     };
-    this.bgColor= "#e8e8e8";
-      this.route.params.subscribe(params => {
-       this.desiredUser = params['username'];
+    this.bgColor = "#e8e8e8";
+    this.route.params.subscribe(params => {
+      this.desiredUser = params['username'];
     });
     this.auth.getProfile(this.desiredUser).subscribe(
-      profile=>{
+      profile => {
         console.log(profile.user);
-        this.user=profile.user;
+        this.user = profile.user;
 
       },
-    err=>{
-      console.log(err);
-    });
+      err => {
+        console.log(err);
+      });
     this.changer.changeBackground('#e8e8e8');
 
     // let myjson=this.http.get('../assets/post.json')
@@ -84,9 +89,33 @@ export class ProfileComponent implements OnInit,OnDestroy {
     //     console.log(this.currPost);
     //   });
 
+
+    //check if I follow the user
+    console.log("in profile",this.desiredUser);
+    if (!this.auth.checkLogoedInUser(this.desiredUser)) {
+      console.log("the user is not me!");
+      this.auth.getProfile(this.desiredUser).subscribe(
+        profile => {
+          console.log("the users",profile.user);
+          this.user = profile.user;
+          console.log("test",this.auth.getLogoedInUser());
+          console.log("1",this.auth.getLogoedInUser()["followings"]);
+          if (this.auth.getLogoedInUser()["followings"].indexOf(this.user["id"])>-1) {
+            this.follow=true;
+          }
+        },
+        err => {
+          console.log(err);
+        });
+    }
   }
-  public changePic(){
-    this.showInput=true;
+
+  public changePic() {
+    this.showInput = true;
+  }
+
+  ischildUpdate(isIt: Boolean) {
+    this.edit = false;
   }
 
   upload() {
@@ -103,23 +132,38 @@ export class ProfileComponent implements OnInit,OnDestroy {
       //call the angular http method
       this.http
       //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-        .post('http://127.0.0.1:3001/users/upload/'+this.user["id"], formData).map((res:Response) => res.json()).subscribe(
+        .post('http://127.0.0.1:3001/users/upload/' + this.user["id"], formData).map((res: Response) => res.json()).subscribe(
         //map the success function and alert the response
         (success) => {
           this.sendMessage('profile');
-          let locaString=localStorage.getItem('user');
+          let locaString = localStorage.getItem('user');
           let locaJson = JSON.parse(locaString);
-          locaJson["img_url"] =  success.msg;
+          locaJson["img_url"] = success.msg;
           let finalString = JSON.stringify(locaJson);
-            localStorage.setItem('user',finalString);
+          localStorage.setItem('user', finalString);
         },
         (error) => alert(error))
     }
   }
 
 
+  public addFollow() {
+    let send = {"username": this.auth.getLogoedInUser()["user_name"],"following_email":this.user["email"]};
+    console.log(send);
+    this.http
+    //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
+      .post('http://127.0.0.1:3001/users/addFollowing', send).map((res: Response) => res.json()).subscribe(
+      //map the success function and alert the response
+      (success) => {
+        console.log(success);
+        this.follow=false;
+      },
+      (error) => alert(error))
 
-  ngOnDestroy(){
+  }
+
+
+  ngOnDestroy() {
     this.changer.restoreolderVer();
     this.connection.unsubscribe();
   }

@@ -33,11 +33,11 @@ io.on('connection', (socket) => {
     });
     socket.on('profile', () => {
         console.log("got message");
-        io.emit('profile');
+        io.emit('profile','');
     });
 
     socket.on('updateProfile', () => {
-        console.log("got message");
+        console.log("got updateProfile");
         io.emit('updateProfile');
     });
 

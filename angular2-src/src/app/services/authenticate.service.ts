@@ -28,6 +28,16 @@ export class AuthenticateService {
       .map(res=>res.json());
   }
 
+  checkLogoedInUser(userName){
+    var kk=JSON.parse(localStorage.getItem('user')).user_name;
+    return kk==userName;
+  }
+
+  getLogoedInUser(){
+    var kk=JSON.parse(localStorage.getItem('user'));
+    return kk;
+  }
+
   update(user){
     let headers = new Headers();
     headers.append('Content-Type','application/json');
