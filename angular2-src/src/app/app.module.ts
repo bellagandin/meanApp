@@ -31,6 +31,8 @@ import {changeBG} from './services/changeBG.service';
 import { SearchResaultComponent } from './components/search-resault/search-resault.component';
 import { UserResaultComponent } from './components/user-resault/user-resault.component';
 import { NewPostComponent } from './components/new-post/new-post.component'
+import {PublishPostService} from './services/publish-post.service';
+import { IngridentComponent } from './components/ingrident/ingrident.component'
 
 const appRoutes: Routes = [
   {path:'',component:HomeComponent},
@@ -62,7 +64,8 @@ const appRoutes: Routes = [
     printSlide,
     SearchResaultComponent,
     UserResaultComponent,
-    NewPostComponent
+    NewPostComponent,
+    IngridentComponent
     
     
   ],
@@ -73,7 +76,8 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     FlashMessagesModule,
     MomentModule,
-    Ng2UploaderModule
+    Ng2UploaderModule,
+    
 
   ],
   providers: [
@@ -81,7 +85,8 @@ const appRoutes: Routes = [
     AuthenticateService,
     ValidateService,
     AuthGuard,
-    changeBG
+    changeBG,
+    PublishPostService
   ],
   bootstrap: [AppComponent]
 })

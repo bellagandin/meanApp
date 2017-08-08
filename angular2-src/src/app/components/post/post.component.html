@@ -1,57 +1,77 @@
 <!-- Simple post content example. -->
 <div class="panel panel-default" *ngIf="thisPost">
   <div class="panel-body">
-      <div class="pull-left">
+        <div class="pull-left">
           <a href="#">
               <img class="media-object img-circle" src="https://lut.im/7JCpw12uUT/mY0Mb78SvSIcjvkf.png" width="50px" height="50px" style="margin-right:8px; margin-top:-5px;">
           </a>
-      </div>
-      <h4><a href="#" style="text-decoration:none;"><strong>{{thisPost.co_author[0].name}}</strong></a> – <small><small><a  style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> {{thisPost.time}}</i></a></small></small></h4>
+        </div>
+    <h4><a href="#" style="text-decoration:none;"><strong>{{thisPost.first_name}} {{thisPost.last_name}}</strong></a> – <small><small><a  style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> {{thisPost.time | amCalendar}}</i></a></small></small></h4>
       
-      <hr>
-      <h3>{{thisPost.recipe_title}}</h3>
-      <div id="post-header" class="row">
-        <div class="col-md-9">
-            <p>Panckake is a very goo desert for every meal it is very nics</p>
-            <p>Panckake is a very goo desert for every meal it is very nics</p>
-            <p>Panckake is a very goo desert for every meal it is very nics</p>
-            <p>Panckake is a very goo desert for every meal it is very nics</p>
-            
-            <a *ngIf="!showPost" href="javascript:void(0)" (click)=showContent() >read post</a>
+    <hr>
+    <h3>{{thisPost.recipe_title}}</h3>
+    <br>
+    <div id="post-header" class="row" style="height:50px;">
+        <div class="col-md-9" align="center">
+            {{thisPost.description}}
         </div>
-
         <div class="col-md-3" >
-            <img src="http://www.seriouseats.com/recipes/assets_c/2016/03/20160324-aquafaba-pancake-oatmeal-vegan-21-thumb-1500xauto-430826.jpg"  id="Mainimg">
+            <img src={{api}}{{this.thisPost.main_img}} id="Mainimg">
         </div>
-        <div class="post-content" *ngIf="showPost">
-            this is the post content
-             <a *ngIf="showPost" href="javascript:void(0)" (click)=hideContent() >hide post</a>
+    </div>
+    <div class="row"  *ngIf="showPost">
+          <hr>
+        <div class="post-content">
+            <h4><strong>Ingridients:</strong></h4>
+            <br>
+            <ul id="ingList">
+                <li class="col-md-4" *ngFor="let ing of thisPost.ingredients">
+                    {{ing.amount}}   <strong>{{ing.name}}</strong>
+                </li>
+            </ul>             
         </div>
-      </div>
+    </div>
+    <div class="row" *ngIf="showPost">
+        <br>
+        <hr>
+        <div class="col-md-12" *ngFor="let step of thisPost.instructions">
+            <p style="font-size: 20px">{{step.stepNumber}}:     {{step.description}}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-ms-8" >
+        <a *ngIf="showPost" href="javascript:void(0)" (click)=hideContent() >hide post</a>
+        <a *ngIf="!showPost" href="javascript:void(0)" (click)=showContent() style="padding: 15ox;" >read post</a>
+    </div>
+    </div>
+    <div class="row">
+    
+    </div>
 
 
-      <hr>
-      <div>
-          <div class="pull-right btn-group-xs">
-              <a class="btn btn-default btn-xs"><i class="fa fa-heart" aria-hidden="true"></i> Like</a>
-              <a class="btn btn-default btn-xs"><i class="fa fa-thumbs-down" aria-hidden="true"></i> Dislike</a>
-              <a class="btn btn-default btn-xs"><i class="fa fa-comment" aria-hidden="true"></i> Comment</a>
-          </div>
-          <div class="pull-left">
-              <p class="text-muted" style="margin-left:5px;"><i class="fa fa-globe" aria-hidden="true"></i> Public</p>
-          </div>
-          <br>
-      </div>
-      <hr>
-      <div class="media">
-          <div class="pull-left">
-              <a href="#">
-                  <img class="media-object img-circle" src="https://lut.im/7JCpw12uUT/mY0Mb78SvSIcjvkf.png" width="35px" height="35px" style="margin-left:3px; margin-right:-5px;">
-              </a>
-          </div>
-          <div class="media-body">
-              <textarea class="form-control" rows="1" placeholder="Comment"></textarea>
-          </div>
+    <hr>
+    <div>
+        <div class="pull-right btn-group-xs">
+            <a class="btn btn-default btn-xs"><i class="fa fa-heart" aria-hidden="true"></i> Like</a>
+            <a class="btn btn-default btn-xs"><i class="fa fa-comment" aria-hidden="true"></i> Comment</a>
+        </div>
+        <div class="pull-left">
+            <p class="text-muted" style="margin-left:5px;"><i class="fa fa-globe" aria-hidden="true"></i> Public</p>
+        </div>
+        <br>
+    </div>
+    <hr>
+    <div class="media">
+        <div class="pull-left">
+            <a href="#">
+                <img class="media-object img-circle" src="https://lut.im/7JCpw12uUT/mY0Mb78SvSIcjvkf.png" width="35px" height="35px" style="margin-left:3px; margin-right:-5px;">
+            </a>
+        </div>
+        <div class="media-body">
+            <textarea class="form-control" rows="1" placeholder="Comment"></textarea>
+        </div>
       </div>
   </div>
 </div>
