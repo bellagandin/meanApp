@@ -11,17 +11,17 @@
               <label for="titleImage">title Image: </label>
               <input type="file" class="form-control" id="mainImage">
           </div>
-          
+
         </div>
         <div class="row" style="padding:20px">
           <div id="des" class="col-md-12 form-group center-block">
             <h5 ><strong>Description:</strong></h5>
-            <textarea id="description" name="description" [(ngModel)]="description" ></textarea>
+            <textarea class="description" name="description" [(ngModel)]="description" ></textarea>
           </div>
         </div>
         <hr>
         <div  class="row" style="padding:20px">
-          <div class="col-md-12 form-group" *ngFor="let ing of ingridients; let index = index; trackBy:trackByFn;"  style="padding:4px;">
+          <div class="col-md-12 form-group" *ngFor="let ing of ingridients; let index = index;"  style="padding:4px;">
             <label>Name:</label>
             <input type="text" [(ngModel)]="ingridients[index].name" name="ingridients[index].name" placeholder={{ingridients[index].name}}>
             <label>Amount:</label>
@@ -32,7 +32,7 @@
               <option value="Spoon">Spoon</option>
               <option value="Teaspoon">Teaspoon</option>
           </select>
-            <button id="rmv" class="btn " (click)="removeIng(ing)">Remove</button>
+            <button class="btn rmv"  (click)="removeIng(ing)">Remove</button>
           </div>
         </div>
         <div class="row">
@@ -41,11 +41,11 @@
         </div>
         <hr>
         <div  class="row" style="padding:20px">
-          <div class="col-md-12 form-group" *ngFor="let st of steps; let index = index;trackBy:trackByIndex;"  style="padding:3px">
+          <div class="col-md-12 form-group" *ngFor="let st of steps; let index = index;"  style="padding:3px">
             <h5>Step {{steps[index].stepNumber}}:</h5>
-            <textarea id="description" name="st.description" [(ngModel)]="steps[index].description" placeholder={{steps[index].description}} >
+            <textarea class="description" name="step[index].description" [(ngModel)]="steps[index].description" placeholder={{steps[index].description}} >
             </textarea>
-            <button id="rmv" class="btn " (click)="removeStep(st)">Remove</button>
+            <button class="btn rmv" (click)="removeStep(st)">Remove</button>
           </div>
         </div>
         <div class="row">

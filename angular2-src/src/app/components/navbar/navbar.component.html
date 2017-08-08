@@ -14,7 +14,13 @@
             <li><div style="height:10px; width:10px;"></div></li>
             <li>
               <div >
+
                 <div style="height: 10px; width:40px;"></div>
+                <select [(ngModel)]="selectedValue" >
+                  <option value="user">user name</option>
+                  <option value="title">recipe title</option>
+                  <option value="text">free text</option>
+                </select>
                 <input type="text" [(ngModel)]="searchQuery" class="borer" placeholder="search in RecipeMe" >
               </div>
             </li>
@@ -30,7 +36,7 @@
             <li *ngIf='auth.loggedIn()' [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a href="#" (click)="logOutClick()">Logout</a></li>
             <li *ngIf='auth.loggedIn()'  [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/profile',getLoggedInUSer().user_name]" >Profile</a></li>
 
-            
+
           </ul>
         </div><!--/.nav-collapse -->
       </div>

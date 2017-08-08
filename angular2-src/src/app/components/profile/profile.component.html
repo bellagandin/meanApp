@@ -16,7 +16,7 @@
             <div class="media-body">
               <hr>
               <h3><strong>Bio</strong></h3>
-              <p>{{user.bio_description}}</p>
+              <p>{{user.self_description}}</p>
               <hr>
               <h3><strong>user name:</strong></h3>
               <p>{{user.user_name}}</p>
@@ -54,8 +54,8 @@
               <button *ngIf="!follow" class="btn btn-success" type="button" id="dropdownMenu1" aria-haspopup="true" (click)="addFollow()">
               Follow
               </button>
-                  <button *ngIf="follow" class="btn btn-success" type="button" id="dropdownMenu2" aria-haspopup="true">
-              UnFollow
+                  <button *ngIf="follow" class="btn btn-success" type="button" id="dropdownMenu2" aria-haspopup="true" (click)="removeFollow()">
+              UNFollow
               </button>
                   </div>
                 <button *ngIf="auth.checkLogoedInUser(user.user_name)" type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>

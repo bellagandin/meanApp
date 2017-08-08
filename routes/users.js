@@ -15,7 +15,7 @@ router.post('/register', (req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         user_name: req.body.user_name,
-        img_url: "/img/profile.png", //TODO: add default img
+        img_url: "/img/profile.png", 
         gender: req.body.gender,
         birthday: req.body.birthday,
         self_description: "",
@@ -215,7 +215,7 @@ router.post('/updateProfile', (req, res, next) => {
 router.post('/getMyPost', function (req, res) {
 
     User.getUserById(req.body.user_id, (err, user) => {//callback
-        if (err) {
+        if (user===null || err) {
             res.json({success: false, msg: err});
         }
         else {
@@ -295,10 +295,11 @@ router.post("/addFollowing", function (req, res) {
 });
 
 router.post("/removeFollowing", function (req, res) {
-    let user_id = req.body.user_id;
+    let username = req.body.username;
+    console.log(username);
     let following_email = req.body.following_email;
-    User.getUserById(user_id, (err, user) => {//find user
-        if (err) {
+    User.getUserByUserName(username, (err, user) => {//find user
+        if (user===null || err) {
             res.json({success: false, msg: err});
         }
         else {
@@ -307,7 +308,8 @@ router.post("/removeFollowing", function (req, res) {
                         res.json({success: false, msg: err});
                     }
                     else {
-                        User.removeFollowing(user, following_user, (err, user2) => {//callback
+                        console.log(user,following_email);
+                        User.removeFollowing(user, following_user, (err, _) => {//callback
                                 if (err) {
                                     res.json({success: false, msg: err});
                                 }
@@ -395,44 +397,70 @@ router.post('/upload/:user_id', function (req, res) {
 
 router.post("/search", (req, res) => {
     const type = req.body.type;
+    console.log(type);
     switch (type) {
         case "user":
-            let email = req.body.email;
-            User.getUserByEmail(email, (err, user) => {
-                if (err) {
-                    res.json({success: false, msg: err});
-                } else {
-                    res.json({success: true, msg: user});
-                }
-            });
+            let value = req.body.value;
+            if (value != null) {
+                console.log("start search");
+                User.getUserByUserName(value, (err, user) => {
+                    if (err) {
+                        res.json({success: false, msg: err});
+                    } else {
+                        res.json({success: true, msg: user});
+                    }
+                });
+            }
+
             break;
         case "title":
-            let title = req.body.title;
-            Post.getPostsByTitle(title, (err, posts) => {
-                if (err) {
-                    res.json({success: false, msg: err});
-                } else {
-                    res.json({success: true, msg: posts});
+            let title = req.body.value;
+            console.log(title);
+            getAllPostOfFollowed(req, (result) => {
+                if (result !== null) {
+                    let arr = result["msg"];
+
+                    let final_result = arr.filter((post) => {
+                        return (post["recipe_title"].includes(text))
+                });
+                    res.json({success: true, msg: final_result});
                 }
+                else {
+                    res.json({success: true, msg: []});
+                }
+                // Post.getPostsByTitle(title, (err, posts) => {
+                //     if (err) {
+                //         res.json({success: false, msg: err});
+                //     } else {
+                //         res.json({success: true, msg: posts});
+                //     }
             });
+
+
             break;
         case "text":
-            const text = req.body.text;
+            const text = req.body.value;
             getAllPostOfFollowed(req, (result) => {
 
                 let arr = result["msg"];
                 console.log("result", arr);
                 console.log('text', text);
-                let final_result = arr.filter((post) => {
-                    return ((post["description"].includes(text))
-                        ||
-                        (post["instructions"].forEach(function (entry) {
-                            entry["step"]["ins"].includes(text);
-                        })))
-                });
-                console.log(final_result);
-                res.json(final_result);
+                if(result!=null) {
+                    let final_result = arr.filter((post) => {
+                        return ((post["description"].includes(text))
+                            ||
+                            (post["instructions"].forEach(function (entry) {
+                                entry["step"]["ins"].includes(text);
+                            })))
+                    });
+                    console.log(final_result);
+                    res.json(final_result);
+                }
+                else{
+                    res.json({success:true, msg:[]});
+                }
             });
+
             break;
     }
 });

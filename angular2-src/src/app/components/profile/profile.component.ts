@@ -55,6 +55,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
         profile => {
           console.log(profile.user);
           this.user = profile.user;
+          this.sendMessage('profile');
+          let finalString = JSON.stringify(this.user);
+          if (this.auth.checkLogoedInUser(this.user))
+            localStorage.setItem('user', finalString);
         },
         err => {
           console.log(err);
@@ -89,7 +93,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     //     console.log(this.currPost);
     //   });
 
-
     //check if I follow the user
     console.log("in profile",this.desiredUser);
     if (!this.auth.checkLogoedInUser(this.desiredUser)) {
@@ -98,10 +101,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
         profile => {
           console.log("the users",profile.user);
           this.user = profile.user;
-          console.log("test",this.auth.getLogoedInUser());
-          console.log("1",this.auth.getLogoedInUser()["followings"]);
+          console.log("me",this.auth.getLogoedInUser());
           if (this.auth.getLogoedInUser()["followings"].indexOf(this.user["id"])>-1) {
             this.follow=true;
+
           }
         },
         err => {
@@ -136,11 +139,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         //map the success function and alert the response
         (success) => {
           this.sendMessage('profile');
-          let locaString = localStorage.getItem('user');
-          let locaJson = JSON.parse(locaString);
-          locaJson["img_url"] = success.msg;
-          let finalString = JSON.stringify(locaJson);
-          localStorage.setItem('user', finalString);
+          this.showInput = false;
         },
         (error) => alert(error))
     }
@@ -156,11 +155,29 @@ export class ProfileComponent implements OnInit, OnDestroy {
       //map the success function and alert the response
       (success) => {
         console.log(success);
-        this.follow=false;
+        this.follow=true;
+        this.sendMessage('profile');
       },
       (error) => alert(error))
 
   }
+
+  public removeFollow(){
+    let send = {"username": this.auth.getLogoedInUser()["user_name"],"following_email":this.user["email"]};
+    console.log(send);
+    this.http
+    //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
+      .post('http://127.0.0.1:3001/users/removeFollowing', send).map((res: Response) => res.json()).subscribe(
+      //map the success function and alert the response
+      (success) => {
+        console.log(success);
+        this.sendMessage('profile');
+      },
+      (error) => alert(error))
+
+  }
+
+
 
 
   ngOnDestroy() {

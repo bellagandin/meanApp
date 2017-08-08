@@ -140,19 +140,16 @@ module.exports.addFollowing = function (user, following, callback) {
 
 };
 
-module.exports.removeFollowing = function (follower, followed, success, failure) {
-
-    let index = user.followings.indexOf(following._id);
-    if (index > -1) {
-
-        user.followings.splice(index, 1);
-
-        let updateData = {followings: user.followings};
-        user.update({$set: updateData}, success);
-    }
-    else {
-        failure();
-    }
+module.exports.removeFollowing = function (user, following_user, success, failure) {
+    let temp = String(following_user._id);
+    //console.log("!!!!!!!",user.followings ,following_user._id,temp );
+    let newCommentList = user.followings.filter((item) => {
+        //console.log(item!== following_user._id, item!= temp);
+        return item!= temp;
+    });
+    //console.log(">>>>>>>>",newCommentList);
+    let updateData = {followings: newCommentList};
+    user.update({$set: updateData}, success);
 };
 
 
