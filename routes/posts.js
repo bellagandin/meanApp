@@ -6,9 +6,6 @@ const User = require('../models/user');
 const config = require('../config/database');
 const multer = require('multer');
 
-
-
-
 // Create Post
 router.post('/createPost', (req, res, next) => {
     let newPost = new Post({
@@ -264,10 +261,6 @@ router.post('/uploadMainImg/:postnumber', function (req, res, next) {
             res.status(422).send("an Error occured")
         }
         console.log("req",req.files);
-        // No error occured.
-        //path = req.files.path;
-        //console.log("path",path);
-        //console.log("req",req);
         let json = {"main_img": path};
         const post_id = req.param('postnumber');
         Post.getPostById(post_id, (err, post) => {

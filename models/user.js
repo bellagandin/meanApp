@@ -34,7 +34,7 @@ const UserSchema = mongoose.Schema({
     birthday: {
         type: Date,
     },
-    bio_description: {
+    self_description: {
         type: String,
     },
     followers: {
@@ -83,10 +83,10 @@ module.exports.addUser = function (newUser, callback) {
 };
 
 module.exports.updateProfile = function (user, updateData, callback) {
-    delete  updateData._id;
+    if (updateData) {
+        delete  updateData._id;
+    }
     //updateData.splice(0, 1);
-    console.log("updateProfile",updateData);
-    console.log("user",user);
     user.update({$set: updateData}, callback);
 };
 
@@ -120,18 +120,15 @@ module.exports.addPost = function (user, post, callback) {
 
 module.exports.removePost = function (user, post_id, callback) {
     let newPostList = user.posts.filter((item) => {
-        console.log(">>>>",item,post_id,item != post_id);
         return item != post_id;
     });
-    console.log("newPostList",newPostList);
     let updateData = {posts: newPostList};
     user.update({$set: updateData}, callback);
 };
 
 module.exports.addFollowing = function (user, following, callback) {
-    console.log(user.followings);
 
-    console.log(user.followings.indexOf(following._id));
+
     if (user.followings.indexOf(following._id) === -1) {
         let updateData = {followings: user.followings.concat(following._id)};
         user.update({$set: updateData}, callback);
@@ -144,10 +141,7 @@ module.exports.addFollowing = function (user, following, callback) {
 };
 
 module.exports.removeFollowing = function (follower, followed, success, failure) {
-    console.log(follower.followings);
-    console.log(followed._id);
 
-    console.log(user.followings.indexOf(following._id));
     let index = user.followings.indexOf(following._id);
     if (index > -1) {
 

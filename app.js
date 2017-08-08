@@ -22,6 +22,21 @@ mongoose.connection.on('error', (err) => {
 });
 
 const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+io.on('connection', (socket) => {
+    console.log('user connected');
+
+    socket.on('disconnect', function(){
+        console.log('user disconnected');
+    });
+    socket.on('profile', (message) => {
+        console.log('profile');
+    });
+});
+
+
 
 const users = require('./routes/users');
 const posts = require('./routes/posts');
@@ -56,6 +71,6 @@ app.get('/', (req, res) => {
 });
 
 // Start Server
-app.listen(port, () => {
+http.listen(port, () => {
     console.log('Server started on port '+port);
 });

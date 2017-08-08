@@ -5,10 +5,10 @@
         <div class="panel-body">
           <div class="media">
             <div align="center">
-              <img class="thumbnail img-responsive" src={{user.img_url}} width="300px" height="300px">
+              <img class="thumbnail img-responsive" src={{api}}{{user.img_url}} width="300px" height="300px">
             </div>
             <div align="center">
-              <input *ngIf="showInput" type="file" name="myPicture"/>
+              <input *ngIf="showInput" type="file" name="myPicture" id="myPicture"/>
               <br>
               <button *ngIf="!showInput" class="btn-primary" (click)="changePic()">change picture</button>
               <button *ngIf="showInput" class="btn-primary" (click)="upload()">Upload</button>
@@ -28,7 +28,7 @@
               <p>{{user.birthday | amDateFormat:'LL'}}
               <hr>
               <h3><strong>Number of followers</strong></h3>
-              <p>{{user.followers.Count}}</p>
+              <p>{{user.followers.length}}</p>
               <hr>
             </div>
           </div>
@@ -39,22 +39,77 @@
       <div class="panel panel-default">
         <div class="panel-body">
             <span>
-                <h1 class="panel-title pull-left" style="font-size:30px;">{{user.first_name}} {{user.last_name}} <small>{{user.email}}</small> <i
-                  class="fa fa-check text-success" aria-hidden="true" data-toggle="tooltip" data-placement="bottom"
-                  title="John Doe is sharing with you"></i></h1>
-                <div class="dropdown pull-right">
-                    <button class="btn btn-success" type="button" id="dropdownMenu1" aria-haspopup="true">
-                        Follow
-                        <span class="caret"></span>
-                    </button>
+                <div class="panel-title pull-left" style="font-size:24px;">
+                  <div><strong>First name:</strong> {{user.first_name}} </div>
+                  <div><strong>Last name:</strong>{{user.last_name}}</div>
+                  <div><strong>Email:</strong> {{user.email}}</div>
+                  <!--<i-->
+                  <!--class="fa fa-check text-success" aria-hidden="true" data-toggle="tooltip" data-placement="bottom"-->
+                  <!--title="John Doe is sharing with you"></i>-->
                 </div>
+
+              <!-- Trigger the modal with a button -->
+
+              <!--<div class="dropdown pull-right">-->
+              <!--<button class="btn btn-success" type="button" id="dropdownMenu1" aria-haspopup="true">-->
+              <!--Follow-->
+              <!--<span class="caret"></span>-->
+              <!--</button>-->
+              <!--</div>-->
             </span>
-          <hr>
         </div>
       </div>
       <hr>
       <!-- here will insert the post compnents. -->
 
+      <button type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>
+      <div *ngIf="edit">
+        <!--<form (submit)="onSubmit()">-->
+        <!--<div class="form-group">-->
+        <!--<label>First Name</label>-->
+        <!--<input type="text" class="form-control" [(ngModel)]="user.first_name" name ="firstName">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label>Last Name</label>-->
+        <!--<input type="text" class="form-control" [(ngModel)]="user.last_name"name ="lastName">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label>user Name</label>-->
+        <!--<input type="text" class="form-control" [(ngModel)]="user.user_name" name ="userName">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label>Email</label>-->
+        <!--<input type="Email" class="form-control" [(ngModel)]="user.email" name ="email">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label>Date of Birth</label>-->
+        <!--<input type="date" class="form-control" [ngModel]="user.birthday | date:'yyyy-MM-dd'" (ngModelChange)="user.birthday = $event"-->
+        <!--name ="birthDate" placeholder="Date of Birth">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label>Describe you self</label>-->
+        <!--<input type="text" class="form-control" [ngModel]="user.self_description" (ngModelChange)="user.birthday = $event"-->
+        <!--name ="birthDate" placeholder="Tell something about yur self">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<div class=" radio-inline">-->
+        <!--<label><input type="radio" name="optradio"   [(ngModel)]="user.gender" value="Male">Male</label>-->
+        <!--</div>-->
+        <!--<div class="radio-inline">-->
+        <!--<label><input type="radio" name="optradio" [(ngModel)]="user.gender" value="Female">Female</label>-->
+        <!--</div>-->
+
+        <!--</div>-->
+        <!--<input type="submit" class="btn btn-primary" value="עדכן" (click)="onUpdateSubmit()" >-->
+        <!--</form>-->
+
+          <app-register [edit]=true [firstName]="user.first_name" [lastName]="user.last_name"
+                        [userName]="user.user_name" [email]="user.email" [birthDate]="user.birthday | date:'yyyy-MM-dd'"
+                        [gender]="user.gender" [self_description]="user.self_description"></app-register>
+
+
     </div>
+
   </div>
+</div>
 </div>

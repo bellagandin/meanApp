@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Post = require('../models/post');
 const config = require('../config/database');
+const multer = require('multer');
 
 // Register
 router.post('/register', (req, res, next) => {
@@ -14,10 +15,10 @@ router.post('/register', (req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         user_name: req.body.user_name,
-        img_url: "http://localhost:3001/img/profile.png", //TODO: add default img
+        img_url: "/img/profile.png", //TODO: add default img
         gender: req.body.gender,
         birthday: req.body.birthday,
-        bio_description: "",
+        self_description: "",
         followers: [],
         posts: [],
         liked_posts: [],
@@ -41,7 +42,7 @@ router.post('/register', (req, res, next) => {
                                 img_url: user.img_url,
                                 gender: user.gender,
                                 birthday: user.birthday,
-                                bio_description: user.bio_description,
+                                self_description: user.self_description,
                                 followers: user.followers,
                                 liked_posts: user.liked_posts
                             };
@@ -128,8 +129,8 @@ router.post('/authenticate', (req, res, next) => {
                         user_name: user.user_name,
                         gender: user.gender,
                         birthday: user.birthday,
-                        bio_description: user.bio_description,
-                        number_of_followers: user.number_of_followers,
+                        self_description: user.self_description,
+                        followers: user.followers,
                         liked_posts: user.liked_posts
                     }
                 });
@@ -162,8 +163,8 @@ router.get('/profile/:user_name', passport.authenticate('jwt', {session: false})
                 user_name: user.user_name,
                 gender: user.gender,
                 birthday: user.birthday,
-                bio_description: user.bio_description,
-                number_of_followers: user.number_of_followers,
+                self_description: user.self_description,
+                followers: user.followers,
                 liked_posts: user.liked_posts
             }
         });
@@ -173,7 +174,7 @@ router.get('/profile/:user_name', passport.authenticate('jwt', {session: false})
 
 // Update Profile
 router.post('/updateProfile', (req, res, next) => {
-    //res.send('PROFILE');
+    console.log("here",req.body.email);
     const email = req.body.email;
     User.getUserByEmail(email, (err, user) => {
         if (err) throw err;
@@ -195,8 +196,8 @@ router.post('/updateProfile', (req, res, next) => {
                         img_url: user.img_url,
                         gender: user.gender,
                         birthday: user.birthday,
-                        bio_description: user.bio_description,
-                        number_of_followers: user.number_of_followers,
+                        self_description: user.self_description,
+                        followers: user.followers,
                         liked_posts: user.liked_posts
                     }
                 });
@@ -340,8 +341,22 @@ router.post("/removeFollowing", function (req, res) {
 });
 
 
-router.post('/uploadProfiles', function (req, res, next) {
+router.post('/upload/:user_id', function (req, res) {
     console.log("start");
+    console.log(req.param('user_id'));
+    let postDest='./public/img/'+req.param('user_id');
+    console.log("postDest",postDest);
+    let storage = multer.diskStorage({
+        destination: postDest,
+        filename: function (req, file, cb) {
+            let extArray = file.mimetype.split("/");
+            let extension = extArray[extArray.length - 1];
+            cb(null, file.fieldname + '-' + Date.now()+ '.' +extension);
+        }
+    });
+
+
+    let upload = multer({storage: storage}).array('photos',10);
     var path = '';
     upload(req, res, function (err) {
         if (err) {
@@ -349,21 +364,32 @@ router.post('/uploadProfiles', function (req, res, next) {
             console.log(err);
             res.status(422).send("an Error occured")
         }
-        // No error occured.
-        console.log("oldPath", req.file);
-        var oldPath = req.file.path;
-        console.log("oldPath", oldPath);
-        let file = req.file.mimetype.split("/");
+        console.log("req",req.files);
+        const user_id = req.param('user_id');
 
-        path = req.file.path + "." + file[1];
-        fs.rename
-        console.log("path", path);
-        console.log("req.file.mimetype", req.file.mimetype);
-        console.log("req", req);
-        fs.rename(oldPath, path, function (err) {
-            if (err) console.log('ERROR: ' + err);
+        User.getUserById(user_id, (err, user) => {//callback
+            if (err) {
+                res.json({success: false, msg: err});
+            }
+            else {
+
+                let path = req.files[0].path.split("public");
+                console.log(path);
+                console.log("path",path[1]);
+                let update = {"img_url": path[1]};
+                User.updateProfile(user,update, (err, _) => {//callback
+                    if (err) {
+                        res.json({success: false, msg: err});
+                    }
+                    else {
+                        res.json({success: true, msg:req.files[0].path });
+                    }
+                });
+            }
         });
-        res.json({success: true, msg: "good!"});
+
+
+
     });
 });
 

@@ -27,8 +27,15 @@ export class AuthenticateService {
     return this.http.post(AppConfig.API_ENDPOINT+'users/authenticate',user,{headers: headers})
       .map(res=>res.json());
   }
-  
-  
+
+  update(user){
+    let headers = new Headers();
+    headers.append('Content-Type','application/json');
+    return this.http.post(AppConfig.API_ENDPOINT+'users/updateProfile',user,{headers: headers})
+      .map(res=>res.json());
+  }
+
+
   getProfile(user_Name: String){
     let headers = new Headers();
     this.getToken();
@@ -42,9 +49,9 @@ export class AuthenticateService {
     const token=localStorage.getItem('id_token');
     this.authToken=token;
   }
-  
-  
-  
+
+
+
   storeUserData(token,user){
     localStorage.setItem('id_token',token);
     localStorage.setItem('user',JSON.stringify(user));

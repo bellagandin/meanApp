@@ -1,4 +1,5 @@
-<h2 class="page-header">Register to RecipeMe</h2>
+<h2 *ngIf="!edit" class="page-header">Register to RecipeMe</h2>
+<div *ngIf="edit" style="height: 20px"></div>
 <form (submit)="onRegisterSubmit()">
   <div class="form-group">
     <label>First Name</label>
@@ -8,7 +9,7 @@
     <label>Last Name</label>
     <input type="text" class="form-control" [(ngModel)]="lastName"name ="lastName">
   </div>
-  <div class="form-group">
+  <div *ngIf="!edit" class="form-group">
     <label>user Name</label>
     <input type="text" class="form-control" [(ngModel)]="userName" name ="userName">
   </div>
@@ -16,13 +17,17 @@
     <label>Email</label>
     <input type="Email" class="form-control" [(ngModel)]="email" name ="email">
   </div>
-  <div class="form-group">
+  <div *ngIf="!edit" class="form-group">
     <label>Password</label>
     <input type="password" class="form-control"[(ngModel)]="password" name ="password">
   </div>
   <div class="form-group">
       <label>Date of Birth</label>
       <input type="date" class="form-control" [(ngModel)]="birthDate" name ="birthDate" placeholder="Date of Birth">
+  </div>
+  <div *ngIf="edit" class="form-group">
+    <label>Self description</label><br>
+    <textarea [(ngModel)]="self_description" name="self_description" style="width: 825px"></textarea>
   </div>
   <div class="form-group">
     <div class=" radio-inline">
@@ -31,6 +36,8 @@
     <div class="radio-inline">
       <label><input type="radio" name="optradio" (click)="gender='Female'">Female</label>
     </div>
-  </div> 
-  <input type="submit" class="btn btn-primary" value="submit" >
+  </div>
+  <input *ngIf="!edit" type="submit" class="btn btn-primary" value="submit" >
+  <input *ngIf="edit" type="submit" class="btn btn-primary" value="Update" >
+
 </form>

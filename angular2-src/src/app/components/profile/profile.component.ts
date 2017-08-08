@@ -8,7 +8,8 @@ import {changeBG} from '../../services/changeBG.service'
 import { ActivatedRoute } from '@angular/router';
 import {  FileUploader } from 'ng2-file-upload/ng2-file-upload';
 import {AppConfig} from "../../shared/AppConfig";
-
+import {FlashMessagesService} from 'angular2-flash-messages';
+// import {Server} from "../../services/socket.service";
 
 @Component({
   selector: 'app-profile',
@@ -16,14 +17,23 @@ import {AppConfig} from "../../shared/AppConfig";
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit,OnDestroy {
-  user: Object
+  user: Object;
   currPost: Post;
   @HostBinding('style.background-color')
   bgColor;
+  connection;
   desiredUser: String;
   showInput : Boolean= false;
+  api: string=AppConfig.API_ENDPOINT;
   uploader:FileUploader = new FileUploader({url: "add", itemAlias: 'myPicture'});
-
+  edit : Boolean = false;
+  firstName: String;
+  lastName: String;
+  userName: String;
+  password: String;
+  email: String;
+  birthDate: Date;
+  gender: String;
 
 
   constructor(private auth : AuthenticateService,
@@ -31,9 +41,21 @@ export class ProfileComponent implements OnInit,OnDestroy {
               private http: Http,
               private changer : changeBG,
               private el: ElementRef,
+              private flasher: FlashMessagesService,
+              // private server: Server,
             private route: ActivatedRoute) { }
 
+  // sendMessage(){
+  //   alert("here");
+  //   this.server.sendMessage("hello");
+  //
+  // }
+  
+
   ngOnInit() {
+    // this.connection = this.server.getMessages().subscribe(message => {
+    //   //TODO: send post prodile req to the reserve
+    // });
     this.uploader.onAfterAddingFile = (file)=> { file.withCredentials = false; };
     this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
       console.log("ImageUpload:uploaded:", item, status, response);
@@ -75,22 +97,29 @@ export class ProfileComponent implements OnInit,OnDestroy {
     //check if the filecount is greater than zero, to be sure a file was selected.
     if (fileCount > 0) { // a file was selected
       //append the key name 'photo' with the first file in the element
-      formData.append('phothos', inputEl.files.item(0));
+      formData.append('photos', inputEl.files.item(0));
       //call the angular http method
       this.http
       //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-        .post(AppConfig.API_ENDPOINT+'profilepic', formData).map((res:Response) => res.json()).subscribe(
+        .post('http://127.0.0.1:3001/users/upload/'+this.user["id"], formData).map((res:Response) => res.json()).subscribe(
         //map the success function and alert the response
         (success) => {
-          alert(success._body);
+          // this.sendMessage();
+          let locaString=localStorage.getItem('user');
+          let locaJson = JSON.parse(locaString);
+          locaJson["img_url"] =  success.msg;
+          let finalString = JSON.stringify(locaJson);
+            localStorage.setItem('user',finalString);
         },
         (error) => alert(error))
     }
   }
 
 
+
   ngOnDestroy(){
     this.changer.restoreolderVer();
+    //this.connection.unsubscribe();
   }
 
 }
