@@ -9,12 +9,13 @@ import { ActivatedRoute } from '@angular/router';
 import {  FileUploader } from 'ng2-file-upload/ng2-file-upload';
 import {AppConfig} from "../../shared/AppConfig";
 import {FlashMessagesService} from 'angular2-flash-messages';
-// import {Server} from "../../services/socket.service";
+import {Server} from "../../services/socket.service";
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
+  providers: [Server],
 })
 export class ProfileComponent implements OnInit,OnDestroy {
   user: Object;
@@ -27,13 +28,6 @@ export class ProfileComponent implements OnInit,OnDestroy {
   api: string=AppConfig.API_ENDPOINT;
   uploader:FileUploader = new FileUploader({url: "add", itemAlias: 'myPicture'});
   edit : Boolean = false;
-  firstName: String;
-  lastName: String;
-  userName: String;
-  password: String;
-  email: String;
-  birthDate: Date;
-  gender: String;
 
 
   constructor(private auth : AuthenticateService,
@@ -42,20 +36,28 @@ export class ProfileComponent implements OnInit,OnDestroy {
               private changer : changeBG,
               private el: ElementRef,
               private flasher: FlashMessagesService,
-              // private server: Server,
+              private server: Server,
             private route: ActivatedRoute) { }
 
-  // sendMessage(){
-  //   alert("here");
-  //   this.server.sendMessage("hello");
-  //
-  // }
-  
+  sendMessage(key){
+    console.log(key);
+    this.server.sendMessage(key);
+
+  }
+
 
   ngOnInit() {
-    // this.connection = this.server.getMessages().subscribe(message => {
-    //   //TODO: send post prodile req to the reserve
-    // });
+    this.connection = this.server.getMessages('profile').subscribe(message => {
+      console.log("get emit from the server");
+      this.auth.getProfile(this.desiredUser).subscribe(
+        profile=>{
+          console.log(profile.user);
+          this.user=profile.user;
+        },
+        err=>{
+          console.log(err);
+        });
+    });
     this.uploader.onAfterAddingFile = (file)=> { file.withCredentials = false; };
     this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
       console.log("ImageUpload:uploaded:", item, status, response);
@@ -104,7 +106,7 @@ export class ProfileComponent implements OnInit,OnDestroy {
         .post('http://127.0.0.1:3001/users/upload/'+this.user["id"], formData).map((res:Response) => res.json()).subscribe(
         //map the success function and alert the response
         (success) => {
-          // this.sendMessage();
+          this.sendMessage('profile');
           let locaString=localStorage.getItem('user');
           let locaJson = JSON.parse(locaString);
           locaJson["img_url"] =  success.msg;
@@ -119,7 +121,7 @@ export class ProfileComponent implements OnInit,OnDestroy {
 
   ngOnDestroy(){
     this.changer.restoreolderVer();
-    //this.connection.unsubscribe();
+    this.connection.unsubscribe();
   }
 
 }

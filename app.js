@@ -31,8 +31,24 @@ io.on('connection', (socket) => {
     socket.on('disconnect', function(){
         console.log('user disconnected');
     });
-    socket.on('profile', (message) => {
-        console.log('profile');
+    socket.on('profile', () => {
+        console.log("got message");
+        io.emit('profile');
+    });
+
+    socket.on('updateProfile', () => {
+        console.log("got message");
+        io.emit('updateProfile');
+    });
+
+    socket.on('follow', () => {
+        console.log("got message");
+        io.emit('follow');
+    });
+
+    socket.on('posts', () => {
+        console.log("got message");
+        io.emit('posts');
     });
 });
 

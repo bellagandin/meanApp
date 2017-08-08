@@ -4,11 +4,13 @@ import {ValidateService} from '../../services/Validate.service';
 import {FlashMessagesService} from 'angular2-flash-messages';
 import {AuthenticateService} from '../../services/authenticate.service';
 import {Router} from '@angular/router';
+import {Server} from "../../services/socket.service";
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.css'],
+  providers: [Server],
 })
 export class RegisterComponent implements OnInit {
   @Input()
@@ -28,16 +30,32 @@ export class RegisterComponent implements OnInit {
   self_description: String;
   @Input()
   edit: boolean = false;
-
+  connection;
 
   constructor(private validator: ValidateService,
               private flasher: FlashMessagesService,
               private auth: AuthenticateService,
+              private server: Server,
               private router: Router) {
 
   }
+  sendMessage(key){
+    console.log(key);
+    this.server.sendMessage(key);
 
+  }
   ngOnInit() {
+    this.connection = this.server.getMessages('updateProfile').subscribe(message => {
+      //location.reload();
+      this.auth.getProfile(this.userName).subscribe(
+        profile=>{
+          console.log(profile.user);
+          this.userName=profile.user;
+        },
+        err=>{
+          console.log(err);
+        });
+    });
   }
 
   onRegisterSubmit() {
@@ -54,13 +72,14 @@ export class RegisterComponent implements OnInit {
 
     if (this.edit) {
       console.log("edit!!!!");
+      console.log("user update ",user);
       this.auth.update(user).subscribe(
         data => {
           if (data.success) {
-            this.flasher.show("You are now update you profile", {cssClass: 'alert-success', timeout: 3000});
+            this.flasher.show("You are now update your profile", {cssClass: 'alert-success', timeout: 3000});
             this.edit=false;
-            this.router.navigate(['/']);
-
+            // this.router.navigate(['/']);
+            this.sendMessage('updateProfile');
           }
           else {
             this.flasher.show("Something went wrong", {cssClass: 'alert-danger', timeout: 3000});

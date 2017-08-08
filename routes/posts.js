@@ -22,7 +22,6 @@ router.post('/createPost', (req, res, next) => {
         comments: [],
         id_generator: 0
     });
-    console.log("newPost", newPost);
     Post.addPost(newPost, (err, post) => {//callback
         if (err) {
             res.json({success: false, msg: "1 " + err});
@@ -55,7 +54,6 @@ router.post('/editPost', (req, res) => {
     const post_id = req.body._id;
     Post.getPostById(post_id, (err, post) => {
         if (err) throw err;
-        console.log(post_id, post);
         if (!post) {
             return res.json({success: false, msg: 'Post not found'});
         }
@@ -84,7 +82,6 @@ router.post("/removePost", (req, res) => {
                 if (err) {
                     res.json({success: false, msg: err});
                 } else {
-                    console.log("user", user);
                     User.removePost(user, post_id, (err, upd) => {
                         if (err) {
                             res.json({success: false, msg: err});
@@ -121,8 +118,6 @@ router.post("/addComment", (req, res) => {
                             res.json({success: false, msg: err});
                         } else {
 
-
-                            console.log(comment);
                             res.json({success: true, msg: comment});
                         }
                     });
@@ -158,7 +153,6 @@ router.post("/editComment", (req, res) => {
         if (err) {
             res.json({success: false, msg: err});
         } else {
-            console.log("test", post);
             Post.editComment(comment, post, (err, upd) => {
                 if (err) {
                     res.json({success: false, msg: err});
@@ -240,7 +234,6 @@ router.post("/disLike", (req, res) => {
 
 
 router.post('/uploadMainImg/:postnumber', function (req, res, next) {
-    console.log("start");
     let postDest='./public/uploads/'+req.param('postnumber');
     let storage = multer.diskStorage({
     destination: postDest,
@@ -257,10 +250,8 @@ router.post('/uploadMainImg/:postnumber', function (req, res, next) {
     upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
-            console.log(err);
             res.status(422).send("an Error occured")
         }
-        console.log("req",req.files);
         let json = {"main_img": path};
         const post_id = req.param('postnumber');
         Post.getPostById(post_id, (err, post) => {
@@ -268,17 +259,13 @@ router.post('/uploadMainImg/:postnumber', function (req, res, next) {
                                     res.json({success: false, msg: err});
                                 } else {
                                     let updateData = {"main_img": postDest+'/'+ req.files[0].filename};
-                                    console.log(updateData);
                                     Post.updatePost(post,updateData, (err,udp) => {
                                         if (err) {
                                     res.json({success: false, msg: err});
                                 } else {
-                                    console.log("udp",udp);
                                     let temp =req.files.slice(1);
                                     let names = temp.map((x)=>{return postDest+'/'+x.filename});
-                                    console.log("posy",names);
                                     let updateData = {"photos":post.photos.concat(names)};
-                                    console.log(updateData);
                                      Post.updatePost(post,updateData, (err, post) => {
                                         if (err) {
                                     res.json({success: false, msg: err});

@@ -216,17 +216,14 @@ router.post('/getMyPost', function (req, res) {
             res.json({success: false, msg: err});
         }
         else {
-            console.log("posts", user.posts);
             const posts = user.posts;
             Post.getPostByIds(posts, (err, detailPosts) => {//callback
-                console.log("posts", detailPosts);
                 if (detailPosts === null) {
                     res.json({success: false, msg: err});
                 }
                 else {
 
                     let answer = detailPosts;
-                    console.log("1", answer);
                     res.json({success: true, msg: answer});
                 }
             });

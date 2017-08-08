@@ -6,14 +6,14 @@ export class Server {
   private url = 'http://localhost:3001';
   private socket;
 
-  sendMessage(message){
-    this.socket.emit("profile", message);
+  sendMessage(key){
+    this.socket.emit(key);
   }
 
-  getMessages() {
+  getMessages(key) {
     let observable = new Observable(observer => {
       this.socket = io(this.url);
-      this.socket.on("profile", (data) => {
+      this.socket.on(key, (data) => {
         observer.next(data);
       });
       return () => {
@@ -22,4 +22,6 @@ export class Server {
     });
     return observable;
   }
+
+
 }
