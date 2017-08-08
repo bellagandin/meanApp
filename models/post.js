@@ -12,13 +12,24 @@ const PostSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    first_name: {
+        type: String,
+        required: true
+    },
+    last_name: {
+        type: String,
+        required: true
+    },
+    user_id: {
+        type: String,
+        required: true
+    },
     category: {
         type: String,
         required: true
     },
     co_author: {
         type: Array,
-        required: true
     },
     main_img: {
         type: String,

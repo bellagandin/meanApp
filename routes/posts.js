@@ -8,9 +8,13 @@ const multer = require('multer');
 
 // Create Post
 router.post('/createPost', (req, res, next) => {
+
     let newPost = new Post({
         time: req.body.time,
         recipe_title: req.body.recipe_title,
+        first_name: req.body.first_name,
+        last_name:req.body.last_name,
+        user_id:req.body.user_id,
         category: req.body.category,
         co_author: req.body.co_author,
         main_img: '',//TODO: "add img"
@@ -36,7 +40,7 @@ router.post('/createPost', (req, res, next) => {
                             if (err) {
                                 res.json({success: false, msg: "1 " + err});
                             } else {
-                                res.json({success: true, msg: {"post_id": newPost._id}});
+                                    res.json({success: true, msg: {"post_id": newPost._id}});
                             }
                         });
                     }
@@ -48,6 +52,8 @@ router.post('/createPost', (req, res, next) => {
         }
     });
 });
+
+
 
 // Update Post
 router.post('/editPost', (req, res) => {
@@ -258,7 +264,8 @@ router.post('/uploadMainImg/:postnumber', function (req, res, next) {
                                 if (err) {
                                     res.json({success: false, msg: err});
                                 } else {
-                                    let updateData = {"main_img": postDest+'/'+ req.files[0].filename};
+                                    let updateData = {"main_img":'/uploads/'+req.param('postnumber')+'/'+ req.files[0].filename};
+                                    console.log(updateData);
                                     Post.updatePost(post,updateData, (err,udp) => {
                                         if (err) {
                                     res.json({success: false, msg: err});

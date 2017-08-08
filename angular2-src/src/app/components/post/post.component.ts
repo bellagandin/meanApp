@@ -1,5 +1,6 @@
 import { Component, OnInit,Input } from '@angular/core';
 import {Post} from '../../shared/post'
+import {AppConfig} from '../../shared/AppConfig'
 
 
 @Component({
@@ -10,11 +11,14 @@ import {Post} from '../../shared/post'
 export class PostComponent implements OnInit {
   @Input()
   thisPost: Post;
+  postDescription: Array<String>=[];
+  api=AppConfig.API_ENDPOINT;
+  
+  description: Array<string>=[];
   showPost: boolean;
-  constructor() {}
+  constructor() {}  
     ngOnInit() {
       this.showPost=false;
-    
     }
 
 private showContent(){

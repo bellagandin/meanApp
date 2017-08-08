@@ -5,7 +5,7 @@
         <div class="row" style="padding: 10px;">
           <div class="col-md-6 form-group">
               <label>Title:</label>
-              <input type="text" class="form-control" id="title">
+              <input type="text" class="form-control" id="title" name="recipe_title" [(ngModel)]="recipe_title" >
           </div>
           <div class="col-md-6 form-group">
               <label for="titleImage">title Image: </label>
@@ -16,23 +16,23 @@
         <div class="row" style="padding:20px">
           <div id="des" class="col-md-12 form-group center-block">
             <h5 ><strong>Description:</strong></h5>
-            <textarea id="description" ></textarea>
+            <textarea id="description" name="description" [(ngModel)]="description" ></textarea>
           </div>
         </div>
         <hr>
         <div  class="row" style="padding:20px">
-          <div class="col-md-12 form-group" *ngFor="let ing of ingridients">
+          <div class="col-md-12 form-group" *ngFor="let ing of ingridients; let index = index; trackBy:trackByFn;"  style="padding:4px;">
             <label>Name:</label>
-            <input type="text" [(ngModel)]="ing.name" name="ing.name" >
+            <input type="text" [(ngModel)]="ingridients[index].name" name="ingridients[index].name" placeholder={{ingridients[index].name}}>
             <label>Amount:</label>
-            <input type="number" [(ngModel)]="ing.amount" name="ing.amount">
+            <input type="number" [(ngModel)]="ingridients[index].amount" name="ingridients[index].amount" >
             <select>
               <option value="gr">gr</option>
               <option value="Cup">Cup</option>
               <option value="Spoon">Spoon</option>
               <option value="Teaspoon">Teaspoon</option>
           </select>
-            <button id="rmv" class="btn ">Remove</button>
+            <button id="rmv" class="btn " (click)="removeIng(ing)">Remove</button>
           </div>
         </div>
         <div class="row">
@@ -41,10 +41,11 @@
         </div>
         <hr>
         <div  class="row" style="padding:20px">
-          <div class="col-md-12 form-group" *ngFor="let st of steps" style="padding:3px">
-            <h5>Step {{st.stepNumber}}:</h5>
-            <textarea id="description" name="st.description" [(ngModel)]="st.description" >
+          <div class="col-md-12 form-group" *ngFor="let st of steps; let index = index;trackBy:trackByIndex;"  style="padding:3px">
+            <h5>Step {{steps[index].stepNumber}}:</h5>
+            <textarea id="description" name="st.description" [(ngModel)]="steps[index].description" placeholder={{steps[index].description}} >
             </textarea>
+            <button id="rmv" class="btn " (click)="removeStep(st)">Remove</button>
           </div>
         </div>
         <div class="row">
@@ -53,8 +54,13 @@
         </div>
         <hr>
         <div class="row">
-            <div class="col-md-4" *ngFor="let img of images">
-              <input type="file" id = "{{imageId[getimageID(img)]}}" style="padding:2px;" />
+            <div class="col-md-6" *ngFor="let img of images" style="padding:4px;">
+              <div class="col-md-6">
+                <input type="file" id = "{{imageId[getimageID(img)]}}" style="padding:2px;" />
+              </div>
+              <div class="col-md-3" align="center" >
+                <button id="rmv" class="btn " (click)="removeImg(img)">Remove</button>
+              </div>
             </div>
         </div>
         <div class="row" style="padding-top:20px">

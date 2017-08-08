@@ -4,6 +4,7 @@ import {Step} from '../../shared/Step'
 import {  FileUploader } from 'ng2-file-upload/ng2-file-upload';
 import {AppConfig} from '../../shared/AppConfig'
 import {Http,Response} from '@angular/http'
+import {PublishPostService} from '../../services/publish-post.service'
 
 
 
@@ -18,10 +19,19 @@ export class NewPostComponent implements OnInit {
   images: Array<FileUploader>=[];
   imageId: Array<String>=[];
   stepN:number=1;
+  stepsN: Array<number>=[];
   imageN: number = 1;
-  constructor(private http: Http,private el: ElementRef ) { }
+  
+  //post details
+  recipe_title: String;
+  category: String;
+  co_author: Array<any>;   //array containing all co-authors
+  description: string;
 
-  ngOnInit( ) {
+
+  constructor(private http: Http,private el: ElementRef,private publisher: PublishPostService ) { }
+
+  ngOnInit(  ) {
   }
 
 
@@ -32,6 +42,32 @@ export class NewPostComponent implements OnInit {
     this.steps.push({stepNumber:this.stepN,description:""});
     this.stepN++;
   }
+
+
+  public removeStep(st){
+    var temp = this.ingridients.indexOf(st);
+    this.steps.splice(temp,1);
+    this.stepN--;
+    for(var i=0;i<this.steps.length;i++){
+      this.steps[i].stepNumber=i+1;
+    }
+}
+
+  public removeIng(ing){
+  var temp = this.ingridients.indexOf(ing);
+  this.ingridients.splice(temp,1);
+  
+}
+  public removeImg(img){
+    var temp = this.images.indexOf(img);
+    this.images.splice(temp,1);
+
+    for(var i=0;i < this.images.length;i++){
+      this.imageId[i]="photo"+(i+1);
+    }
+    
+  }
+
     public addPhoto(){
       this.imageId.push("photo"+this.imageN);
       this.imageN++;
@@ -46,7 +82,43 @@ export class NewPostComponent implements OnInit {
 
     return this.images.indexOf(img);
   }
+  
+  
   public publishPost(){
+    let thisUser=JSON.parse(localStorage.getItem('user'));
+
+    let post={
+      time:new Date(),
+      first_name:thisUser.first_name,
+      last_name:thisUser.last_name,
+      user_id:thisUser.id,
+      recipe_title:this.recipe_title,
+      category:"desserts",
+      main_img:"",
+      description:this.description,
+      co_author: [],
+      ingredients: this.ingridients,
+      instructions: this.steps
+    }
+    console.log(post);
+    this.publisher.publish(post).subscribe(
+      data=>{
+        
+        this.addPhotos(data.msg.post_id);
+      },
+      err=>{
+        console.log(err);
+      });
+
+  }
+
+trackByFn(index: any, item: any) {
+   return index;
+}
+  
+  
+  
+  public addPhotos(postId:String){
 
     let formData = new FormData();
     let mainphEl: HTMLInputElement = this.el.nativeElement.querySelector('#mainImage');
@@ -67,14 +139,9 @@ export class NewPostComponent implements OnInit {
             //call the angular http method
           }
         }
-        this.http
-        //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-        .post(AppConfig.API_ENDPOINT+"posts/uploadMainImg/"+'5988818faa41ff1e28cb2a17', formData).map((res:Response) => res.json()).subscribe(
-                //map the success function and alert the response
-                 (success) => {
-                         alert(success._body);
-                },
-                (error) => alert(error))
+        this.publisher.addPhotos(formData,postId).subscribe( sucssess=>{
+          alert(sucssess);
+        },err=>{alert(err)});
     }
 
 }
