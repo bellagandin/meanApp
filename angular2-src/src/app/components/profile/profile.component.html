@@ -43,11 +43,7 @@
                   <div><strong>First name:</strong> {{user.first_name}} </div>
                   <div><strong>Last name:</strong>{{user.last_name}}</div>
                   <div><strong>Email:</strong> {{user.email}}</div>
-                  <!--<i-->
-                  <!--class="fa fa-check text-success" aria-hidden="true" data-toggle="tooltip" data-placement="bottom"-->
-                  <!--title="John Doe is sharing with you"></i>-->
                 </div>
-
               <!-- Trigger the modal with a button -->
               <div class="dropdown pull-right">
                 <div *ngIf="!auth.checkLogoedInUser(user.user_name)" >
@@ -60,61 +56,25 @@
                   </div>
                 <button *ngIf="auth.checkLogoedInUser(user.user_name)" type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>
               </div>
-
-
-
             </span>
         </div>
       </div>
       <hr>
+      <div *ngIf="!edit">
+        <div class="panel panel-default" *ngFor="let post of myPosts">
+          <div class="panel-body">
+            <app-post [thisPost]= post></app-post>
+          </div>
+        </div>
+      </div>
       <!-- here will insert the post compnents. -->
 
       <!--<button type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>-->
       <div *ngIf="edit">
-        <!--<form (submit)="onSubmit()">-->
-        <!--<div class="form-group">-->
-        <!--<label>First Name</label>-->
-        <!--<input type="text" class="form-control" [(ngModel)]="user.first_name" name ="firstName">-->
-        <!--</div>-->
-        <!--<div class="form-group">-->
-        <!--<label>Last Name</label>-->
-        <!--<input type="text" class="form-control" [(ngModel)]="user.last_name"name ="lastName">-->
-        <!--</div>-->
-        <!--<div class="form-group">-->
-        <!--<label>user Name</label>-->
-        <!--<input type="text" class="form-control" [(ngModel)]="user.user_name" name ="userName">-->
-        <!--</div>-->
-        <!--<div class="form-group">-->
-        <!--<label>Email</label>-->
-        <!--<input type="Email" class="form-control" [(ngModel)]="user.email" name ="email">-->
-        <!--</div>-->
-        <!--<div class="form-group">-->
-        <!--<label>Date of Birth</label>-->
-        <!--<input type="date" class="form-control" [ngModel]="user.birthday | date:'yyyy-MM-dd'" (ngModelChange)="user.birthday = $event"-->
-        <!--name ="birthDate" placeholder="Date of Birth">-->
-        <!--</div>-->
-        <!--<div class="form-group">-->
-        <!--<label>Describe you self</label>-->
-        <!--<input type="text" class="form-control" [ngModel]="user.self_description" (ngModelChange)="user.birthday = $event"-->
-        <!--name ="birthDate" placeholder="Tell something about yur self">-->
-        <!--</div>-->
-        <!--<div class="form-group">-->
-        <!--<div class=" radio-inline">-->
-        <!--<label><input type="radio" name="optradio"   [(ngModel)]="user.gender" value="Male">Male</label>-->
-        <!--</div>-->
-        <!--<div class="radio-inline">-->
-        <!--<label><input type="radio" name="optradio" [(ngModel)]="user.gender" value="Female">Female</label>-->
-        <!--</div>-->
-
-        <!--</div>-->
-        <!--<input type="submit" class="btn btn-primary" value="עדכן" (click)="onUpdateSubmit()" >-->
-        <!--</form>-->
-
           <app-register (updt)="ischildUpdate($event)" [edit]=true [firstName]="user.first_name" [lastName]="user.last_name"
                         [userName]="user.user_name" [email]="user.email" [birthDate]="user.birthday | date:'yyyy-MM-dd'"
-                        [gender]="user.gender" [self_description]="user.self_description"></app-register>
-
-
+                        [gender]="user.gender" [self_description]="user.self_description">
+                      </app-register>
     </div>
 
   </div>

@@ -46,6 +46,9 @@ const PostSchema = mongoose.Schema({
         type: Array,
         required: true
     },
+    user_img:{
+        type:String
+    },
     photos:{
       type: Array,
     },
@@ -87,7 +90,7 @@ module.exports.removePost = function (post_id, callback) {
 
 module.exports.updatePost = function (post, updateData, callback) {
     delete  updateData._id;
-    Post.update({$set: updateData}, callback);
+    post.update({$set: updateData}, callback);
 };
 
 module.exports.addCommentToPost = function (comment, post, callback) {

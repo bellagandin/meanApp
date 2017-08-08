@@ -10,6 +10,7 @@ import {FileUploader} from 'ng2-file-upload/ng2-file-upload';
 import {AppConfig} from "../../shared/AppConfig";
 import {FlashMessagesService} from 'angular2-flash-messages';
 import {Server} from "../../services/socket.service";
+import {getPostsService} from '../../services/getPosts.service'
 
 @Component({
   selector: 'app-profile',
@@ -20,7 +21,6 @@ import {Server} from "../../services/socket.service";
 export class ProfileComponent implements OnInit, OnDestroy {
   user: Object;
   currPost: Post;
-  @HostBinding('style.background-color')
   bgColor;
   connection;
   desiredUser: String;
@@ -29,6 +29,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   uploader: FileUploader = new FileUploader({url: "add", itemAlias: 'myPicture'});
   edit: Boolean = false;
   follow: Boolean = false;
+  myPosts: Array<Post>;
+  showPst:Array<Post>;
 
 
   constructor(private auth: AuthenticateService,
@@ -38,7 +40,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
               private el: ElementRef,
               private flasher: FlashMessagesService,
               private server: Server,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private getPosts: getPostsService) {
   }
 
   sendMessage(key) {
@@ -79,6 +82,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
       profile => {
         console.log(profile.user);
         this.user = profile.user;
+        this.getPosts.getUserPost(profile.user.id).subscribe(
+            data=>{
+              
+              this.myPosts=data.msg;
+
+            },
+            err=>{console.log(err);}
+          );
 
       },
       err => {

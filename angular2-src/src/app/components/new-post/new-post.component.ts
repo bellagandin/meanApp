@@ -86,7 +86,7 @@ export class NewPostComponent implements OnInit {
   
   public publishPost(){
     let thisUser=JSON.parse(localStorage.getItem('user'));
-
+    
     let post={
       time:new Date(),
       first_name:thisUser.first_name,
@@ -95,6 +95,7 @@ export class NewPostComponent implements OnInit {
       recipe_title:this.recipe_title,
       category:"desserts",
       main_img:"",
+      user_img:thisUser.img_url,
       description:this.description,
       co_author: [],
       ingredients: this.ingridients,
@@ -103,7 +104,7 @@ export class NewPostComponent implements OnInit {
     console.log(post);
     this.publisher.publish(post).subscribe(
       data=>{
-        
+        console.log(data.msg.post_id);
         this.addPhotos(data.msg.post_id);
       },
       err=>{
@@ -124,7 +125,6 @@ trackByFn(index: any, item: any) {
     let mainphEl: HTMLInputElement = this.el.nativeElement.querySelector('#mainImage');
     if(mainphEl.files.length>0)
       formData.append('photos',mainphEl.files.item(0),mainphEl.files.item(0).name);
-    console.log(this.imageId.length);
     for(var i=1;i<=this.imageId.length;i++){
     //locate the file element meant for the file upload.
         let inputEl: HTMLInputElement = this.el.nativeElement.querySelector('#photo'+i);

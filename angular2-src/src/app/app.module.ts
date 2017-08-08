@@ -11,6 +11,7 @@ import { Ng2UploaderModule } from 'ng2-uploader';
 
 //components and services deckeration
 import {ApiService} from './services/api.service'
+import {getPostsService} from './services/getPosts.service'
 import {AuthenticateService} from './services/authenticate.service'
 import {ValidateService} from './services/Validate.service'
 import { AppComponent } from './app.component';
@@ -43,7 +44,7 @@ const appRoutes: Routes = [
   {path:'post',component:PostComponent},
   {path:'test',component:TesterComponent},
   {path:'searchResault',component:SearchResaultComponent},
-  {path:'newPost',component:NewPostComponent}
+  {path:'newPost',component:NewPostComponent,canActivate:[AuthGuard]}
 
 ]
 
@@ -78,6 +79,7 @@ const appRoutes: Routes = [
     MomentModule,
     Ng2UploaderModule,
     
+    
 
   ],
   providers: [
@@ -86,7 +88,8 @@ const appRoutes: Routes = [
     ValidateService,
     AuthGuard,
     changeBG,
-    PublishPostService
+    PublishPostService,
+    getPostsService
   ],
   bootstrap: [AppComponent]
 })
