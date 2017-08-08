@@ -81,7 +81,7 @@ export class AuthenticateService {
     localStorage.clear();
   }
   getLoggedInUser(){
-    return this.user;
+    return JSON.parse(localStorage.getItem('user'));
   }
   getLoggedInUserName(){
     return this.user.user_name;

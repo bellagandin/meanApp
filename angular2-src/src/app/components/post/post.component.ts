@@ -1,3 +1,4 @@
+import { AuthenticateService } from '../../services/authenticate.service';
 import { Component, OnInit,Input } from '@angular/core';
 import {Post} from '../../shared/post'
 import {AppConfig} from '../../shared/AppConfig'
@@ -13,12 +14,15 @@ export class PostComponent implements OnInit {
   thisPost: Post;
   postDescription: Array<String>=[];
   api=AppConfig.API_ENDPOINT;
+  myImg=this.auth.getLoggedInUser().img_url;
+  
   
   description: Array<string>=[];
   showPost: boolean;
-  constructor() {}  
+  constructor(private auth: AuthenticateService) {}  
     ngOnInit() {
       this.showPost=false;
+      console.log(this.myImg)
     }
 
 private showContent(){

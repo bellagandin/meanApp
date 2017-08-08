@@ -15,6 +15,7 @@ router.post('/createPost', (req, res, next) => {
         first_name: req.body.first_name,
         last_name:req.body.last_name,
         user_id:req.body.user_id,
+        user_img:req.body.user_img,
         category: req.body.category,
         co_author: req.body.co_author,
         main_img: '',//TODO: "add img"
@@ -258,10 +259,12 @@ router.post('/uploadMainImg/:postnumber', function (req, res, next) {
             // An error occurred when uploading
             res.status(422).send("an Error occured")
         }
+        else{
         let json = {"main_img": path};
         const post_id = req.param('postnumber');
         Post.getPostById(post_id, (err, post) => {
-                                if (err) {
+                      
+            if (err) {
                                     res.json({success: false, msg: err});
                                 } else {
                                     let updateData = {"main_img":'/uploads/'+req.param('postnumber')+'/'+ req.files[0].filename};
@@ -285,7 +288,7 @@ router.post('/uploadMainImg/:postnumber', function (req, res, next) {
                                 }
         });
 
-
+        }
 
     });
 });
