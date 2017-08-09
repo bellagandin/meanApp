@@ -68,12 +68,12 @@
         </div>
       </div>
       <!-- here will insert the post compnents. -->
-
+    
       <!--<button type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>-->
       <div *ngIf="edit">
           <app-register (updt)="ischildUpdate($event)" [edit]=true [firstName]="user.first_name" [lastName]="user.last_name"
                         [userName]="user.user_name" [email]="user.email" [birthDate]="user.birthday | date:'yyyy-MM-dd'"
-                        [gender]="user.gender" [self_description]="user.self_description">
+                        [gender]="user.gender"  [self_description]="user.self_description">
                       </app-register>
     </div>
 

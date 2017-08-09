@@ -13,6 +13,7 @@ export class Post {
     amount_of_likes: number;
     amount_of_dislike: number;
     comments: Array<any>;  //array containing all comments
+    _id: String;
 
 
 

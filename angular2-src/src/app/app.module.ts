@@ -33,7 +33,8 @@ import { SearchResaultComponent } from './components/search-resault/search-resau
 import { UserResaultComponent } from './components/user-resault/user-resault.component';
 import { NewPostComponent } from './components/new-post/new-post.component'
 import {PublishPostService} from './services/publish-post.service';
-import { IngridentComponent } from './components/ingrident/ingrident.component'
+import { IngridentComponent } from './components/ingrident/ingrident.component';
+import { CommentComponent } from './components/comment/comment.component'
 
 const appRoutes: Routes = [
   {path:'',component:HomeComponent},
@@ -66,7 +67,8 @@ const appRoutes: Routes = [
     SearchResaultComponent,
     UserResaultComponent,
     NewPostComponent,
-    IngridentComponent
+    IngridentComponent,
+    CommentComponent
     
     
   ],

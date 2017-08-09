@@ -112,8 +112,11 @@ router.post("/addComment", (req, res) => {
         } else {
             let comment = {
                 comment_id: post.id_generator,
-                text: req.body.text_comment,
-                author: req.body.user_email,
+                content: req.body.content,
+                first_name: req.body.first_name,
+                last_name:req.body.last_name,
+                img_url:req.body.img_url,
+                usr_name:req.body.usr_name,
                 likes: 0
             };
             Post.addCommentToPost(comment, post, (err, updatedPost) => {

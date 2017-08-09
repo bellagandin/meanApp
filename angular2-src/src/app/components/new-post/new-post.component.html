@@ -23,9 +23,9 @@
         <div  class="row" style="padding:20px">
           <div class="col-md-12 form-group" *ngFor="let ing of ingridients; let index = index; trackBy:trackByFn;"  style="padding:4px;">
             <label>Name:</label>
-            <input type="text" [(ngModel)]="ingridients[index].name" name="ingridients[index].name" placeholder={{ingridients[index].name}}>
+            <input type="text" class="form-control" [(ngModel)]="ingridients[index].name" name="ingridients[index].name" placeholder={{ingridients[index].name}}>
             <label>Amount:</label>
-            <input type="number" [(ngModel)]="ingridients[index].amount" name="ingridients[index].amount" >
+            <input type="number" class="form-control" [(ngModel)]="ingridients[index].amount" name="ingridients[index].amount" >
             <select>
               <option value="gr">gr</option>
               <option value="Cup">Cup</option>
@@ -43,7 +43,7 @@
         <div  class="row" style="padding:20px">
           <div class="col-md-12 form-group" *ngFor="let st of steps; let index = index;trackBy:trackByIndex;"  style="padding:3px">
             <h5>Step {{steps[index].stepNumber}}:</h5>
-            <textarea id="description" name="st.description" [(ngModel)]="steps[index].description" placeholder={{steps[index].description}} >
+            <textarea id="description" class="form-control" name="st.description" [(ngModel)]="steps[index].description" placeholder={{steps[index].description}} >
             </textarea>
             <button id="rmv" class="btn " (click)="removeStep(st)">Remove</button>
           </div>
@@ -56,7 +56,7 @@
         <div class="row">
             <div class="col-md-6" *ngFor="let img of images" style="padding:4px;">
               <div class="col-md-6">
-                <input type="file" id = "{{imageId[getimageID(img)]}}" style="padding:2px;" />
+                <input type="file" class="form-control" id = "{{imageId[getimageID(img)]}}" style="padding:2px;" />
               </div>
               <div class="col-md-3" align="center" >
                 <button id="rmv" class="btn " (click)="removeImg(img)">Remove</button>
