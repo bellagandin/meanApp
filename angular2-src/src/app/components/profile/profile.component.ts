@@ -11,6 +11,7 @@ import {AppConfig} from "../../shared/AppConfig";
 import {FlashMessagesService} from 'angular2-flash-messages';
 import {Server} from "../../services/socket.service";
 import {getPostsService} from '../../services/getPosts.service'
+import {userInfo} from "os";
 
 @Component({
   selector: 'app-profile',
@@ -53,15 +54,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.connection = this.server.getMessages('profile').subscribe(message => {
-      console.log("get emit from the server");
+      //console.log("get emit from the server");
       this.auth.getProfile(this.desiredUser).subscribe(
         profile => {
           console.log(profile.user);
           this.user = profile.user;
-          this.sendMessage('profile');
-          let finalString = JSON.stringify(this.user);
-          if (this.auth.checkLogoedInUser(this.user))
-            localStorage.setItem('user', finalString);
+          //this.sendMessage('profile');
+          //let finalString = JSON.stringify(this.user);
+            //localStorage.setItem('user', finalString);
         },
         err => {
           console.log(err);
@@ -112,10 +112,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
         profile => {
           console.log("the users",profile.user);
           console.log("me",this.auth.getLogoedInUser());
-          if (this.auth.getLogoedInUser()["followings"].indexOf(profile.user["id"])>-1) {
-            this.follow=true;
+          if(this.auth.getLogoedInUser()["followings"]!=[]) {
+             if (this.auth.getLogoedInUser()["followings"].indexOf(profile.user["id"]) > -1) {
+              this.follow = true;
 
-          }
+             }
+           }
         },
         err => {
           console.log(err);
@@ -148,7 +150,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         .post('http://127.0.0.1:3001/users/upload/' + this.user["id"], formData).map((res: Response) => res.json()).subscribe(
         //map the success function and alert the response
         (success) => {
+          console.log(success.msg);
           this.sendMessage('profile');
+          localStorage.setItem('user',JSON.stringify(success.msg));
           this.showInput = false;
         },
         (error) => alert(error))
@@ -167,6 +171,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         console.log(success);
         this.follow=true;
         this.sendMessage('profile');
+        localStorage.setItem('user',JSON.stringify(success.msg));
+        this.follow=false;
       },
       (error) => alert(error))
 
@@ -182,6 +188,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       (success) => {
         console.log(success);
         this.sendMessage('profile');
+        localStorage.setItem('user',JSON.stringify(success.msg));
         this.follow=false;
       },
       (error) => alert(error))

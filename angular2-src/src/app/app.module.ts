@@ -44,7 +44,7 @@ const appRoutes: Routes = [
   {path:'profile/:username',component:ProfileComponent,canActivate:[AuthGuard]},
   {path:'post',component:PostComponent},
   {path:'test',component:TesterComponent},
-  {path:'searchResault',component:SearchResaultComponent},
+  {path:'searchResault/:searchQuery/:selectedValue',component:SearchResaultComponent},
   {path:'newPost',component:NewPostComponent,canActivate:[AuthGuard]}
 
 ]
@@ -66,8 +66,8 @@ const appRoutes: Routes = [
     CommentComponent,
     ImageSliderComponent,
 
-    
-    
+
+
   ],
   imports: [
     BrowserModule,
@@ -79,9 +79,9 @@ const appRoutes: Routes = [
     Ng2UploaderModule,
     CarouselModule.forRoot(),
     NgxGalleryModule,
-    ReactiveFormsModule 
-    
-    
+    ReactiveFormsModule
+
+
 
   ],
   providers: [

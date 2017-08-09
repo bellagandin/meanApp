@@ -34,7 +34,7 @@
     <div class="row" *ngIf="showPost">
         <br>
         <hr>
-        <span style="font-size:px"><strong>Steps</strong></span>
+        <span style="font-size:1px"><strong>Steps</strong></span>
         <br>
         <div class="col-md-12" *ngFor="let step of thisPost.instructions">
             <p style="font-size: 20px">{{step.stepNumber}}:     {{step.description}}</p>
@@ -56,8 +56,9 @@
     <hr>
     <div>
         <div class="pull-right btn-group-xs">
-            <a class="btn btn-default btn-xs"><i id="like" class="fa fa-thumbs-down" aria-hidden="true" (click)="editLike()" ></i> Like</a>
-            <a class="btn btn-default btn-xs"><i class="fa fa-comment" aria-hidden="true"></i> Comment</a>
+            <a class="btn btn-default btn-xs" (click)="editLike()"><i id="like" class="fa fa-thumbs-up" aria-hidden="true"  ></i> {{thisPost["likes"].length}}</a>
+
+          <a class="btn btn-default btn-xs"><i class="fa fa-comment" aria-hidden="true"></i> Comment</a>
         </div>
         <br>
     </div>

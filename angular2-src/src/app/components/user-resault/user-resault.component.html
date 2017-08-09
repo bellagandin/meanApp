@@ -2,7 +2,7 @@
 <div class="container-fluid well span6">
 	<div class="row-fluid">
         <div class="col-md-3" >
-		    <img src="https://secure.gravatar.com/avatar/de9b11d0f9c0569ba917393ed5e5b3ab?s=140&r=g&d=mm" class="img-circle">
+		    <img src={{api}}{{user.img_url}} class="img-circle">
         </div>
         <div class="col-md-9">
           <div class="row">
@@ -13,6 +13,10 @@
                 <h6>User Name: {{user.user_name}}</h6>
             </div>
           </div>
-        
+
+    <button *ngIf="!follow" class="btn btn-success" type="button" id="dropdownMenu1" aria-haspopup="true" (click)="addFollow()">
+      Follow
+    </button>
+
 </div>
 </div>

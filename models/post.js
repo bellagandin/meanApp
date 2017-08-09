@@ -20,6 +20,10 @@ const PostSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    user_name: {
+        type: String,
+        required: true
+    },
     user_id: {
         type: String,
         required: true
@@ -67,6 +71,7 @@ const ObjectId = mongoose.Schema.ObjectId;
 const Post = module.exports = mongoose.model('Post', PostSchema);
 
 module.exports.getPostById = function (id, callback) {
+    console.log("id",id);
     Post.findById(id, callback);
 };
 
@@ -95,7 +100,7 @@ module.exports.updatePost = function (post, updateData, callback) {
 
 module.exports.addCommentToPost = function (comment, post, callback) {
     let addComment = {comments: post.comments.concat(comment), id_generator: post.id_generator + 1};
-    Post.update({$set: addComment}, callback);
+    post.update({$set: addComment}, callback);
 };
 
 
@@ -105,23 +110,26 @@ module.exports.removeCommentFromPost = function (comment_id, post, success) {
         return item.comment_id !== comment_id;
     });
     let updateData = {comments: newCommentList};
-    Post.update({$set: updateData}, success);
+    post.update({$set: updateData}, success);
 
 };
 
 module.exports.addLike = function ( post,user, callback) {
     let addLike = {likes: post.likes.concat(user._id)};
-    Post.update({$set: addLike}, callback);
+    console.log(addLike);
+    post.update({$set: addLike}, callback);
 
 };
 
 
 module.exports.removeLike = function ( post,user, callback) {
     let newCommentList = post.likes.filter((item) => {
-        return item !== user._id;
+        console.log(item,''+user._id,item != ''+user._id);
+        return item != ''+user._id;
     });
     let update = {likes:newCommentList};
-    Post.update({$set: update}, callback);
+    console.log("update",update);
+    post.update({$set: update}, callback);
 };
 
 
@@ -132,7 +140,7 @@ module.exports.editComment = function ( comment,post, callback) {
     });
     let editComment = {comments: newCommentList.concat(comment)};
     console.log("editComment", editComment);
-    Post.update({$set: editComment}, callback);
+    post.update({$set: editComment}, callback);
 };
 
 module.exports.getPostsByTitle = function ( title, callback) {
