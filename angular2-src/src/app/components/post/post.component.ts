@@ -15,6 +15,7 @@ export class PostComponent implements OnInit {
   postDescription: Array<String>=[];
   api=AppConfig.API_ENDPOINT;
   myImg=this.auth.getLoggedInUser().img_url;
+  like:Boolean;
 
 
   description: Array<string>=[];
@@ -22,8 +23,12 @@ export class PostComponent implements OnInit {
   constructor(private auth: AuthenticateService) {}
     ngOnInit() {
       this.showPost=false;
-      console.log(this.myImg)
+      console.log(this.myImg);
 
+      if(this.auth.getLogoedInUser()["likes"].indexOf(this.thisPost["id"])>0)
+      {
+        this.like=false;
+      }
 
     }
 

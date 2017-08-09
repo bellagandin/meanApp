@@ -446,14 +446,21 @@ router.post("/search", (req, res) => {
                 console.log('text', text);
                 if(result!=null) {
                     let final_result = arr.filter((post) => {
-                        return ((post["description"].includes(text))
-                            ||
-                            (post["instructions"].forEach(function (entry) {
-                                entry["step"]["ins"].includes(text);
-                            }))
-                        ||(post["recipe_title"].includes(text)))
+                        return predicate(post,text)
                     });
-                    console.log(final_result);
+                    console.log("final_result",final_result);
+
+                    var helper = final_result.map((item)=>{
+                        let count = 0;
+                        count += item["description"].match(text).length;
+                        count += item["instructions"].forEach(function (entry) {
+                            console.log("in for each",entry);
+                            entry["description"].includes(text);
+                        });
+                        count +=item["recipe_title"].includes(text);
+                        return [count,item];
+                    });
+                    console.log(helper);
                     res.json(final_result);
                 }
                 else{
@@ -544,4 +551,13 @@ var getAllPostOfFollowed = function (req, callback) {
             });
         }
     });
+};
+
+var predicate = function(post,text){
+    return ((post["description"].includes(text))
+        ||
+        (post["instructions"].forEach(function (entry) {
+            entry["description"].includes(text);
+        }))
+        ||(post["recipe_title"].includes(text)))
 };

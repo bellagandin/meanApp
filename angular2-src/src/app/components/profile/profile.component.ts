@@ -111,9 +111,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.auth.getProfile(this.desiredUser).subscribe(
         profile => {
           console.log("the users",profile.user);
-          this.user = profile.user;
           console.log("me",this.auth.getLogoedInUser());
-          if (this.auth.getLogoedInUser()["followings"].indexOf(this.user["id"])>-1) {
+          if (this.auth.getLogoedInUser()["followings"].indexOf(profile.user["id"])>-1) {
             this.follow=true;
 
           }
