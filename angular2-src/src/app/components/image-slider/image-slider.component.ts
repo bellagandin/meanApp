@@ -1,17 +1,21 @@
-import { AppConfig } from '../shared/AppConfig';
 import { Component, OnInit,Input } from '@angular/core';
-import {Http,Headers} from '@angular/http';
+import {AppConfig} from '../../shared/AppConfig';
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery';
 
 
+
 @Component({
-  selector: 'app-tester',
-  templateUrl: './tester.component.html',
-  styleUrls: ['./tester.component.css']
+  selector: 'app-image-slider',
+  templateUrl: './image-slider.component.html',
+  styleUrls: ['./image-slider.component.css']
 })
-export class TesterComponent implements OnInit  {
-   galleryOptions: NgxGalleryOptions[];
-    galleryImages: NgxGalleryImage[];
+export class ImageSliderComponent implements OnInit {
+  api=AppConfig.API_ENDPOINT;
+  @Input()
+  pics;
+  galleryOptions: NgxGalleryOptions[];
+  galleryImages: NgxGalleryImage[]=[];
+
 
     ngOnInit(): void {     
 
@@ -39,18 +43,11 @@ export class TesterComponent implements OnInit  {
             }
         ];
 
-        this.galleryImages = [
-            {
-                
-                big: 'https://upload.wikimedia.org/wikipedia/mediawiki/a/a9/Example.jpg'
-            }
-        ];
-    }
+        for(var i=0;i<this.pics.length;i++){
+            var picPat=this.api+this.pics[i];
+            this.galleryImages.push({ small:picPat,medium:picPat,big:picPat});
+        }
+    }  constructor() { }
+
+
 }
-
-   
-
- 
-
- 
-

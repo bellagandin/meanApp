@@ -38,5 +38,11 @@ export class getPostsService {
     return this.http.post(AppConfig.API_ENDPOINT+'posts/addComment',comment,{headers: headers})
       .map(res=>res.json());
   }
+  public getSinglePostByID(postId){
+    let headers=new Headers();
+    headers.append('Content-Type','application/json');
+    return this.http.post(AppConfig.API_ENDPOINT+'posts/getSinglePost',{post_id: postId},{headers: headers})
+      .map(res=>res.json());
+  }
 
 }

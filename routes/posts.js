@@ -131,6 +131,15 @@ router.post("/addComment", (req, res) => {
     });
 });
 
+
+router.post('/getSinglePost', (req, res) => {
+    const post_id = req.body.post_id;
+    Post.getPostById(post_id ,(err, post) => {
+        if (err) throw err;
+        res.json({success: true, msg: post});
+    });
+});
+
 router.post("/removeComment", (req, res) => {
     const post_id = req.body.post_id;
     const comment_id = req.body.comment_id;
@@ -271,7 +280,7 @@ router.post('/uploadMainImg/:postnumber', function (req, res, next) {
                                     res.json({success: false, msg: err});
                                 } else {
                                     let temp =req.files.slice(1);
-                                    let names = temp.map((x)=>{return postDest+'/'+x.filename});
+                                    let names = temp.map((x)=>{return '/uploads/'+req.param('postnumber')+'/'+x.filename});
                                     let updateData = {"photos":post.photos.concat(names)};
                                      Post.updatePost(post,updateData, (err, post) => {
                                         if (err) {

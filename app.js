@@ -32,12 +32,10 @@ io.on('connection', (socket) => {
         console.log('user disconnected');
     });
     socket.on('profile', () => {
-        console.log("got message");
         io.emit('profile','');
     });
 
     socket.on('updateProfile', () => {
-        console.log("got updateProfile");
         io.emit('updateProfile');
     });
 

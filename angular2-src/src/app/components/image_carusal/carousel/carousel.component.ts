@@ -5,7 +5,7 @@ export enum Direction {UNKNOWN, NEXT, PREV};
 
 
 @Component({
-  selector: 'carousel',
+  selector: 'ssss',
   templateUrl: './carousel.component.html',
   styleUrls: ['./carousel.component.css']
   

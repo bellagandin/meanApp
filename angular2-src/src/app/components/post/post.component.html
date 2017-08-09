@@ -34,14 +34,16 @@
     <div class="row" *ngIf="showPost">
         <br>
         <hr>
+        <span style="font-size:px"><strong>Steps</strong></span>
+        <br>
         <div class="col-md-12" *ngFor="let step of thisPost.instructions">
             <p style="font-size: 20px">{{step.stepNumber}}:     {{step.description}}</p>
         </div>
+        <app-image-slider *ngIf="thisPost.photos.length>0" [pics]=thisPost.photos></app-image-slider>
     </div>
 
     <div class="row">
-        <div class="col-md-4"></div>
-        <div class="col-ms-8" >
+        <div class="col-sm-12" >
         <a *ngIf="showPost" href="javascript:void(0)" (click)=hideContent() >hide post</a>
         <a *ngIf="!showPost" href="javascript:void(0)" (click)=showContent() style="padding :15px;" >read post</a>
     </div>
@@ -60,11 +62,14 @@
         <br>
     </div>
     <hr>
-    <h4 align="center">Comments</h4>
-    <div *ngFor="let comment of thisPost.comments">
-        <app-comment  [thisComment]=comment></app-comment>
+    <div *ngIf="showPost">
+        <hr>
+        <h4 align="center">Comments</h4>
+        <div *ngFor="let comment of thisPost.comments">
+            <app-comment  [thisComment]=comment></app-comment>
+        </div>
+        <hr>
     </div>
-    <hr>
     <div class="media">
         <div class="pull-left">
             <a href="#">
