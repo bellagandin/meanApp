@@ -60,6 +60,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.user = profile.user;
           this.sendMessage('profile');
           let finalString = JSON.stringify(this.user);
+          if (this.auth.checkLogoedInUser(this.user))
             localStorage.setItem('user', finalString);
         },
         err => {

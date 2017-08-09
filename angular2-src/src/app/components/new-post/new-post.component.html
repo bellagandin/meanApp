@@ -1,75 +1,113 @@
 <div class="container">
-    <h1>Add New Recipe </h1>
-    <form class="form-inline">
-      <div class="container">
-        <div class="row" style="padding: 10px;">
-          <div class="col-md-6 form-group">
-              <label>Title:</label>
-              <input type="text" class="form-control" id="title" name="recipe_title" [(ngModel)]="recipe_title" >
-          </div>
-          <div class="col-md-6 form-group">
-              <label for="titleImage">title Image: </label>
-              <input type="file" class="form-control" id="mainImage">
-          </div>
-
-        </div>
-        <div class="row" style="padding:20px">
-          <div id="des" class="col-md-12 form-group center-block">
-            <h5 ><strong>Description:</strong></h5>
-            <textarea class="description" name="description" [(ngModel)]="description" ></textarea>
-          </div>
-        </div>
-        <hr>
-        <div  class="row" style="padding:20px">
-          <div class="col-md-12 form-group" *ngFor="let ing of ingridients; let index = index;"  style="padding:4px;">
-            <label>Name:</label>
-            <input type="text" class="form-control" [(ngModel)]="ingridients[index].name" name="ingridients[index].name" placeholder={{ingridients[index].name}}>
-            <label>Amount:</label>
-            <input type="number" class="form-control" [(ngModel)]="ingridients[index].amount" name="ingridients[index].amount" >
-            <select>
-              <option value="gr">gr</option>
-              <option value="Cup">Cup</option>
-              <option value="Spoon">Spoon</option>
-              <option value="Teaspoon">Teaspoon</option>
-          </select>
-            <button class="btn rmv"  (click)="removeIng(ing)">Remove</button>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-1"></div>
-          <button type="button" class="btn btn-primary buttuns" (click)="AddIngridient()">Add Inngridient</button>
-        </div>
-        <hr>
-        <div  class="row" style="padding:20px">
-          <div class="col-md-12 form-group" *ngFor="let st of steps; let index = index;"  style="padding:3px">
-            <h5>Step {{steps[index].stepNumber}}:</h5>
-            <textarea id="description" class="form-control" name="st.description" [(ngModel)]="steps[index].description" placeholder={{steps[index].description}} >
-            </textarea>
-            <button class="btn rmv" (click)="removeStep(st)">Remove</button>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-1"></div>
-          <button type="button" class="btn btn-primary buttuns" (click)="AddStep()">Add Step</button>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col-md-6" *ngFor="let img of images" style="padding:4px;">
-              <div class="col-md-6">
-                <input type="file" class="form-control" id = "{{imageId[getimageID(img)]}}" style="padding:2px;" />
-              </div>
-              <div class="col-md-3" align="center" >
-                <button id="rmv" class="btn " (click)="removeImg(img)">Remove</button>
-              </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="margin-20">
+        <h4>Add Post</h4>
+      </div>
+      <form [formGroup]="myForm" novalidate (ngSubmit)="publish(myForm)" class="form-inline">
+        <div class="container">
+            <div class="row" style="padding: 10px;">
+                <div class="col-md-6 form-group">
+                    <label>Title:</label>
+                    <input type="text" class="form-control" id="title" formControlName="recepie_title">
+                </div>
             </div>
         </div>
-        <div class="row" style="padding-top:20px">
-          <div class="col-md-1"></div>
-            <button id="addPhothobtn" type="button" class="btn btn-primary buttuns" (click)="addPhoto()">Add Photo</button>
+        <br>
+        <br>
+        <div class="row" style="padding:20px">
+            <h5 ><strong>Description:</strong></h5>
+            <textarea class="description" name="description" formControlName="description" style="width:50%;" ></textarea>
+          
         </div>
-        <div style="padding:20px" class="row">
-          <button type="submit" class="btn btn-success" (click)="publishPost()">Submit</button>
+        <hr>
+        <!--addresses-->
+        <div formArrayName="ingridients">
+            <h3> Add Ingridients</h3>
+          <div *ngFor="let ing of myForm.controls.ingridients.controls; let i=index" class="panel panel-default">
+            <div class="panel-heading">
+              <span>Ingridient {{i + 1}}</span>
+              <span class="glyphicon glyphicon-remove pull-right" *ngIf="myForm.controls.ingridients.controls.length > 1" (click)="removeIng(i)"></span>
+            </div>
+            <div class="panel-body" [formGroupName]="i">
+              <div class="form-group col-xs-6">
+                <label>name</label>
+                <input type="text" class="form-control" formControlName="name">
+                <small [hidden]="myForm.controls.ingridients.controls[i].controls.name.valid" class="text-danger">
+                    at least 1 ingridient  is required
+                </small>
+              </div>
+              <div class="form-group col-xs-6">
+                <label>amount</label>
+                <input type="text" class="form-control" formControlName="amount">
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </form>
+            <div class="margin-20">
+          <a (click)="addIng()" style="cursor: default">
+            Add another ingridient +
+          </a>
+        </div>
+
+
+        <br>
+        <div formArrayName="Steps">
+            <h3> Add Steps</h3>
+          <div *ngFor="let st of myForm.controls.Steps.controls; let i=index" class="panel panel-default">
+            <div class="panel-heading">
+              <span>Step  {{i + 1}}</span>
+              <span class="glyphicon glyphicon-remove pull-right" *ngIf="myForm.controls.Steps.controls.length > 1" (click)="removeStep(i)"></span>
+            </div>
+            <div class="panel-body" [formGroupName]="i">
+              <div class="form-group col-xs-6">
+                <textarea rows=1 type="text" class="form-control" formControlName="description"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+
+        <div class="margin-20">
+          <a (click)="addStep()" style="cursor: default">
+            Add another Step +
+          </a>
+        </div>
+
+        
+        <br>
+        <div formArrayName="photos">
+            <h3> Add Photos</h3>
+          <div *ngFor="let im of myForm.controls.photos.controls; let i=index" class="panel panel-default">
+            <div class="panel-heading">
+              <span>image  {{i + 1}}</span>
+              <span class="glyphicon glyphicon-remove pull-right" *ngIf="myForm.controls.photos.controls.length > 1" (click)="removeImg(i)"></span>
+            </div>
+            <div class="panel-body" [formGroupName]="i">
+              <div class="form-group col-xs-6">
+                <input type="file" class="form-control" formControlName="img" id={{setId(i)}} (change)="onChange($event,i)">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="margin-20">
+          <a (click)="addImg()" style="cursor: default">
+            Add another image +
+          </a>
+        </div>
+
+        <div class="margin-20">
+          <button type="submit" class="btn btn-primary pull-right" [disabled]="!myForm.valid">Submit</button>
+        </div>
+        <div class="clearfix"></div>
+
+        <div class="margin-20">
+          <div>myForm details:-</div>
+          <pre>Is myForm valid?: <br>{{myForm.valid | json}}</pre>
+          <pre>form value: <br>{{myForm.value | json}}</pre>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
