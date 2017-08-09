@@ -48,7 +48,8 @@ export class NewPostComponent implements OnInit {
     initIng() {
         return this._fb.group({
             name: ['', Validators.required],
-            amount: ['']
+            amount: [''],
+            unit: ['gr']
         });
     }
 
@@ -100,6 +101,11 @@ export class NewPostComponent implements OnInit {
         for(var i=0;i<formPost.Steps.length;i++){
             formPost.Steps[i].stepNumber=i+1;
         }
+        let ing=[];
+        for(var j=0;j<formPost.ingridients.length;j++){
+            ing.push({name:formPost.ingridients[j].name,
+                      amount:formPost.ingridients[j].amount+' '+formPost.ingridients[j].unit})
+        }
     
         let post={
             time:new Date(),
@@ -109,10 +115,11 @@ export class NewPostComponent implements OnInit {
             recipe_title:formPost.recepie_title,
             category:"desserts",
             main_img:"",
+            user_name:thisUser.user_name,
             user_img:thisUser.img_url,
             description:formPost.description,
             co_author: [],
-            ingredients: formPost.ingridients,
+            ingredients: ing,
             instructions: formPost.Steps
         }
         console.log(post);
