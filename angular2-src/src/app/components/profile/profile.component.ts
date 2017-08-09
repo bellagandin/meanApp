@@ -82,7 +82,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       profile => {
         console.log(profile.user);
         this.user = profile.user;
-        this.getPosts.getUserPost(profile.user.id).subscribe(
+        this.getPosts.getUserPost(profile.user._id).subscribe(
             data=>{
 
               this.myPosts=data.msg;
@@ -147,7 +147,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       //call the angular http method
       this.http
       //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-        .post('http://127.0.0.1:3001/users/upload/' + this.user["id"], formData).map((res: Response) => res.json()).subscribe(
+        .post('http://127.0.0.1:3001/users/upload/' + this.user["_id"], formData).map((res: Response) => res.json()).subscribe(
         //map the success function and alert the response
         (success) => {
           console.log(success.msg);

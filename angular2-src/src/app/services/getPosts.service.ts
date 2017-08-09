@@ -28,10 +28,11 @@ export class getPostsService {
   public getUserPost(uid){
     let headers=new Headers();
     headers.append('Content-Type','application/json');
+    console.log("testddddddd",uid);
     return this.http.post(AppConfig.API_ENDPOINT+'users/getMyPost',{user_id: uid},{headers: headers})
       .map(res=>res.json());
   }
-  
+
   public addComment(comment){
     let headers=new Headers();
     headers.append('Content-Type','application/json');
