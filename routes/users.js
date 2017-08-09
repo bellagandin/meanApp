@@ -411,7 +411,6 @@ router.post("/search", (req, res) => {
                     }
                 });
             }
-
             break;
         case "title":
             let title = req.body.value;
@@ -451,7 +450,8 @@ router.post("/search", (req, res) => {
                             ||
                             (post["instructions"].forEach(function (entry) {
                                 entry["step"]["ins"].includes(text);
-                            })))
+                            }))
+                        ||(post["recipe_title"].includes(title)))
                     });
                     console.log(final_result);
                     res.json(final_result);

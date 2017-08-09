@@ -117,6 +117,7 @@ router.post("/addComment", (req, res) => {
                 first_name: req.body.first_name,
                 last_name: req.body.last_name,
                 img_url: req.body.img_url,
+                user_name: req.body.username,
                 likes: 0
             };
             Post.addCommentToPost(comment, post, (err, udp) => {
