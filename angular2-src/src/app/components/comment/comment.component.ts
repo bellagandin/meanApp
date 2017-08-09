@@ -11,10 +11,14 @@ export class CommentComponent implements OnInit {
   @Input()
   thisComment: Comment;
   api=AppConfig.API_ENDPOINT;
+  
+
   constructor() { }
 
   ngOnInit() {
     console.log(this.thisComment);
   }
+
+
 
 }

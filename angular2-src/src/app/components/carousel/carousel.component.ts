@@ -11,7 +11,7 @@ export class CarouselComponent {
     /**
      * Play Interval
      */
-    @Input('playInterval') interval:any = 2000;
+    @Input('playInterval') interval:any = 4000;
     slides:any;
     
     @Input("slides") set _slides(s){

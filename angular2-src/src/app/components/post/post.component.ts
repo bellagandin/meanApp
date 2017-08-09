@@ -18,6 +18,7 @@ export class PostComponent implements OnInit {
   myImg=this.auth.getLoggedInUser().img_url;
   commentIn: String;
   like:boolean=false;
+  showComment: boolean=false;
 
 
   description: Array<string>=[];
@@ -36,12 +37,23 @@ export class PostComponent implements OnInit {
         }
       }
     }
-
+private showComments(){
+  this.showComment=!this.showComments;
+}
 private showContent(){
   this.showPost=true;
 }
 private hideContent(){
   this.showPost=false;
+}
+public updateComment(){
+  this.getP.getSinglePostByID(this.thisPost._id).subscribe(
+    data=>{
+      console.log("return post is");
+      console.log(data);
+      this.thisPost=data.msg;
+    }
+  )
 }
 
 addComment(){
@@ -53,12 +65,14 @@ addComment(){
       last_name: usr.last_name,
       img_url:this.myImg,
       content:this.commentIn,
-      user_name:usr.user_name
+      user_name:usr.user_name,
+      time: new Date()
     }
 
     this.getP.addComment(comment).subscribe(
       data=>{
-        console.log(data);
+        if(data.success)
+          this.updateComment();
       }
     )
 
