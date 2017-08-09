@@ -361,7 +361,7 @@ router.post('/upload/:user_id', function (req, res) {
 
 
     let upload = multer({storage: storage}).array('photos', 10);
-    var path = '';
+    let path = '';
     upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
@@ -378,8 +378,8 @@ router.post('/upload/:user_id', function (req, res) {
             else {
 
                 let path = req.files[0].path.split("public");
-                console.log(path);
-                console.log("path", path[1]);
+                //console.log(path);
+                //console.log("path", path[1]);
                 let update = {"img_url": path[1]};
                 User.updateProfile(user, update, (err, _) => {//callback
                     if (err) {
@@ -436,31 +436,35 @@ router.post("/search", (req, res) => {
             getAllPostOfFollowed(req, (result) => {
                 if (result !== null) {
                     let arr = result["msg"];
+                    if (arr != []) {
+                        let final_result = arr.filter((post) => {
+                            return (post["recipe_title"].includes(title))
+                        });
+                        //console.log("final_result",final_result);
+                        //count the number of time  text in post
+                        var helper = final_result.map((item) => {
+                            let count = 0;
+                            count += item["recipe_title"].match(title).length;
+                            return [count, item];
+                        });
 
-                    let final_result = arr.filter((post) => {
-                        return (post["recipe_title"].includes(title))
-                    });
-                    //console.log("final_result",final_result);
-                    //count the number of time  text in post
-                    var helper = final_result.map((item) => {
-                        let count = 0;
-                        count += item["recipe_title"].match(title).length;
-                        return [count, item];
-                    });
+                        //sort the post according to amount of text in posts
+                        let answer = helper.sort(function (a, b) {
+                            return b[0] - a[0];
+                        });
+                        //console.log("answer",answer);
+                        let fix_answer = [];
 
-                    //sort the post according to amount of text in posts
-                    let answer = helper.sort(function (a, b) {
-                        return b[0] - a[0];
-                    });
-                    //console.log("answer",answer);
-                    let fix_answer = [];
-
-                    //delete the count from the posts
-                    for (let i in answer) {
-                        fix_answer.push(answer[i][1]);
+                        //delete the count from the posts
+                        for (let i in answer) {
+                            fix_answer.push(answer[i][1]);
+                        }
+                        //console.log("fix_answer",fix_answer);
+                        res.json({success: true, msg: fix_answer});
                     }
-                    //console.log("fix_answer",fix_answer);
-                    res.json({success: true, msg: fix_answer});
+                    else{
+                        res.json({success: true, msg: []});
+                    }
                 }
                 else {
                     res.json({success: true, msg: []});

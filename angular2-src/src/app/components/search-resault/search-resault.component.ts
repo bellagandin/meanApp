@@ -14,6 +14,7 @@ export class SearchResaultComponent implements OnInit {
   selectedValue;
   searchQuery;
   users=[];
+  posts=[];
 
   ngOnInit() {
     this.route.params.subscribe(params => {
