@@ -182,40 +182,30 @@ router.get('/profile/:user_name', passport.authenticate('jwt', {session: false})
 router.post('/updateProfile', (req, res, next) => {
     console.log("here", req.body.email);
     const email = req.body.email;
+    console.log("test!!!!",req.body);
     User.getUserByEmail(email, (err, user) => {
-        if (err) throw err;
-        if (!user) {
-            return res.json({success: false, msg: 'User not found'});
+        if (user==null) {
+            res.json({success: false, msg: "the user not found"});}
+        else {
+            User.updateProfile(user, req.body, (err, upd) => {//callback
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    User.getUserByEmail(req.body.email, (err, user) => {
+                        if (user === null) throw err;
+                        if (user !== null) {
+                            res.json({success: true, msg: user});
+                        }
+                    });
+                }
+            });
         }
-        User.updateProfile(user, req.body, (err, user) => {//callback
-            if (err) {
-                res.json({success: false, msg: err});
-            } else {
 
-                res.json({
-                    success: true,
-                    user: {
-                        id: user._id,
-                        first_name: user.first_name,
-                        last_name: user.last_name,
-                        email: user.email,
-                        img_url: user.img_url,
-                        gender: user.gender,
-                        birthday: user.birthday,
-                        self_description: user.self_description,
-                        followers: user.followers,
-                        liked_posts: user.liked_posts,
-                        rate: user.rate,
-
-                    }
-                });
-            }
-
-        });
     });
 
-
 });
+
+
 
 router.post('/getMyPost', function (req, res) {
 
@@ -389,7 +379,23 @@ router.post('/upload/:user_id', function (req, res) {
                         res.json({success: false, msg: err});
                     }
                     else {
-                        res.json({success: true, msg: req.files[0].path});
+                        res.json({
+                            success: true,
+                            msg: {
+                                id: user._id,
+                                first_name: user.first_name,
+                                last_name: user.last_name,
+                                email: user.email,
+                                img_url: req.files[0].path,
+                                gender: user.gender,
+                                birthday: user.birthday,
+                                self_description: user.self_description,
+                                followers: user.followers,
+                                liked_posts: user.liked_posts,
+                                rate: user.rate,
+                            }
+                        });
+                        //res.json({success: true, msg: req.files[0].path});
                     }
                 });
             }

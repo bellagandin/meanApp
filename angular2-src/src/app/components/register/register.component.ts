@@ -78,6 +78,9 @@ export class RegisterComponent implements OnInit {
           if (data.success) {
             console.log('send amit updateProfile ');
             this.sendMessage('profile');
+            console.log("1",data.msg);
+            localStorage.setItem('user',JSON.stringify(data.msg));
+            console.log("2",JSON.stringify(data.msg));
             this.flasher.show("You are now update your profile", {cssClass: 'alert-success', timeout: 3000});
             // this.router.navigate(['/']);
             this.toUpdate();

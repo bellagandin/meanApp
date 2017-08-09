@@ -11,6 +11,7 @@ import {AppConfig} from "../../shared/AppConfig";
 import {FlashMessagesService} from 'angular2-flash-messages';
 import {Server} from "../../services/socket.service";
 import {getPostsService} from '../../services/getPosts.service'
+import {userInfo} from "os";
 
 @Component({
   selector: 'app-profile',
@@ -112,9 +113,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
         profile => {
           console.log("the users",profile.user);
           console.log("me",this.auth.getLogoedInUser());
-          if (this.auth.getLogoedInUser()["followings"].indexOf(profile.user["id"])>-1) {
-            this.follow=true;
+          if(this.auth.getLogoedInUser()["followings"]!=[]) {
+            if (this.auth.getLogoedInUser()["followings"].indexOf(profile.user["id"]) > -1) {
+              this.follow = true;
 
+            }
           }
         },
         err => {
@@ -148,7 +151,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         .post('http://127.0.0.1:3001/users/upload/' + this.user["id"], formData).map((res: Response) => res.json()).subscribe(
         //map the success function and alert the response
         (success) => {
+          console.log(success.msg);
           this.sendMessage('profile');
+          localStorage.setItem('user',JSON.stringify(success.msg));
           this.showInput = false;
         },
         (error) => alert(error))

@@ -17,6 +17,7 @@ export class PostComponent implements OnInit {
   api=AppConfig.API_ENDPOINT;
   myImg=this.auth.getLoggedInUser().img_url;
   commentIn: String;
+  like:boolean=false;
 
 
   description: Array<string>=[];
@@ -24,9 +25,16 @@ export class PostComponent implements OnInit {
   constructor(private auth: AuthenticateService,
               private getP: getPostsService) {}
     ngOnInit() {
-      this.showPost=false;
+      this.showPost = false;
       console.log(this.thisPost.comments);
+      console.log(this.auth.getLogoedInUser()["liked_posts"]);
+       if (this.auth.getLogoedInUser()["liked_posts"] !== []) {
+        if (this.auth.getLogoedInUser()["liked_posts"].indexOf(Post["id"]) > -1) {
 
+          this.like = true;
+          console.log(this.like);
+        }
+      }
     }
 
 private showContent(){
