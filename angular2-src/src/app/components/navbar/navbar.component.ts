@@ -34,18 +34,8 @@ export class NavbarComponent implements OnInit {
     return JSON.parse(localStorage.getItem('user'));
   }
   search(){
-    console.log(this.selectedValue,this.searchQuery);
-    let send = {type:this.selectedValue, value:this.searchQuery};
-    this.http
-    //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-      .post('http://127.0.0.1:3001/users/search', send).map((res: Response) => res.json()).subscribe(
-      //map the success function and alert the response
-      (success) => {
-        console.log(success);
-       // this.sendMessage('profile');
-      },
-      (error) => alert(error))
-    this.router.navigate(['searchResault']);
+
+    this.router.navigate(['searchResault',this.searchQuery,this.selectedValue]);
   }
 
 }

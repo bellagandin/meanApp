@@ -218,3 +218,6 @@ module.exports.DecRate = function (user, callback) {
     user.update({$set: UpdateData}, callback);
 };
 
+module.exports.findUserRegex = function (user, callback) {
+    User.find({user_name:{$regex:user}},callback);
+};

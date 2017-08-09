@@ -420,11 +420,12 @@ router.post("/search", (req, res) => {
             let value = req.body.value;
             if (value != null) {
                 console.log("start search");
-                User.getUserByUserName(value, (err, user) => {
+                User.findUserRegex(value, (err, users) => {
                     if (err) {
                         res.json({success: false, msg: err});
                     } else {
-                        res.json({success: true, msg: user});
+                        console.log("user",users);
+                        res.json({success: true, msg: users});
                     }
                 });
             }
