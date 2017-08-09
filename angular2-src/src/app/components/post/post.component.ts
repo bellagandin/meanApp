@@ -15,11 +15,11 @@ export class PostComponent implements OnInit {
   postDescription: Array<String>=[];
   api=AppConfig.API_ENDPOINT;
   myImg=this.auth.getLoggedInUser().img_url;
-  
-  
+
+
   description: Array<string>=[];
   showPost: boolean;
-  constructor(private auth: AuthenticateService) {}  
+  constructor(private auth: AuthenticateService) {}
     ngOnInit() {
       this.showPost=false;
       console.log(this.myImg)
@@ -32,5 +32,8 @@ private hideContent(){
   this.showPost=false;
 }
 
-  
+public editLike(){
+
+}
+
 }

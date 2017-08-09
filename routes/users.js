@@ -451,7 +451,7 @@ router.post("/search", (req, res) => {
                             (post["instructions"].forEach(function (entry) {
                                 entry["step"]["ins"].includes(text);
                             }))
-                        ||(post["recipe_title"].includes(title)))
+                        ||(post["recipe_title"].includes(text)))
                     });
                     console.log(final_result);
                     res.json(final_result);
