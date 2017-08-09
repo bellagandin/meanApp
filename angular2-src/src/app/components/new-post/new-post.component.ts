@@ -12,6 +12,7 @@ import {PublishPostService} from '../../services/publish-post.service'
 export class NewPostComponent implements OnInit {
     public myForm: FormGroup;
     public pics=[];
+    public ings=[];
 
     constructor(private _fb: FormBuilder,
                 private publisher:PublishPostService,
@@ -48,7 +49,8 @@ export class NewPostComponent implements OnInit {
     initIng() {
         return this._fb.group({
             name: ['', Validators.required],
-            amount: ['']
+            amount: [''],
+            unit:['']
         });
     }
 
@@ -100,6 +102,10 @@ export class NewPostComponent implements OnInit {
         for(var i=0;i<formPost.Steps.length;i++){
             formPost.Steps[i].stepNumber=i+1;
         }
+        for(var j=0;j<formPost.ingridients.length;j++){
+            this.ings.push({name:formPost.ingridients[j].name,
+            amount:formPost.ingridients[j].amount+' '+formPost.ingridients[j].unit})
+        }
         console.log("thisUser",thisUser);
         let post={
             time:new Date(),
@@ -112,7 +118,7 @@ export class NewPostComponent implements OnInit {
             user_img:thisUser.img_url,
             description:formPost.description,
             co_author: [],
-            ingredients: formPost.ingridients,
+            ingredients: this.ings,
             instructions: formPost.Steps,
             user_name : thisUser.user_name,
 

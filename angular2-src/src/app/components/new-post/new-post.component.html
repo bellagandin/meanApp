@@ -30,16 +30,24 @@
               <span class="glyphicon glyphicon-remove pull-right" *ngIf="myForm.controls.ingridients.controls.length > 1" (click)="removeIng(i)"></span>
             </div>
             <div class="panel-body" [formGroupName]="i">
-              <div class="form-group col-xs-6">
+              <div class="form-group col-xs-4">
                 <label>name</label>
                 <input type="text" class="form-control" formControlName="name">
                 <small [hidden]="myForm.controls.ingridients.controls[i].controls.name.valid" class="text-danger">
                     at least 1 ingridient  is required
                 </small>
               </div>
-              <div class="form-group col-xs-6">
+              <div class="form-group col-xs-4">
                 <label>amount</label>
-                <input type="text" class="form-control" formControlName="amount">
+                <input type="number" class="form-control" formControlName="amount">
+              </div>
+               <div class="form-group col-xs-4">
+                <select class="form-control" formControlName="unit">
+                  <option value="gr">gr</option>
+                  <option value="Cup">Cup</option>
+                  <option value="Spoon">Spoon</option>
+                  <option value="TeaSpoon">TeaSpoon</option>
+                </select>
               </div>
             </div>
           </div>
