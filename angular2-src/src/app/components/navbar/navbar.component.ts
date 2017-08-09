@@ -31,6 +31,7 @@ export class NavbarComponent implements OnInit {
     return false;
   }
   getLoggedInUSer(){
+    console.log("help!!!32425!",localStorage.getItem('user'));
     return JSON.parse(localStorage.getItem('user'));
   }
   search(){
