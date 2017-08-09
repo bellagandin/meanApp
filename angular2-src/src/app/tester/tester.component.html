@@ -1,1 +1,113 @@
-<ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="margin-20">
+        <h4>Add Post</h4>
+      </div>
+      <form [formGroup]="myForm" novalidate (ngSubmit)="publish(myForm)" class="form-inline">
+        <div class="container">
+            <div class="row" style="padding: 10px;">
+                <div class="col-md-6 form-group">
+                    <label>Title:</label>
+                    <input type="text" class="form-control" id="title" formControlName="recepie_title">
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row" style="padding:20px">
+            <h5 ><strong>Description:</strong></h5>
+            <textarea class="description" name="description" formControlName="description" style="width:50%;" ></textarea>
+          
+        </div>
+        <hr>
+        <!--addresses-->
+        <div formArrayName="ingridients">
+            <h3> Add Ingridients</h3>
+          <div *ngFor="let ing of myForm.controls.ingridients.controls; let i=index" class="panel panel-default">
+            <div class="panel-heading">
+              <span>Ingridient {{i + 1}}</span>
+              <span class="glyphicon glyphicon-remove pull-right" *ngIf="myForm.controls.ingridients.controls.length > 1" (click)="removeIng(i)"></span>
+            </div>
+            <div class="panel-body" [formGroupName]="i">
+              <div class="form-group col-xs-6">
+                <label>name</label>
+                <input type="text" class="form-control" formControlName="name">
+                <small [hidden]="myForm.controls.ingridients.controls[i].controls.name.valid" class="text-danger">
+                    at least 1 ingridient  is required
+                </small>
+              </div>
+              <div class="form-group col-xs-6">
+                <label>amount</label>
+                <input type="text" class="form-control" formControlName="amount">
+              </div>
+            </div>
+          </div>
+        </div>
+            <div class="margin-20">
+          <a (click)="addIng()" style="cursor: default">
+            Add another ingridient +
+          </a>
+        </div>
+
+
+        <br>
+        <div formArrayName="Steps">
+            <h3> Add Steps</h3>
+          <div *ngFor="let st of myForm.controls.Steps.controls; let i=index" class="panel panel-default">
+            <div class="panel-heading">
+              <span>Step  {{i + 1}}</span>
+              <span class="glyphicon glyphicon-remove pull-right" *ngIf="myForm.controls.Steps.controls.length > 1" (click)="removeStep(i)"></span>
+            </div>
+            <div class="panel-body" [formGroupName]="i">
+              <div class="form-group col-xs-6">
+                <textarea rows=1 type="text" class="form-control" formControlName="description"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+
+        <div class="margin-20">
+          <a (click)="addStep()" style="cursor: default">
+            Add another Step +
+          </a>
+        </div>
+
+        
+        <br>
+        <div formArrayName="photos">
+            <h3> Add Photos</h3>
+          <div *ngFor="let im of myForm.controls.photos.controls; let i=index" class="panel panel-default">
+            <div class="panel-heading">
+              <span>image  {{i + 1}}</span>
+              <span class="glyphicon glyphicon-remove pull-right" *ngIf="myForm.controls.photos.controls.length > 1" (click)="removeImg(i)"></span>
+            </div>
+            <div class="panel-body" [formGroupName]="i">
+              <div class="form-group col-xs-6">
+                <input type="file" class="form-control" formControlName="img" id={{setId(i)}} (change)="onChange($event,i)">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="margin-20">
+          <a (click)="addImg()" style="cursor: default">
+            Add another image +
+          </a>
+        </div>
+
+        <div class="margin-20">
+          <button type="submit" class="btn btn-primary pull-right" [disabled]="!myForm.valid">Submit</button>
+        </div>
+        <div class="clearfix"></div>
+
+        <div class="margin-20">
+          <div>myForm details:-</div>
+          <pre>Is myForm valid?: <br>{{myForm.valid | json}}</pre>
+          <pre>form value: <br>{{myForm.value | json}}</pre>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 //modules imports
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule  } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {RouterModule,Routes} from '@angular/router';
 import {FlashMessagesModule} from 'angular2-flash-messages'
@@ -27,16 +27,14 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import {AuthGuard} from './guards/auth.guard';
 import { PostComponent } from './components/post/post.component';
-import { Carousel } from './components/image_carusal/carousel/carousel.component';
 import { TesterComponent } from './tester/tester.component';
 import {changeBG} from './services/changeBG.service';
 import { SearchResaultComponent } from './components/search-resault/search-resault.component';
 import { UserResaultComponent } from './components/user-resault/user-resault.component';
 import { NewPostComponent } from './components/new-post/new-post.component'
 import {PublishPostService} from './services/publish-post.service';
-import { IngridentComponent } from './components/ingrident/ingrident.component';
 import { CommentComponent } from './components/comment/comment.component';
-import { ImageSliderComponent } from './components/image-slider/image-slider.component'
+import { ImageSliderComponent } from './components/image-slider/image-slider.component';
 
 const appRoutes: Routes = [
   {path:'',component:HomeComponent},
@@ -45,7 +43,7 @@ const appRoutes: Routes = [
   {path:'dashboard',component:DashboardComponent, canActivate:[AuthGuard]},
   {path:'profile/:username',component:ProfileComponent,canActivate:[AuthGuard]},
   {path:'post',component:PostComponent},
-  {path:'test',component:UserResaultComponent},
+  {path:'test',component:TesterComponent},
   {path:'searchResault/:searchQuery/:selectedValue',component:SearchResaultComponent},
   {path:'newPost',component:NewPostComponent,canActivate:[AuthGuard]}
 
@@ -65,9 +63,9 @@ const appRoutes: Routes = [
     SearchResaultComponent,
     UserResaultComponent,
     NewPostComponent,
-    IngridentComponent,
     CommentComponent,
-    ImageSliderComponent
+    ImageSliderComponent,
+
 
 
   ],
@@ -80,7 +78,8 @@ const appRoutes: Routes = [
     MomentModule,
     Ng2UploaderModule,
     CarouselModule.forRoot(),
-    NgxGalleryModule
+    NgxGalleryModule,
+    ReactiveFormsModule
 
 
 
