@@ -10,7 +10,9 @@
             <div align="center">
               <input *ngIf="showInput" type="file" name="myPicture" id="myPicture"/>
               <br>
+              <span *ngIf="auth.checkLogoedInUser(user.user_name)">
               <button *ngIf="!showInput" class="btn-primary" (click)="changePic()">change picture</button>
+              </span>
               <button *ngIf="showInput" class="btn-primary" (click)="upload()">Upload</button>
             </div>
             <div class="media-body">
@@ -68,7 +70,7 @@
         </div>
       </div>
       <!-- here will insert the post compnents. -->
-    
+
       <!--<button type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>-->
       <div *ngIf="edit">
           <app-register (updt)="ischildUpdate($event)" [edit]=true [firstName]="user.first_name" [lastName]="user.last_name"

@@ -172,7 +172,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.follow=true;
         this.sendMessage('profile');
         localStorage.setItem('user',JSON.stringify(success.msg));
-        this.follow=false;
+        this.follow=true;
       },
       (error) => alert(error))
 

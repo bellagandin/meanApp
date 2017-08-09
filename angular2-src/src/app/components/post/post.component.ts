@@ -82,6 +82,7 @@ public updateComment(){
       console.log("return post is");
       console.log(data);
       this.thisPost=data.msg;
+      this.sendMessage('post');
     }
   )
 }

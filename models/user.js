@@ -134,9 +134,9 @@ module.exports.removePost = function (user, post_id, callback) {
 
 module.exports.addFollowing = function (user, following, callback) {
 
-
     if (user.followings.indexOf(following._id) === -1) {
         let updateData = {followings: user.followings.concat(following._id)};
+        console.log("updateData",updateData);
         user.update({$set: updateData}, callback);
     }
     else {

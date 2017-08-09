@@ -100,12 +100,12 @@ export class NewPostComponent implements OnInit {
         for(var i=0;i<formPost.Steps.length;i++){
             formPost.Steps[i].stepNumber=i+1;
         }
-
+        console.log("thisUser",thisUser);
         let post={
             time:new Date(),
             first_name:thisUser.first_name,
             last_name:thisUser.last_name,
-            user_id:thisUser.id,
+            user_id:thisUser._id,
             recipe_title:formPost.recepie_title,
             category:"desserts",
             main_img:"",
@@ -113,13 +113,15 @@ export class NewPostComponent implements OnInit {
             description:formPost.description,
             co_author: [],
             ingredients: formPost.ingridients,
-            instructions: formPost.Steps
-        }
+            instructions: formPost.Steps,
+            user_name : thisUser.user_name,
+
+        };
         console.log(post);
 
          this.publisher.publish(post).subscribe(
       data=>{
-        console.log(data.msg.post_id);
+        console.log(data,data.msg.post_id);
         this.addPhotos(data.msg.post_id);
       },
       err=>{

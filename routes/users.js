@@ -35,7 +35,7 @@ router.post('/register', (req, res, next) => {
                             res.json({success: false, msg: err});
                         } else {
                             let answer = {
-                                user_id: user._id,
+                                _id: user._id,
                                 first_name: user.first_name,
                                 last_name: user.last_name,
                                 email: user.email,
@@ -123,7 +123,7 @@ router.post('/authenticate', (req, res, next) => {
                     success: true,
                     token: 'JWT ' + token,
                     user: {
-                        id: user._id,
+                        _id: user._id,
                         first_name: user.first_name,
                         last_name: user.last_name,
                         email: user.email,
@@ -159,7 +159,7 @@ router.get('/profile/:user_name', passport.authenticate('jwt', {session: false})
         res.json({
             success: true,
             user: {
-                id: user._id,
+                _id: user._id,
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,
@@ -389,7 +389,7 @@ router.post('/upload/:user_id', function (req, res) {
                         res.json({
                             success: true,
                             msg: {
-                                id: user._id,
+                                _id: user._id,
                                 first_name: user.first_name,
                                 last_name: user.last_name,
                                 email: user.email,
@@ -577,7 +577,7 @@ const add_following_function = function (user, following_email, res) {
             res.json({success: false, msg: err});
         }
         else {
-            User.addFollowing(user, following_user, (err, user2) => {//callback
+            User.addFollowing(user, following_user, (err, udp) => {//callback
                     if (err) {
                         res.json({success: false, msg: err});
                     }
@@ -595,12 +595,21 @@ const add_following_function = function (user, following_email, res) {
 
 var add_follower_function = function (user, following_user, res) {
     //add follower
+    console.log("kepp",user);
     User.addFollower(user, following_user, (err, udp) => {//callback
             if (err) {
                 res.json({success: false, msg: err});
             }
             else {
-                res.json({success: true, msg: user});
+                User.getUserById(user._id,(err, newUser) =>
+                {//callback
+                    if (err) {
+                        res.json({success: false, msg: err});
+                    }
+                    else {
+                        res.json({success: true, msg: newUser});
+                    }
+                });
             }
         },//end callback
         (() => {
