@@ -2,6 +2,7 @@ import { AuthenticateService } from '../../services/authenticate.service';
 import { Component, OnInit,Input } from '@angular/core';
 import {Post} from '../../shared/post'
 import {AppConfig} from '../../shared/AppConfig'
+import {getPostsService} from '../../services/getPosts.service'
 
 
 @Component({
@@ -15,20 +16,16 @@ export class PostComponent implements OnInit {
   postDescription: Array<String>=[];
   api=AppConfig.API_ENDPOINT;
   myImg=this.auth.getLoggedInUser().img_url;
-  like:Boolean;
+  commentIn: String;
 
 
   description: Array<string>=[];
   showPost: boolean;
-  constructor(private auth: AuthenticateService) {}
+  constructor(private auth: AuthenticateService,
+              private getP: getPostsService) {}
     ngOnInit() {
       this.showPost=false;
-      console.log(this.myImg);
-
-      if(this.auth.getLogoedInUser()["likes"].indexOf(this.thisPost["id"])>0)
-      {
-        this.like=false;
-      }
+      console.log(this.thisPost.comments);
 
     }
 
@@ -39,8 +36,28 @@ private hideContent(){
   this.showPost=false;
 }
 
-public editLike(){
+addComment(){
+  if(this.commentIn){
+    let usr=this.auth.getLoggedInUser();
+    let comment={
+      post_id: this.thisPost._id,
+      first_name:usr.first_name,
+      last_name: usr.last_name,
+      img_url:this.myImg,
+      content:this.commentIn,
+      user_name:usr.user_name
+    }
 
+    this.getP.addComment(comment).subscribe(
+      data=>{
+        console.log(data);
+      }
+    )
+
+
+
+  }
 }
+
 
 }

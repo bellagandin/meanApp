@@ -112,12 +112,13 @@ router.post("/addComment", (req, res) => {
         } else {
             let comment = {
                 comment_id: post.id_generator,
+                time:req.body.time,
                 content: req.body.content,
-                time: req.body.time,
                 first_name: req.body.first_name,
-                last_name: req.body.last_name,
-                img_url: req.body.img_url,
-                user_name: req.body.username,
+                last_name:req.body.last_name,
+                img_url:req.body.img_url,
+                usr_name:req.body.usr_name,
+                likes: 0
             };
             Post.addCommentToPost(comment, post, (err, udp) => {
                 if (udp.nModified === 0 || err) {
