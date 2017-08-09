@@ -37,7 +37,7 @@
 .navbar-nav.navbar-right:last-child {
     margin-right: 15px !important;
 }
-.navbar-footer 
+.navbar-footer
 {
     background-color:#DDD;
 }
@@ -60,11 +60,11 @@ overflow: hidden;
     margin-left:58px;
 }
 #Mainimg{
-    height: 25%; 
-    width: 100%; 
+    height: 25%;
+    width: 100%;
     object-fit: contain;
     border: 3px solid black;
-    
+
 }
 
 
@@ -72,6 +72,10 @@ overflow: hidden;
     margin-top: 3px;
     margin-left: 25px;
     position: absolute;
+}
+
+#like{
+  color: deeppink;
 }
 
 body {

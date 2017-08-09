@@ -23,6 +23,8 @@ export class PostComponent implements OnInit {
     ngOnInit() {
       this.showPost=false;
       console.log(this.myImg)
+
+
     }
 
 private showContent(){
