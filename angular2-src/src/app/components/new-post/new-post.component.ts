@@ -21,7 +21,7 @@ export class NewPostComponent implements OnInit {
   stepN:number=1;
   stepsN: Array<number>=[];
   imageN: number = 1;
-  
+
   //post details
   recipe_title: String;
   category: String;
@@ -56,7 +56,7 @@ export class NewPostComponent implements OnInit {
   public removeIng(ing){
   var temp = this.ingridients.indexOf(ing);
   this.ingridients.splice(temp,1);
-  
+
 }
   public removeImg(img){
     var temp = this.images.indexOf(img);
@@ -65,7 +65,7 @@ export class NewPostComponent implements OnInit {
     for(var i=0;i < this.images.length;i++){
       this.imageId[i]="photo"+(i+1);
     }
-    
+
   }
 
     public addPhoto(){
@@ -82,11 +82,11 @@ export class NewPostComponent implements OnInit {
 
     return this.images.indexOf(img);
   }
-  
-  
+
+
   public publishPost(){
     let thisUser=JSON.parse(localStorage.getItem('user'));
-    
+
     let post={
       time:new Date(),
       first_name:thisUser.first_name,
@@ -99,7 +99,8 @@ export class NewPostComponent implements OnInit {
       description:this.description,
       co_author: [],
       ingredients: this.ingridients,
-      instructions: this.steps
+      instructions: this.steps,
+      user_name: thisUser.user_name,
     }
     console.log(post);
     this.publisher.publish(post).subscribe(
@@ -116,9 +117,9 @@ export class NewPostComponent implements OnInit {
 trackByFn(index: any, item: any) {
    return index;
 }
-  
-  
-  
+
+
+
   public addPhotos(postId:String){
 
     let formData = new FormData();

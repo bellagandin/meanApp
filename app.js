@@ -35,14 +35,10 @@ io.on('connection', (socket) => {
         io.emit('profile','');
     });
 
-    socket.on('updateProfile', () => {
-        io.emit('updateProfile');
+    socket.on('post', () => {
+        io.emit('post','');
     });
 
-    socket.on('follow', () => {
-        console.log("got message");
-        io.emit('follow');
-    });
 
     socket.on('posts', () => {
         console.log("got message");

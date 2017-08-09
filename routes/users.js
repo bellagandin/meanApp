@@ -314,7 +314,14 @@ router.post("/removeFollowing", function (req, res) {
                                                 res.json({success: false, msg: err});
                                             }
                                             else {
-                                                res.json({success: true, msg: user2});
+                                                User.getUserByUserName(req.body.username,  (err, answer) => {//callback
+                                                    if (err) {
+                                                        res.json({success: false, msg: err});
+                                                    }
+                                                    else {
+                                                        res.json({success: true, msg: answer});
+                                                    }
+                                                });
                                             }
                                         },//end callback
                                         (() => {
@@ -386,7 +393,7 @@ router.post('/upload/:user_id', function (req, res) {
                                 first_name: user.first_name,
                                 last_name: user.last_name,
                                 email: user.email,
-                                img_url: req.files[0].path,
+                                img_url: path[1],
                                 gender: user.gender,
                                 birthday: user.birthday,
                                 self_description: user.self_description,
@@ -583,7 +590,7 @@ const add_following_function = function (user, following_email, res) {
 
 var add_follower_function = function (user, following_user, res) {
     //add follower
-    User.addFollower(user, following_user, (err, user) => {//callback
+    User.addFollower(user, following_user, (err, udp) => {//callback
             if (err) {
                 res.json({success: false, msg: err});
             }

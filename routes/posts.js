@@ -18,10 +18,11 @@ router.post('/createPost', (req, res, next) => {
         user_img:req.body.user_img,
         category: req.body.category,
         co_author: req.body.co_author,
-        main_img: '',//TODO: "add img"
+        main_img: '',
         ingredients: req.body.ingredients,
         description: req.body.description,
         instructions: req.body.instructions,
+        user_name: req.body.user_name,
         photos: [],
         likes: [],
         comments: [],
@@ -123,7 +124,7 @@ router.post("/addComment", (req, res) => {
                 first_name: req.body.first_name,
                 last_name:req.body.last_name,
                 img_url:req.body.img_url,
-                usr_name:req.body.usr_name,
+                user_name:req.body.user_name,
                 likes: 0
             };
             Post.addCommentToPost(comment, post, (err, udp) => {
@@ -186,7 +187,7 @@ router.post("/editComment", (req, res) => {
 
 router.post("/likedPost", (req, res) => {
     const post_id = req.body.post_id;
-    const user_email = req.body.user_email;
+    const username = req.body.user_name;
     console.log("post_id",post_id);
     //Get object post
     Post.getPostById(post_id, (err, post) => {
@@ -194,8 +195,9 @@ router.post("/likedPost", (req, res) => {
             res.json({success: false, msg: err});
         } else {
             //get object user
-            User.getUserByEmail(user_email, (err, user) => {
-                if (err) {
+            User.getUserByUserName(username, (err, user) => {
+                if (user===null||err) {
+                    console.log("22",username);
                     res.json({success: false, msg: err});
                 } else {
                     //add like to post
@@ -218,7 +220,14 @@ router.post("/likedPost", (req, res) => {
                                                 if (err) {
                                                     res.json({success: false, msg: err});
                                                 } else {
-                                                    res.json({success: true, msg: post});
+                                                    User.getUserByUserName(username, (err, user) => {
+                                                        if (user === null || err) {
+                                                            console.log("11");
+                                                            res.json({success: false, msg: "the user not found"});
+                                                        } else {
+                                                            res.json({success: true, msg: user});
+                                                        }
+                                                    });
                                                 }
                                             });
                                         }
@@ -238,16 +247,19 @@ router.post("/likedPost", (req, res) => {
 
 router.post("/disLike", (req, res) => {
     const post_id = req.body.post_id;
-    const user_email = req.body.user_email;
+    const username = req.body.user_name;
     //Get object post
     Post.getPostById(post_id, (err, post) => {
-        if (err) {
+        if (post===null||err) {
+            console.log("2");
             res.json({success: false, msg: err});
         } else {
             //get object user
-            User.getUserByEmail(user_email, (err, user) => {
-                if (err) {
-                    res.json({success: false, msg: err});
+            console.log("username",username);
+            User.getUserByUserName(username, (err, user) => {
+                if (user===null||err) {
+                    console.log("1");
+                    res.json({success: false, msg: "the user not found"});
                 } else {
                     //add like to post
                     Post.removeLike(post, user, (err, _) => {
@@ -258,7 +270,14 @@ router.post("/disLike", (req, res) => {
                                 if (err) {
                                     res.json({success: false, msg: err});
                                 } else {
-                                    res.json({success: true, msg: post});
+                                    User.getUserByUserName(username, (err, user) => {
+                                        if (user === null || err) {
+                                            console.log("11");
+                                            res.json({success: false, msg: "the user not found"});
+                                        } else {
+                                            res.json({success: true, msg: user});
+                                        }
+                                    });
                                 }
                             });
                         }

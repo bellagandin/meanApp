@@ -192,12 +192,13 @@ module.exports.addLikeToPost = function (post, user, callback) {
 };
 
 module.exports.removeLikeFromPost = function (post, user, callback) {
-    let newCommentList = post.liked_posts.filter((item) => {
-        return item!== post._id;
+    let newLikesList = user.liked_posts.filter((item) => {
+        //console.log(item,post._id,''+post._id,item!= ''+post._id);
+        return item!= ''+post._id;
     });
-    console.log("newCommentList",newCommentList);
+    console.log("newLikesList",newLikesList);
 
-    let upd = {liked_posts:newCommentList};
+    let upd = {liked_posts:newLikesList};
     console.log("upd",upd);
     user.update({$set: upd}, callback);
 };
