@@ -22,17 +22,18 @@ router.post('/register', (req, res, next) => {
         followers: [],
         posts: [],
         liked_posts: [],
-        followings: []
+        followings: [],
+        rate: 0,
     });
     // Check if there is a user with the same email
     User.getUserByEmail(req.body.email, (err, user) => {//callback
         if (user === null) {
             User.getUserByUserName(req.body.user_name, (err, user) => {//callback
-                if (user===null) {
+                if (user === null) {
                     User.addUser(newUser, (err, user) => {//callback
                         if (err) {
-                        res.json({success: false, msg: err});
-                         } else {
+                            res.json({success: false, msg: err});
+                        } else {
                             let answer = {
                                 user_id: user._id,
                                 first_name: user.first_name,
@@ -46,13 +47,13 @@ router.post('/register', (req, res, next) => {
                                 followers: user.followers,
                                 liked_posts: user.liked_posts,
                                 followings: user.followings,
+                                rate: 0,
                             };
                             res.json({success: true, msg: answer});
                         }
                     });
                 }
-                else
-                {
+                else {
                     res.json({success: false, msg: "There is a user with the same username"});
                 }
 
@@ -133,7 +134,8 @@ router.post('/authenticate', (req, res, next) => {
                         self_description: user.self_description,
                         followers: user.followers,
                         liked_posts: user.liked_posts,
-                        followings: user.followings
+                        followings: user.followings,
+                        rate: user.rate
                     }
                 });
             } else {
@@ -168,7 +170,8 @@ router.get('/profile/:user_name', passport.authenticate('jwt', {session: false})
                 self_description: user.self_description,
                 followers: user.followers,
                 liked_posts: user.liked_posts,
-                followings: user.followings
+                followings: user.followings,
+                rate: user.rate
             }
         });
     });
@@ -177,7 +180,7 @@ router.get('/profile/:user_name', passport.authenticate('jwt', {session: false})
 
 // Update Profile
 router.post('/updateProfile', (req, res, next) => {
-    console.log("here",req.body.email);
+    console.log("here", req.body.email);
     const email = req.body.email;
     User.getUserByEmail(email, (err, user) => {
         if (err) throw err;
@@ -201,7 +204,9 @@ router.post('/updateProfile', (req, res, next) => {
                         birthday: user.birthday,
                         self_description: user.self_description,
                         followers: user.followers,
-                        liked_posts: user.liked_posts
+                        liked_posts: user.liked_posts,
+                        rate: user.rate,
+
                     }
                 });
             }
@@ -215,7 +220,7 @@ router.post('/updateProfile', (req, res, next) => {
 router.post('/getMyPost', function (req, res) {
 
     User.getUserById(req.body.user_id, (err, user) => {//callback
-        if (user===null || err) {
+        if (user === null || err) {
             res.json({success: false, msg: err});
         }
         else {
@@ -299,7 +304,7 @@ router.post("/removeFollowing", function (req, res) {
     console.log(username);
     let following_email = req.body.following_email;
     User.getUserByUserName(username, (err, user) => {//find user
-        if (user===null || err) {
+        if (user === null || err) {
             res.json({success: false, msg: err});
         }
         else {
@@ -308,7 +313,7 @@ router.post("/removeFollowing", function (req, res) {
                         res.json({success: false, msg: err});
                     }
                     else {
-                        console.log(user,following_email);
+                        console.log(user, following_email);
                         User.removeFollowing(user, following_user, (err, _) => {//callback
                                 if (err) {
                                     res.json({success: false, msg: err});
@@ -346,19 +351,19 @@ router.post("/removeFollowing", function (req, res) {
 router.post('/upload/:user_id', function (req, res) {
     console.log("start");
     console.log(req.param('user_id'));
-    let postDest='./public/img/'+req.param('user_id');
-    console.log("postDest",postDest);
+    let postDest = './public/img/' + req.param('user_id');
+    console.log("postDest", postDest);
     let storage = multer.diskStorage({
         destination: postDest,
         filename: function (req, file, cb) {
             let extArray = file.mimetype.split("/");
             let extension = extArray[extArray.length - 1];
-            cb(null, file.fieldname + '-' + Date.now()+ '.' +extension);
+            cb(null, file.fieldname + '-' + Date.now() + '.' + extension);
         }
     });
 
 
-    let upload = multer({storage: storage}).array('photos',10);
+    let upload = multer({storage: storage}).array('photos', 10);
     var path = '';
     upload(req, res, function (err) {
         if (err) {
@@ -366,7 +371,7 @@ router.post('/upload/:user_id', function (req, res) {
             console.log(err);
             res.status(422).send("an Error occured")
         }
-        console.log("req",req.files);
+        console.log("req", req.files);
         const user_id = req.param('user_id');
 
         User.getUserById(user_id, (err, user) => {//callback
@@ -377,19 +382,18 @@ router.post('/upload/:user_id', function (req, res) {
 
                 let path = req.files[0].path.split("public");
                 console.log(path);
-                console.log("path",path[1]);
+                console.log("path", path[1]);
                 let update = {"img_url": path[1]};
-                User.updateProfile(user,update, (err, _) => {//callback
+                User.updateProfile(user, update, (err, _) => {//callback
                     if (err) {
                         res.json({success: false, msg: err});
                     }
                     else {
-                        res.json({success: true, msg:req.files[0].path });
+                        res.json({success: true, msg: req.files[0].path});
                     }
                 });
             }
         });
-
 
 
     });
@@ -421,18 +425,33 @@ router.post("/search", (req, res) => {
 
                     let final_result = arr.filter((post) => {
                         return (post["recipe_title"].includes(title))
-                });
-                    res.json({success: true, msg: final_result});
+                    });
+                    //console.log("final_result",final_result);
+                    //count the number of time  text in post
+                    var helper = final_result.map((item) => {
+                        let count = 0;
+                        count += item["recipe_title"].match(title).length;
+                        return [count, item];
+                    });
+
+                    //sort the post according to amount of text in posts
+                    let answer = helper.sort(function (a, b) {
+                        return b[0] - a[0];
+                    });
+                    //console.log("answer",answer);
+                    let fix_answer = [];
+
+                    //delete the count from the posts
+                    for (let i in answer) {
+                        fix_answer.push(answer[i][1]);
+                    }
+                    //console.log("fix_answer",fix_answer);
+                    res.json({success: true, msg: fix_answer});
                 }
                 else {
                     res.json({success: true, msg: []});
                 }
-                // Post.getPostsByTitle(title, (err, posts) => {
-                //     if (err) {
-                //         res.json({success: false, msg: err});
-                //     } else {
-                //         res.json({success: true, msg: posts});
-                //     }
+
             });
 
 
@@ -444,33 +463,92 @@ router.post("/search", (req, res) => {
                 let arr = result["msg"];
                 console.log("result", arr);
                 console.log('text', text);
-                if(result!=null) {
+                if (result != null) {
                     let final_result = arr.filter((post) => {
-                        return predicate(post,text)
+                        return predicate(post, text)
                     });
-                    console.log("final_result",final_result);
-
-                    var helper = final_result.map((item)=>{
+                    //console.log("final_result",final_result);
+                    //count the number of time  text in post
+                    var helper = final_result.map((item) => {
                         let count = 0;
-                        count += item["description"].match(text).length;
-                        count += item["instructions"].forEach(function (entry) {
-                            console.log("in for each",entry);
-                            entry["description"].includes(text);
+                        if (item["description"].match(text) !== null) {
+                            count += item["description"].match(text).length;
+                        }
+                        item["instructions"].forEach(function (entry) {
+                            if (entry["description"].match(text) !== null) {
+                                count += entry["description"].match(text).length;
+                            }
                         });
-                        count +=item["recipe_title"].includes(text);
-                        return [count,item];
+                        if (item["recipe_title"].match(text) !== null) {
+                            count += item["recipe_title"].match(text).length;
+                        }
+                        return [count, item];
                     });
-                    console.log(helper);
-                    res.json(final_result);
+
+                    //sort the post according to amount of text in posts
+                    let answer = helper.sort(function (a, b) {
+                        return b[0] - a[0];
+                    });
+                    //console.log("answer",answer);
+                    let fix_answer = [];
+
+                    //delete the count from the posts
+                    for (let i in answer) {
+                        fix_answer.push(answer[i][1]);
+                    }
+                    //console.log("fix_answer",fix_answer);
+
+                    //send it
+                    res.json({success: true, msg: fix_answer});
                 }
-                else{
-                    res.json({success:true, msg:[]});
+                else {
+                    res.json({success: true, msg: []});
                 }
             });
 
             break;
     }
 });
+
+router.post("/LikedPost", (req, res) => {
+    getAllPostOfFollowed(req, (result) => {
+        let arr = result["msg"];
+        console.log("result", arr);
+        let arrSorted = arr.sort(function (a, b) {
+            return b["likes"].length - a["likes"].length;
+        });
+        console.log(arrSorted);
+        res.json({success: true, msg: arrSorted});
+    });
+
+});
+
+router.post("/LikedUsers", (req, res) => {
+    const user_id = req.body.user_id;
+    User.getUserById(user_id, (err, user) => {
+        if (err) {
+            res.json({success: false, msg: err});
+        }
+        else {
+            const followings = user.followings;
+            console.log(followings);
+            User.findUser(followings, (err, docs) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                }
+                else {
+                    console.log("docs",docs);
+                    let answer = docs.sort(function (a, b) {
+                        return b.rate - a.rate;
+                    });
+                    res.json({success: true, msg: answer});
+                }
+            });
+        }
+    });
+
+});
+
 
 module.exports = router;
 
@@ -553,11 +631,11 @@ var getAllPostOfFollowed = function (req, callback) {
     });
 };
 
-var predicate = function(post,text){
+var predicate = function (post, text) {
     return ((post["description"].includes(text))
         ||
         (post["instructions"].forEach(function (entry) {
             entry["description"].includes(text);
         }))
-        ||(post["recipe_title"].includes(text)))
+        || (post["recipe_title"].includes(text)))
 };

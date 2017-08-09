@@ -54,7 +54,13 @@ router.post('/createPost', (req, res, next) => {
     });
 });
 
-
+router.post('/getSinglePost', (req, res) => {
+    const post_id = req.body.post_id;
+    Post.getPostById(post_id ,(err, post) => {
+        if (err) throw err;
+        res.json({success: true, msg: post});
+    });
+});
 
 // Update Post
 router.post('/editPost', (req, res) => {
@@ -172,9 +178,10 @@ router.post("/editComment", (req, res) => {
 router.post("/likedPost", (req, res) => {
     const post_id = req.body.post_id;
     const user_email = req.body.user_email;
+    console.log("post_id",post_id);
     //Get object post
     Post.getPostById(post_id, (err, post) => {
-        if (err) {
+        if (post === null || err) {
             res.json({success: false, msg: err});
         } else {
             //get object user
@@ -187,11 +194,27 @@ router.post("/likedPost", (req, res) => {
                         if (err) {
                             res.json({success: false, msg: err});
                         } else {
-                            User.addLikeToPost(post, user, (err, post) => {
-                                if (err) {
+                            console.log("post.user_id",post.user_id);
+                            User.getUserById(post.user_id, (err, user_post) => {
+                                if (user_post===null ||err) {
+                                    console.log("user_post",user_post);
                                     res.json({success: false, msg: err});
                                 } else {
-                                    res.json({success: true, msg: post});
+                                    console.log("user_post",user_post);
+                                    User.IncRate(user_post, (err, _) => {
+                                        if (err) {
+                                            res.json({success: false, msg: err});
+                                        } else {
+                                            User.addLikeToPost(post, user, (err, post) => {
+                                                if (err) {
+                                                    res.json({success: false, msg: err});
+                                                } else {
+                                                    res.json({success: true, msg: post});
+                                                }
+                                            });
+                                        }
+                                    });
+
                                 }
                             });
                         }
@@ -199,8 +222,10 @@ router.post("/likedPost", (req, res) => {
                 }
             });
         }
-    });
 });
+});
+
+
 
 router.post("/disLike", (req, res) => {
     const post_id = req.body.post_id;

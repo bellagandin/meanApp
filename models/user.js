@@ -49,6 +49,9 @@ const UserSchema = mongoose.Schema({
     followings: {
         type: Array,
     },
+    rate:{
+        type:Number
+    }
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);
@@ -61,6 +64,9 @@ module.exports.getFollowingsPostsId = function (FollowingsIds, callback) {
     User.find({_id: {$in: FollowingsIds}}, callback);
 };
 
+module.exports.findUser = function (posts, callback) {
+    User.find({_id: {$in: posts}}, callback);
+};
 
 module.exports.getUserByEmail = function (email, callback) {
     const query = {email: email};
@@ -190,7 +196,24 @@ module.exports.removeLikeFromPost = function (post, user, callback) {
         return item!== post._id;
     });
     console.log("newCommentList",newCommentList);
+
     let upd = {liked_posts:newCommentList};
     console.log("upd",upd);
     user.update({$set: upd}, callback);
 };
+
+
+module.exports.IncRate = function (user, callback) {
+    let newRate = user.rate+1;
+    let UpdateData = {rate:newRate};
+    console.log("upd",UpdateData);
+    user.update({$set: UpdateData}, callback);
+};
+
+module.exports.DecRate = function (user, callback) {
+    let newRate = user.rate-1;
+    let UpdateData = {rate:newRate};
+    console.log("upd",UpdateData);
+    user.update({$set: UpdateData}, callback);
+};
+
