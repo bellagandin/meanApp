@@ -107,27 +107,23 @@ router.post("/removePost", (req, res) => {
 router.post("/addComment", (req, res) => {
     const post_id = req.body.post_id;
     Post.getPostById(post_id, (err, post) => {
-        if (err) {
+        if (post===null||err) {
             res.json({success: false, msg: err});
         } else {
             let comment = {
                 comment_id: post.id_generator,
-                text: req.body.text_comment,
-                author: req.body.user_email,
+                content: req.body.content,
+                time: req.body.time,
+                first_name: req.body.first_name,
+                last_name: req.body.last_name,
+                img_url: req.body.img_url,
                 likes: 0
             };
-            Post.addCommentToPost(comment, post, (err, updatedPost) => {
-                if (err) {
+            Post.addCommentToPost(comment, post, (err, udp) => {
+                if (udp.nModified === 0 || err) {
                     res.json({success: false, msg: err});
                 } else {
-                    User.getUserByEmail(req.body.user_email, (err, user) => {
-                        if (err) {
-                            res.json({success: false, msg: err});
-                        } else {
-
-                            res.json({success: true, msg: comment});
-                        }
-                    });
+                    res.json({success: true, msg: comment});
                 }
             });
         }

@@ -421,7 +421,7 @@ router.post("/search", (req, res) => {
                     let arr = result["msg"];
 
                     let final_result = arr.filter((post) => {
-                        return (post["recipe_title"].includes(text))
+                        return (post["recipe_title"].includes(title))
                 });
                     res.json({success: true, msg: final_result});
                 }
