@@ -15,7 +15,7 @@ router.post('/register', (req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         user_name: req.body.user_name,
-        img_url: "/img/profile.png", 
+        img_url: "/img/profile.png",
         gender: req.body.gender,
         birthday: req.body.birthday,
         self_description: "",

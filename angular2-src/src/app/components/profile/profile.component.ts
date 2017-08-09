@@ -84,7 +84,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.user = profile.user;
         this.getPosts.getUserPost(profile.user.id).subscribe(
             data=>{
-              
+
               this.myPosts=data.msg;
 
             },
@@ -183,6 +183,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       (success) => {
         console.log(success);
         this.sendMessage('profile');
+        this.follow=false;
       },
       (error) => alert(error))
 
