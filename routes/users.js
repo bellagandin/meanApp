@@ -398,6 +398,7 @@ router.post('/upload/:user_id', function (req, res) {
                                 birthday: user.birthday,
                                 self_description: user.self_description,
                                 followers: user.followers,
+                                followings: user.followings,
                                 liked_posts: user.liked_posts,
                                 rate: user.rate,
                                 user_name:user.user_name,

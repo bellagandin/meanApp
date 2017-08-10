@@ -97,14 +97,14 @@ router.post('/editPost', (req, res) => {
 
 
 router.post("/removePost", (req, res) => {
-    const post_id = req.body._id;
-    const user_email = req.body.user_email;
+    const post_id = req.body.post_id;
+    const user_name = req.body.user_name;
     Post.removePost(post_id, (err, post) => {
         if (err) {
             res.json({success: false, msg: err});
         } else {
             // get object user
-            User.getUserByEmail(user_email, (err, user) => {
+            User.getUserByUserName(user_name, (err, user) => {
                 if (err) {
                     res.json({success: false, msg: err});
                 } else {
@@ -273,7 +273,7 @@ router.post("/disLike", (req, res) => {
                     console.log("1");
                     res.json({success: false, msg: "the user not found"});
                 } else {
-                    //add like to post
+                    //remove like from post
                     Post.removeLike(post, user, (err, _) => {
                         if (err) {
                             res.json({success: false, msg: err});

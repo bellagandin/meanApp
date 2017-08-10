@@ -43,6 +43,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
               private flasher: FlashMessagesService,
               private server: Server,
               private route: ActivatedRoute,
+              public flash : FlashMessagesService,
               private getPosts: getPostsService) {
   }
 
@@ -110,6 +111,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     //     console.log(this.currPost);
     //   });
 
+
+    console.log("check for edit",this.edit);
     //check if I follow the user
     console.log("in profile",this.desiredUser);
     if (!this.auth.checkLogoedInUser(this.desiredUser)) {
@@ -157,7 +160,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         //map the success function and alert the response
         (success) => {
           console.log(success.msg);
-          this.sendMessage('profile');
+            this.sendMessage('profile');
           if(success.msg!=null) {
             localStorage.setItem('user', JSON.stringify(success.msg));
           }
@@ -177,12 +180,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
       //map the success function and alert the response
       (success) => {
         console.log(success);
-        this.follow=true;
-        this.sendMessage('profile');
-        localStorage.setItem('user',JSON.stringify(success.msg));
-        this.follow=true;
+        if(success.success) {
+          this.follow = true;
+          this.sendMessage('profile');
+          localStorage.setItem('user', JSON.stringify(success.msg));
+          this.follow = true;
+        }
+        else {
+          this.flash.show(success.msg,{cssClass:'alert-danger',timeout:3000});
+        }
       },
       (error) => alert(error))
+
 
   }
 

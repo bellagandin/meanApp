@@ -50,7 +50,7 @@ export class NewPostComponent implements OnInit {
                 Category:['',Validators.required],
                 description:['',Validators.required],
                 coAuthors: this._fb.array([
-                    
+
                 ]),
                 ingridients: this._fb.array([
                     this.initIng(),
@@ -65,7 +65,7 @@ export class NewPostComponent implements OnInit {
         }
         else{
             console.log(this.postToEdit);
-            this.serverPics=this.postToEdit.photos
+            this.serverPics=this.postToEdit.photos;
             var ing=this.postToEdit.ingredients;
             console.log(ing);
             let ingTo=[];

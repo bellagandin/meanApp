@@ -197,5 +197,17 @@ public editLike(){
  }
 }
 
-
+public delPost(){
+  let send = {post_id:this.thisPost["_id"],user_name:this.auth.getLogoedInUser()["user_name"]};
+  console.log("delPost",send);
+  this.http.post('http://127.0.0.1:3001/posts/removePost', send).map((res: Response) => res.json()).subscribe(
+    //map the success function and alert the response
+    (success) => {
+      if(success.success) {
+        console.log(success.msg);
+        this.sendMessage('post');
+      }
+    },
+    (error) => alert(error))
+}
 }

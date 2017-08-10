@@ -25,6 +25,8 @@ export class UserResaultComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("test231",this.auth.getLogoedInUser());
+
     this.connection = this.server.getMessages('profile').subscribe(message => {
       location.reload();
     });
@@ -39,10 +41,16 @@ export class UserResaultComponent implements OnInit {
     if (!this.auth.checkLogoedInUser(this.user["user_name"])) {
       console.log("the user is not me!");
 
-      console.log("the users", user);
-      console.log("me", user);
+      console.log("the users", this.user);
+      console.log("me", this.auth.getLogoedInUser());
       if (this.auth.getLogoedInUser()["followings"] != []) {
-        if (this.auth.getLogoedInUser()["followings"].indexOf(this.user["_id"]) > -1) {
+        let item_id = this.user["_id"];
+        console.log("this.user",this.user);
+        console.log("test23",this.auth.getLogoedInUser()["followings"]);
+        let tempo = this.auth.getLogoedInUser()["followings"].filter((item)=>{return item===item_id});
+        console.log("tempo",tempo);
+        if(tempo.length!==0){
+        //if (this.auth.getLogoedInUser()["followings"].indexOf(this.user["_id"]) > -1) {
           this.follow = true;
 
         }
