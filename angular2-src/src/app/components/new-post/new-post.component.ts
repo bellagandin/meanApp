@@ -4,6 +4,7 @@ import {AuthenticateService} from '../../services/authenticate.service'
 import {PublishPostService} from '../../services/publish-post.service'
 import {Server} from "../../services/socket.service";
 import {AppConfig} from '../../shared/AppConfig'
+import{Router} from '@angular/router'
 
 
 @Component({
@@ -16,6 +17,7 @@ export class NewPostComponent implements OnInit {
     public myForm: FormGroup;
     public pics=[];
     public ings=[];
+
     api=AppConfig.API_ENDPOINT;
 
     public serverPics=[];
@@ -28,7 +30,8 @@ export class NewPostComponent implements OnInit {
     constructor(private _fb: FormBuilder,
                 private publisher:PublishPostService,
                 private server: Server,
-                private el: ElementRef) { }
+                private el: ElementRef,
+                private router: Router) { }
 
   sendMessage(key) {
     console.log(key);
@@ -41,23 +44,14 @@ export class NewPostComponent implements OnInit {
 
       });
 
-        this.myForm = this._fb.group({
-            recepie_title: [''],
-            description:[''],
-            ingridients: this._fb.array([
-                this.initIng(),
-            ]),
-            Steps:this._fb.array([
-                this.initStep(),
-            ]),
-            photos:this._fb.array([
-                this.initimage(),
-            ])
-        });
         if(!this.edit){
             this.myForm = this._fb.group({
-                recepie_title: [''],
-                description:[''],
+                recepie_title: ['',Validators.required],
+                Category:['',Validators.required],
+                description:['',Validators.required],
+                coAuthors: this._fb.array([
+                    
+                ]),
                 ingridients: this._fb.array([
                     this.initIng(),
                 ]),
@@ -86,7 +80,9 @@ export class NewPostComponent implements OnInit {
 
             this.myForm = this._fb.group({
                 recepie_title: [this.postToEdit.recipe_title],
+                Category:[this.postToEdit.category],
                 description:[this.postToEdit.description],
+                coAuthors: this._fb.array(this.initEditArray(this.postToEdit.co_author)),
                 ingridients: this._fb.array(ingTo),
                 Steps:this._fb.array(this.initEditArray(this.postToEdit.instructions)),
                 photos:this._fb.array(this.initEditArray([]))
@@ -107,7 +103,7 @@ export class NewPostComponent implements OnInit {
     initStep(){
         return this._fb.group({
             stepNumber:[''],
-            description:['']
+            description:['',Validators.required]
         })
     }
     initimage(){
@@ -116,11 +112,29 @@ export class NewPostComponent implements OnInit {
         })
     }
 
+    initCoauthor(){
+        return this._fb.group({
+            user_name:['']
+        })
+    }
+
+
+    addCoauthor() {
+        const control = <FormArray>this.myForm.controls['coAuthors'];
+        control.push(this.initCoauthor());
+    }
+
+    removeCoauthor(i: number) {
+        const control = <FormArray>this.myForm.controls['coAuthors'];
+        control.removeAt(i);
+    }
+
+
     initIng() {
         return this._fb.group({
             name: ['', Validators.required],
-            amount: [''],
-            unit:['']
+            amount: ['',Validators.required],
+            unit:['',Validators.required]
         });
     }
     //remove pic from server
@@ -179,6 +193,10 @@ export class NewPostComponent implements OnInit {
         return "photo"+i;
     }
     publish(myForm) {
+        if(this.pics.length<1 && this.edit){
+            alert("At least one picture is mandatory");
+            return;
+        }
         let formPost=myForm.value;
 
 
@@ -190,6 +208,7 @@ export class NewPostComponent implements OnInit {
             this.ings.push({name:formPost.ingridients[j].name,
             amount:formPost.ingridients[j].amount+' '+formPost.ingridients[j].unit})
         }
+
         console.log("thisUser",thisUser);
         let post={
             time:new Date(),
@@ -197,11 +216,11 @@ export class NewPostComponent implements OnInit {
             last_name:thisUser.last_name,
             user_id:thisUser._id,
             recipe_title:formPost.recepie_title,
-            category:"desserts",
+            category:formPost.Category,
             main_img:"",
             user_img:thisUser.img_url,
             description:formPost.description,
-            co_author: [],
+            co_author: formPost.coAuthors,
             ingredients: this.ings,
             instructions: formPost.Steps,
             user_name : thisUser.user_name,
@@ -224,7 +243,12 @@ export class NewPostComponent implements OnInit {
             post.main_img=this.postToEdit.main_img;
             this.publisher.editPost(post).subscribe(
                 data=>{
-                    this.addMorePhotos(this.postToEdit._id);
+                    if(this.pics.length>0){
+                        this.addMorePhotos(this.postToEdit._id);
+                    }
+                    else{
+                        this.router.navigate(['/']);
+                    }
                 },
                 err=>{
                     console.log(err);
@@ -247,8 +271,9 @@ export class NewPostComponent implements OnInit {
                 formData.append('photos',this.pics[i]);
             }
             this.publisher.addPhotos(formData,postId).subscribe( data=>{
-            console.log(data);
-              this.sendMessage('post');
+                    console.log(data);
+                    this.sendMessage('post');
+                    this.router.navigate(['/']);
             },err=>{alert(err)});
     }
 
@@ -260,7 +285,9 @@ export class NewPostComponent implements OnInit {
                 formData.append('photos',this.pics[i]);
             }
             this.publisher.addMorePhotos(formData,postId).subscribe( data=>{
-            console.log(data);
+                console.log(data);
+                this.sendMessage('post');
+                this.router.navigate(['/']);
             },err=>{alert(err)});
     }
 

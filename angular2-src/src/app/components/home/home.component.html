@@ -1,9 +1,12 @@
 <div class="jumbotron text-center">
   <h1>RecipeMe</h1>
   <p class="lead">"Welcome to RecipeMe,Post and share you cooking skills"</p>
-  <div>
+  <div *ngIf="!auth.loggedIn()">
     <a class="btn btn-primary" [routerLink]="['/register']">Register</a>
     <a class="btn btn-default" [routerLink]="['/login']">Login</a>
+  </div>
+    <div *ngIf="auth.loggedIn()">
+    <a class="btn btn-primary" [routerLink]="['/newPost']">Add new post</a>
   </div>
 </div>
 <div id="content">
