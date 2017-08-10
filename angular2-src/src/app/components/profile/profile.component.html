@@ -70,7 +70,8 @@
       <div *ngIf="!edit||!showFollowing">
         <div class="panel panel-default" *ngFor="let post of myPosts">
           <div class="panel-body">
-            <app-post [thisPost]= post></app-post>
+            <app-post *ngIf="!auth.checkLogoedInUser(user.user_name)" [thisPost]= post></app-post>
+            <app-post *ngIf="auth.checkLogoedInUser(user.user_name)"[edit]=true [thisPost]= post></app-post>
           </div>
         </div>
       </div>

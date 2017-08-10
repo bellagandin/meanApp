@@ -83,6 +83,22 @@
           </a>
         </div>
 
+
+        <div *ngIf="edit">
+          <div class="row">
+            <div *ngFor="let pic of serverPics; let i=index">
+              <div class="col-md-6">
+                <div  class="col-md-12">
+                  <img class="thumbnail img-responsive" src={{api}}{{pic}} width="300px" height="200px">
+                </div>
+                <div class="col-md-2"></div>
+                <div class="col-md-6">
+                  <button align="center" class="btn btn-danger" (click)=removePic(i)>Remove</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         
         <br>
         <div formArrayName="photos">

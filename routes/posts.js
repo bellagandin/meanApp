@@ -65,6 +65,8 @@ router.post('/getSinglePost', (req, res) => {
 
 // Update Post
 router.post('/editPost', (req, res) => {
+    console.log(req.body);
+    console.log(req.body._id);
     const post_id = req.body._id;
     Post.getPostById(post_id, (err, post) => {
         if (err) throw err;
@@ -285,6 +287,86 @@ router.post("/disLike", (req, res) => {
                 }
             });
         }
+    });
+});
+
+
+
+
+router.post("/removeImg", (req, res) => {
+    let post_id=req.body.post_id;
+    let ind = req.body.imgInd;
+    console.log(ind);
+    console.log(post_id);
+
+    Post.getPostById(post_id,(err,post)=>{
+        if (post===null||err) {
+            res.json({success: false, msg: err});
+        }
+        else{
+            let temp=post.photos;
+            console.log(post.photos);
+            temp.splice(ind,1);
+            let udp={photos:temp};
+            console.log(udp);
+            Post.updatePost(post,udp,(err,post)=>{
+        if (post===null||err) {
+            res.json({success: false, msg: err});
+        }
+        else{
+            res.json({success: true, msg: "Image "+ind+" was deleted secssesfulyy"});
+        }
+        });
+        }
+   
+    });
+});
+
+
+router.post('/morePhotos/:postnumber', function (req, res, next) {
+    let postDest='./public/uploads/'+req.param('postnumber');
+    let storage = multer.diskStorage({
+    destination: postDest,
+    filename: function (req, file, cb) {
+        let extArray = file.mimetype.split("/");
+        let extension = extArray[extArray.length - 1];
+        cb(null, file.fieldname + '-' + Date.now()+ '.' +extension);
+    }
+    })
+
+    let upload = multer({storage: storage}).array('photos',10);
+    var path = '';
+    upload(req, res, function (err) {
+        if (err) {
+            // An error occurred when uploading
+            res.status(422).send("an Error occured")
+        }
+        else{
+        const post_id = req.param('postnumber');
+        Post.getPostById(post_id, (err, post) => {
+                      
+            if (err) {
+                res.json({success: false, msg: err});
+                            } else {
+                                let temp =post.photos;
+                                let files=req.files;
+                                let names = files.map((x)=>{return '/uploads/'+req.param('postnumber')+'/'+x.filename});
+                                let newPhotos=temp.concat(names);
+                                let updateData={photos: newPhotos};
+                                Post.updatePost(post,updateData, (err,udp) => {
+                                    if (err) {
+                                        res.json({success: false, msg: err});
+                                    } 
+                                    else {
+                                        res.json({success:true,msg:"images Added to Post"});
+                                
+                                    }
+                                });
+                            }
+            });
+
+        }
+
     });
 });
 

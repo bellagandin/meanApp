@@ -5,6 +5,8 @@ import {AppConfig} from '../../shared/AppConfig'
 import {getPostsService} from '../../services/getPosts.service'
 import {Server} from "../../services/socket.service";
 import {Http, Response} from '@angular/http';
+import{Router} from '@angular/router'
+import {PostEditService} from '../../services/post-edit.service'
 
 @Component({
   selector: 'app-post',
@@ -15,6 +17,8 @@ import {Http, Response} from '@angular/http';
 export class PostComponent implements OnInit {
   @Input()
   thisPost: Post;
+  @Input()
+  edit;
   postDescription: Array<String>=[];
   api=AppConfig.API_ENDPOINT;
   myImg=this.auth.getLoggedInUser().img_url;
@@ -28,7 +32,10 @@ export class PostComponent implements OnInit {
   constructor(private auth: AuthenticateService,
               private getP: getPostsService,
               private http: Http,
-              private server: Server) {}
+              private server: Server,
+              private router: Router,
+              private editP: PostEditService) {
+              }
 
   sendMessage(key) {
     console.log(key);
@@ -37,6 +44,7 @@ export class PostComponent implements OnInit {
   }
 
     ngOnInit() {
+
       this.connection = this.server.getMessages('profile').subscribe(message => {
 
       });
@@ -64,10 +72,18 @@ export class PostComponent implements OnInit {
           console.log(this.like);
         }
      }
+
+
     }
 private showComments(){
   this.showComment=!this.showComments;
 }
+
+private editPost(){
+  this.router.navigate(['/EditPost',this.thisPost._id]);
+}
+
+
 private showContent(){
   this.showPost=true;
 }
