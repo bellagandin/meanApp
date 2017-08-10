@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.connection = this.server.getMessages('post').subscribe(message => {
+      console.log("hptpost");
       location.reload();
     });
     this.connection = this.server.getMessages('profile').subscribe(message => {
@@ -66,6 +67,7 @@ export class HomeComponent implements OnInit {
     }
 
   }
+
 
 
 }

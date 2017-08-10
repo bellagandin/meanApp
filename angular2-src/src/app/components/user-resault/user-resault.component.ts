@@ -26,10 +26,10 @@ export class UserResaultComponent implements OnInit {
 
   ngOnInit() {
     this.connection = this.server.getMessages('profile').subscribe(message => {
-
+      location.reload();
     });
     this.connection = this.server.getMessages('post').subscribe(message => {
-
+      location.reload();
     });
 //check if the user is logged in
     if (this.auth.loggedIn()) {

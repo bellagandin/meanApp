@@ -46,9 +46,10 @@ export class PostComponent implements OnInit {
     ngOnInit() {
 
       this.connection = this.server.getMessages('profile').subscribe(message => {
-
+        location.reload();
       });
       this.connection = this.server.getMessages('post').subscribe(message => {
+        location.reload();
         //console.log("get emit from the server");
         let send = {post_id:this.thisPost["_id"]};
         this.http.post('http://127.0.0.1:3001/posts/getSinglePost', send).map((res: Response) => res.json()).subscribe(
@@ -66,7 +67,15 @@ export class PostComponent implements OnInit {
       console.log("comment",this.thisPost.comments);
       console.log("like",this.auth.getLogoedInUser()["liked_posts"]);
        if (this.auth.getLogoedInUser()["liked_posts"] !== []) {
-        if (this.auth.getLogoedInUser()["liked_posts"].indexOf(this.thisPost["_id"]) > -1) {
+         let s = ""+this.thisPost["_id"];
+         console.log("s",s);
+         let temp = this.auth.getLogoedInUser()["liked_posts"].filter((item)=>{
+           return item== this.thisPost["_id"];
+           }
+         );
+         if (temp.length!==0){
+        // if (s in this.auth.getLogoedInUser()["liked_posts"]) {
+        // if (this.auth.getLogoedInUser()["liked_posts"].indexOf(this.thisPost["_id"])) {
 
           this.like = true;
           console.log(this.like);
@@ -130,29 +139,59 @@ public editLike(){
   if (!this.like)
   {//addlike
     console.log("@#",this.thisPost );
-    let send = {post_id:this.thisPost["_id"],user_name:this.thisPost["user_name"] };
+    let send = {post_id:this.thisPost["_id"],user_name:this.auth.getLogoedInUser()["user_name"] };
     console.log("send",send);
     this.http.post('http://127.0.0.1:3001/posts/likedPost', send).map((res: Response) => res.json()).subscribe(
       //map the success function and alert the response
       (success) => {
-        console.log(success.msg);
-        this.sendMessage('post');
-        this.like = true;
-        localStorage.setItem('user',JSON.stringify(success.msg));
+       if(success.success) {
+         localStorage.setItem('user', JSON.stringify(success.msg));
+         console.log(success.msg);
+         this.like = true;
+         localStorage.setItem('user', JSON.stringify(success.msg));
+         this.sendMessage('post');
+         // this.http.get('http://127.0.0.1:3001/users/profile/:' + this.auth.getLogoedInUser()["user_name"]).map((res: Response) => res.json()).subscribe(
+         //   //map the success function and alert the response
+         //   (success) => {
+         //     if (success.success) {
+         //       console.log(success.msg);
+         //
+         //       localStorage.setItem('user', JSON.stringify(success.msg));
+         //       console.log(success.msg);
+         //       this.like = true;
+         //       this.sendMessage('post');
+         //     }
+         //   });
+       }
 
       });
   }
   else{//dislike
     console.log("@#",this.thisPost );
-    let send = {post_id:this.thisPost["_id"],user_name:this.thisPost["user_name"] };
+    let send = {post_id:this.thisPost["_id"],user_name:this.auth.getLogoedInUser()["user_name"]};
     console.log("send",send);
     this.http.post('http://127.0.0.1:3001/posts/disLike', send).map((res: Response) => res.json()).subscribe(
       //map the success function and alert the response
       (success) => {
-        console.log(success.msg);
-        this.sendMessage('post');
-        this.like=false;
-        localStorage.setItem('user',JSON.stringify(success.msg));
+        if(success.success) {
+                localStorage.setItem('user', JSON.stringify(success.msg));
+                console.log(success.msg);
+                this.like = true;
+                localStorage.setItem('user', JSON.stringify(success.msg));
+                this.sendMessage('post');
+          // this.http.get('http://127.0.0.1:3001/users/profile/:' + this.auth.getLogoedInUser()["user_name"]).map((res: Response) => res.json()).subscribe(
+          //   //map the success function and alert the response
+          //   (success) => {
+          //     if (success.success) {
+          //       console.log(success.msg);
+          //
+          //       localStorage.setItem('user', JSON.stringify(success.msg));
+          //       console.log(success.msg);
+          //       this.like = true;
+          //       this.sendMessage('post');
+          //     }
+          //   });
+        }
       },
       (error) => alert(error))
  }

@@ -8,7 +8,14 @@ const multer = require('multer');
 
 // Create Post
 router.post('/createPost', (req, res, next) => {
-
+    let coauth = [];
+    console.log("req.body.co_author",req.body.co_author);
+    User.getUserByUserName(req.body.co_author, (err, users)=>{
+        if(err) throw err;
+        console.log("users",users);
+        coauth= req.body.co_author.filter((item)=>{return item===users["user_name"]});
+    });
+    console.log("coauth",coauth);
     let newPost = new Post({
         time: req.body.time,
         recipe_title: req.body.recipe_title,
@@ -17,7 +24,7 @@ router.post('/createPost', (req, res, next) => {
         user_id:req.body.user_id,
         user_img:req.body.user_img,
         category: req.body.category,
-        co_author: req.body.co_author,
+        co_author: coauth,
         main_img: '',
         ingredients: req.body.ingredients,
         description: req.body.description,

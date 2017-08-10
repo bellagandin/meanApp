@@ -413,6 +413,8 @@ router.post('/upload/:user_id', function (req, res) {
     });
 });
 
+
+
 router.post("/search", (req, res) => {
     const type = req.body.type;
     console.log(type);
@@ -551,12 +553,16 @@ router.post("/LikedPost", (req, res) => {
     getAllPostOfFollowed(req, (result) => {
         let arr = result["msg"];
         console.log("result", arr);
-        if(arr!==null) {
+        if(arr.constructor === Array||arr!==null) {
             let arrSorted = arr.sort(function (a, b) {
                 return b["likes"].length - a["likes"].length;
             });
             console.log(arrSorted);
             res.json({success: true, msg: arrSorted});
+        }
+        else
+        {
+            res.json({success: false, msg: "get not find the user"});
         }
     });
 

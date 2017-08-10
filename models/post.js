@@ -152,7 +152,7 @@ module.exports.getPostsByTitle = function ( title, callback) {
 
 
 module.exports.getPostsByText = function ( text, callback) {
-    Post.find({$and:[{recipe_title : {$regex : text}},{description : {$regex : text}}]},callback);
+    Post.find({$and:[{recipe_title : {$regex : text}},{description : {$regex : text}},{category : {$regex : text}}]},callback);
     //TODO: add search in instruction
 };
 

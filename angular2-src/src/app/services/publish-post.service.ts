@@ -16,9 +16,9 @@ export class PublishPostService {
       return this.http.post(AppConfig.API_ENDPOINT+'posts/createPost',post,{headers: headers})
         .map(res=>res.json());
     }
-    
+
   public addPhotos(formData,postId){
-    return this.http.post(AppConfig.API_ENDPOINT+"posts/uploadMainImg/"+postId, 
+    return this.http.post(AppConfig.API_ENDPOINT+"posts/uploadMainImg/"+postId,
     formData).map((res) => res.json());
 
     }
@@ -27,7 +27,7 @@ export class PublishPostService {
       let headers = new Headers();
       console.log("removing pic");
       headers.append('Content-Type','application/json');
-      console.log(ind)
+      console.log(ind);
       console.log(postId);
       return this.http.post(AppConfig.API_ENDPOINT+'posts/removeImg',{imgInd:ind,post_id:postId},{headers: headers})
         .map(res=>res.json());
@@ -38,14 +38,14 @@ export class PublishPostService {
       console.log("service",post);
       headers.append('Content-Type','application/json');
       return this.http.post(AppConfig.API_ENDPOINT+'posts/editPost',post,{headers: headers})
-        .map(res=>res.json()); 
+        .map(res=>res.json());
   }
     public addMorePhotos(formData,postId){
-          return this.http.post(AppConfig.API_ENDPOINT+"posts/morePhotos/"+postId, 
+          return this.http.post(AppConfig.API_ENDPOINT+"posts/morePhotos/"+postId,
             formData).map((res) => res.json())
     }
 
 
   }
-  
+
 
