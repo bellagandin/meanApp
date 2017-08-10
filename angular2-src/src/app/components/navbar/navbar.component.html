@@ -30,7 +30,8 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li *ngIf='auth.loggedIn()' [routerLinkActive]="['active']"><a ><strong>{{getLoggedInUSer().user_name}}</strong></a></li>>
+            <li *ngIf='auth.loggedIn()' [routerLinkActive]="['active']"><a ><strong>Connected as: {{getLoggedInUSer().user_name}}</strong></a></li>>
+            <li *ngIf='auth.loggedIn()' [routerLinkActive]="['active']" [routerLink]="['/newPost']"><a><strong>Publish New Recipe</strong></a></li>>
             <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/']">Home</a></li>
             <li *ngIf='!auth.loggedIn()' [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/login']">Login</a></li>
             <li *ngIf='!auth.loggedIn()' [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/register']">Register</a></li>
