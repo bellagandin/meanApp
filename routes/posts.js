@@ -6,60 +6,63 @@ const User = require('../models/user');
 const config = require('../config/database');
 const multer = require('multer');
 
+
 // Create Post
 router.post('/createPost', (req, res, next) => {
     let coauth = [];
     console.log("req.body.co_author",req.body.co_author);
-    User.getUserByUserName(req.body.co_author, (err, users)=>{
+    User.getAllUserByUserName(req.body.co_author, (err, users)=>{
         if(err) throw err;
         console.log("users",users);
-        coauth= req.body.co_author.filter((item)=>{return item===users["user_name"]});
-    });
-    console.log("coauth",coauth);
-    let newPost = new Post({
-        time: req.body.time,
-        recipe_title: req.body.recipe_title,
-        first_name: req.body.first_name,
-        last_name:req.body.last_name,
-        user_id:req.body.user_id,
-        user_img:req.body.user_img,
-        category: req.body.category,
-        co_author: coauth,
-        main_img: '',
-        ingredients: req.body.ingredients,
-        description: req.body.description,
-        instructions: req.body.instructions,
-        user_name: req.body.user_name,
-        photos: [],
-        likes: [],
-        comments: [],
-        id_generator: 0
-    });
-    Post.addPost(newPost, (err, post) => {//callback
-        if (err) {
-            res.json({success: false, msg: "1 " + err});
-        } else {
-            let userId = req.body.user_id;
-            User.getUserById(userId, (err, user) => {// added post id to list of post of user
-                if (err) {
-                    res.json({success: false, msg: "2 " + err});
-                } else {
-                    if (user != null) {
-                        User.addPost(user, newPost, (err, post) => {
-                            if (err) {
-                                res.json({success: false, msg: "1 " + err});
-                            } else {
+        let temp = users.map((item)=> {return item["user_name"];});
+        coauth = req.body.co_author.filter((item)=>{console.log(item,temp, temp.indexOf(item));return temp.indexOf(item)>-1});
+        console.log("coauth",coauth);
+        let newPost = new Post({
+            time: req.body.time,
+            recipe_title: req.body.recipe_title,
+            first_name: req.body.first_name,
+            last_name:req.body.last_name,
+            user_id:req.body.user_id,
+            user_img:req.body.user_img,
+            category: req.body.category,
+            co_author: coauth,
+            main_img: '',
+            ingredients: req.body.ingredients,
+            description: req.body.description,
+            instructions: req.body.instructions,
+            user_name: req.body.user_name,
+            photos: [],
+            likes: [],
+            comments: [],
+            id_generator: 0
+        });
+        Post.addPost(newPost, (err, post) => {//callback
+            if (err) {
+                res.json({success: false, msg: "1 " + err});
+            } else {
+                let userId = req.body.user_id;
+                User.getUserById(userId, (err, user) => {// added post id to list of post of user
+                    if (err) {
+                        res.json({success: false, msg: "2 " + err});
+                    } else {
+                        if (user != null) {
+                            User.addPost(user, newPost, (err, post) => {
+                                if (err) {
+                                    res.json({success: false, msg: "1 " + err});
+                                } else {
                                     res.json({success: true, msg: {"post_id": newPost._id}});
-                            }
-                        });
+                                }
+                            });
+                        }
+                        else {
+                            res.json({success: false, msg: "the user not exits"});
+                        }
                     }
-                    else {
-                        res.json({success: false, msg: "the user not exits"});
-                    }
-                }
-            });
-        }
+                });
+            }
+        });
     });
+
 });
 
 router.post('/getSinglePost', (req, res) => {

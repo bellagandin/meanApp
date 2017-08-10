@@ -92,6 +92,7 @@ module.exports.updateProfile = function (user, updateData, callback) {
     if (updateData) {
         delete  updateData._id;
     }
+    console.log("dd");
     //updateData.splice(0, 1);
     user.update({$set: updateData}, callback);
 };
@@ -225,4 +226,9 @@ module.exports.findUserRegex = function (user, callback) {
 
 module.exports.gelAllUsers = function (callback) {
     User.find(callback);
+};
+
+
+module.exports.getAllUserByUserName = function (ids,callback) {
+    User.find(ids,callback);
 };
