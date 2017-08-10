@@ -30,6 +30,7 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
+                        <li [routerLinkActive]="['active']"><a ><strong>{{getLoggedInUSer().user_name}}</strong></a></li>>
             <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/']">Home</a></li>
             <li *ngIf='!auth.loggedIn()' [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/login']">Login</a></li>
             <li *ngIf='!auth.loggedIn()' [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/register']">Register</a></li>

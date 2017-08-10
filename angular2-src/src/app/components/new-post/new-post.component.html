@@ -2,7 +2,8 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="margin-20">
-        <h4>Add Post</h4>
+        <h3>Add Post</h3>
+        <br>
       </div>
       <form [formGroup]="myForm" novalidate (ngSubmit)="publish(myForm)" class="form-inline">
         <div class="container">
@@ -11,6 +12,10 @@
                     <label>Title:</label>
                     <input type="text" class="form-control" id="title" formControlName="recepie_title">
                 </div>
+                  <div class="col-md-6 form-group">
+                    <label>Category:</label>
+                    <input type="text" class="form-control" id="Category" formControlName="Category">
+                  </div>
             </div>
         </div>
         <br>
@@ -18,7 +23,7 @@
         <div class="row" style="padding:20px">
             <h5 ><strong>Description:</strong></h5>
             <textarea class="description" name="description" formControlName="description" style="width:50%;" ></textarea>
-          
+
         </div>
         <hr>
         <!--addresses-->
@@ -68,9 +73,7 @@
               <span class="glyphicon glyphicon-remove pull-right" *ngIf="myForm.controls.Steps.controls.length > 1" (click)="removeStep(i)"></span>
             </div>
             <div class="panel-body" [formGroupName]="i">
-              <div class="form-group col-xs-6">
-                <textarea rows=1 type="text" class="form-control" formControlName="description"></textarea>
-              </div>
+                <textarea rows=1 type="text" class="form-control" formControlName="description" style="width:90%;"></textarea>
             </div>
           </div>
         </div>
@@ -83,6 +86,32 @@
           </a>
         </div>
 
+
+<!-- co-Authors-->
+        <br>
+        <div formArrayName="coAuthors">
+            <h3> Add Co-Authors</h3>
+          <div class="row">
+            <div *ngFor="let cA of myForm.controls.coAuthors.controls; let i=index" class="panel panel-default col-md-3" style="margin:4px">
+              <div class="panel-heading">
+                <span>co-Author  {{i + 1}}</span>
+                <span class="glyphicon glyphicon-remove pull-right"  (click)="removeCoauthor(i)"></span>
+              </div>
+              <div class="panel-body" [formGroupName]="i">
+                  <input  type="text" class="form-control" formControlName="user_name" style="width:90%;">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="margin-20 row">
+          <a (click)="addCoauthor()" style="cursor: default; margin-left:20px;">
+            Add Co-Author +
+          </a>
+        </div>
+
+<!-- end of coAuthor       -->
 
         <div *ngIf="edit">
           <div class="row">
@@ -122,7 +151,7 @@
         </div>
 
         <div class="margin-20">
-          <button type="submit" class="btn btn-primary pull-right" [disabled]="!myForm.valid">Submit</button>
+          <button type="submit" class="btn btn-primary pull-right" [disabled]="!myForm.valid">Publish</button>
         </div>
         <div class="clearfix"></div>
 
