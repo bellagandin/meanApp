@@ -1,7 +1,8 @@
-import { Component, OnInit,ElementRef } from '@angular/core';
+import { Component, OnInit,ElementRef,Input } from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
 import {AuthenticateService} from '../../services/authenticate.service'
 import {PublishPostService} from '../../services/publish-post.service'
+import {AppConfig} from '../../shared/AppConfig'
 
 
 @Component({
@@ -13,25 +14,67 @@ export class NewPostComponent implements OnInit {
     public myForm: FormGroup;
     public pics=[];
     public ings=[];
+    api=AppConfig.API_ENDPOINT;
+
+    public serverPics=[];
+    @Input()
+    public edit=false;
+    @Input()
+    postToEdit;
 
     constructor(private _fb: FormBuilder,
                 private publisher:PublishPostService,
                 private el: ElementRef) { }
 
     ngOnInit() {
-        this.myForm = this._fb.group({
-            recepie_title: [''],
-            description:[''],
-            ingridients: this._fb.array([
-                this.initIng(),
-            ]),
-            Steps:this._fb.array([
-                this.initStep(),
-            ]),
-            photos:this._fb.array([
-                this.initimage(),
-            ])
-        });
+        if(!this.edit){
+            this.myForm = this._fb.group({
+                recepie_title: [''],
+                description:[''],
+                ingridients: this._fb.array([
+                    this.initIng(),
+                ]),
+                Steps:this._fb.array([
+                    this.initStep(),
+                ]),
+                photos:this._fb.array([
+                    this.initimage(),
+                ])
+            });
+        }
+        else{
+            console.log(this.postToEdit);
+            this.serverPics=this.postToEdit.photos
+            var ing=this.postToEdit.ingredients;
+            console.log(ing);
+            let ingTo=[];
+            for(var y=0;y<ing.length;y++){
+                var temp=ing[y].amount.split(' ');
+                console.log(temp);
+                ingTo.push(this._fb.group({name:ing[y].name,
+                unit:temp[1],
+                amount:temp[0]}));
+            }
+
+
+            this.myForm = this._fb.group({
+                recepie_title: [this.postToEdit.recipe_title],
+                description:[this.postToEdit.description],
+                ingridients: this._fb.array(ingTo),
+                Steps:this._fb.array(this.initEditArray(this.postToEdit.instructions)),
+                photos:this._fb.array(this.initEditArray([]))
+            });
+            
+
+        }
+    }
+
+    initEditArray(array){
+        var ret=[];
+        for(var f=0;f<array.length;f++){
+            ret.push(this._fb.group(array[f]));
+        } 
+        return ret;
     }
 
     initStep(){
@@ -52,6 +95,20 @@ export class NewPostComponent implements OnInit {
             amount: [''],
             unit:['']
         });
+    }
+    //remove pic from server
+    removePic(i){
+        var imgSrc=this.serverPics[i];
+        this.serverPics.splice(i,1);
+        this.publisher.removePic(i,this.postToEdit._id).subscribe(
+            data=>{
+                console.log(data);
+                
+            },
+            (err)=>{
+
+            }
+        )
     }
 
     addIng() {
@@ -124,15 +181,29 @@ export class NewPostComponent implements OnInit {
 
         };
         console.log(post);
+        if(!this.edit){
 
-         this.publisher.publish(post).subscribe(
-      data=>{
-        console.log(data,data.msg.post_id);
-        this.addPhotos(data.msg.post_id);
-      },
-      err=>{
-        console.log(err);
-      });
+            this.publisher.publish(post).subscribe(
+                data=>{
+                    console.log(data,data.msg.post_id);
+                    this.addPhotos(data.msg.post_id);
+                },
+                err=>{
+                    console.log(err);
+                });
+            }
+        else{
+            post['_id']=this.postToEdit._id;
+            post.main_img=this.postToEdit.main_img;
+            this.publisher.editPost(post).subscribe(
+                data=>{
+                    this.addMorePhotos(this.postToEdit._id);
+                },
+                err=>{
+                    console.log(err);
+                });
+
+        }
 
     }
 
@@ -149,6 +220,18 @@ export class NewPostComponent implements OnInit {
                 formData.append('photos',this.pics[i]);
             }
             this.publisher.addPhotos(formData,postId).subscribe( data=>{
+            console.log(data);
+            },err=>{alert(err)});
+    }
+    
+    
+    
+    public addMorePhotos(postId:String){
+        let formData = new FormData();
+            for(var i=0;i<this.pics.length;i++){
+                formData.append('photos',this.pics[i]);
+            }
+            this.publisher.addMorePhotos(formData,postId).subscribe( data=>{
             console.log(data);
             },err=>{alert(err)});
     }

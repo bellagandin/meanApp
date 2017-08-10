@@ -14,6 +14,7 @@ export class Post {
     amount_of_dislike: number;
     comments: Array<any>;  //array containing all comments
     _id: String;
+    user_name: String;
 
 
 

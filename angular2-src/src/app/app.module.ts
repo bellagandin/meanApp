@@ -16,6 +16,7 @@ import { NgxGalleryModule } from 'ngx-gallery';
 //components and services deckeration
 import {ApiService} from './services/api.service'
 import {getPostsService} from './services/getPosts.service'
+import {PostEditService} from './services/post-edit.service'
 import {AuthenticateService} from './services/authenticate.service'
 import {ValidateService} from './services/Validate.service'
 import { AppComponent } from './app.component';
@@ -35,6 +36,7 @@ import { NewPostComponent } from './components/new-post/new-post.component'
 import {PublishPostService} from './services/publish-post.service';
 import { CommentComponent } from './components/comment/comment.component';
 import { ImageSliderComponent } from './components/image-slider/image-slider.component';
+import { EditPostComponent } from './components/edit-post/edit-post.component';
 
 const appRoutes: Routes = [
   {path:'',component:HomeComponent},
@@ -44,6 +46,7 @@ const appRoutes: Routes = [
   {path:'profile/:username',component:ProfileComponent,canActivate:[AuthGuard]},
   {path:'post',component:PostComponent},
   {path:'test',component:TesterComponent},
+  {path:'EditPost/:post_id',component:EditPostComponent},
   {path:'searchResault/:searchQuery/:selectedValue',component:SearchResaultComponent},
   {path:'newPost',component:NewPostComponent,canActivate:[AuthGuard]}
 
@@ -65,6 +68,7 @@ const appRoutes: Routes = [
     NewPostComponent,
     CommentComponent,
     ImageSliderComponent,
+    EditPostComponent,
 
 
 
@@ -91,7 +95,8 @@ const appRoutes: Routes = [
     AuthGuard,
     changeBG,
     PublishPostService,
-    getPostsService
+    getPostsService,
+    PostEditService
   ],
   bootstrap: [AppComponent]
 })

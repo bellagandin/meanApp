@@ -82,9 +82,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       profile => {
         console.log(profile.user);
         this.user = profile.user;
-        this.getPosts.getUserPost(profile.user.id).subscribe(
+        this.getPosts.getUserPost(profile.user._id).subscribe(
             data=>{
-
+              console.log("userPost",data.msg);
               this.myPosts=data.msg;
 
             },

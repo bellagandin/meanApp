@@ -94,7 +94,10 @@ module.exports.removePost = function (post_id, callback) {
 };
 
 module.exports.updatePost = function (post, updateData, callback) {
-    delete  updateData._id;
+    console.log("updatedData",updateData);
+    console.log(" ----------------");
+    //delete  updateData._id;
+    //consol.log(";;;;;;;;;;;;;;;;;",updateData);
     post.update({$set: updateData}, callback);
 };
 

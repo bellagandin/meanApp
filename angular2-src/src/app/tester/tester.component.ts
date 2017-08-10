@@ -2,6 +2,7 @@ import { Component, OnInit,ElementRef } from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
 import {AuthenticateService} from '../services/authenticate.service'
 import {PublishPostService} from '../services/publish-post.service'
+import {getPostsService} from '../services/getPosts.service'
 
 
 @Component({
@@ -10,142 +11,57 @@ import {PublishPostService} from '../services/publish-post.service'
   templateUrl: 'tester.component.html',
 })
 export class TesterComponent implements OnInit {
-    public myForm: FormGroup;
-    public pics=[];
+    public currPost={
+        _id:"598b63a0900cb8b375ce0642",
+        recipe_title: "asdsa",
+        first_name : "Omer",
+        last_name : "Regev",
+        user_id : "5980d5894b5b36967c14a5ba",
+        user_img : "\\img\\5980d5894b5b36967c14a5ba\\photos-1502201331154.jpeg",
+        category : "desserts",
+        main_img: "/uploads/598b5a77900cb8b375ce063a/photos-1502304888185.jpeg",
+        description : "asdsadsa",
+        id_generator : 0,
+        comments : [ ],
+        likes : [ ],
+        photos : [
+                "/uploads/598b5a77900cb8b375ce063a/photos-1502304888187.jpeg",
+                "/uploads/598b5a77900cb8b375ce063a/photos-1502304888189.jpeg"
+        ],
+        instructions : [
+                {
+                        "description" : "322332",
+                        "stepNumber" : 1
+                }
+        ],
+        ingredients : [
+                {
+                        "amount" : "2 gr",
+                        "name" : "aaas"
+                }
+        ],
+        co_author: [ ],
+        __v : 0,
+        user_name:"royreg"
+};
 
     constructor(private _fb: FormBuilder,
                 private publisher:PublishPostService,
-                private el: ElementRef) { }
+                private p: getPostsService,
+                private auth: AuthenticateService) { }
 
     ngOnInit() {
-        this.myForm = this._fb.group({
-            recepie_title: [''],
-            description:[''],
-            ingridients: this._fb.array([
-                this.initIng(),
-            ]),
-            Steps:this._fb.array([
-                this.initStep(),
-            ]),
-            photos:this._fb.array([
-                this.initimage(),
-            ])
-        });
-    }
+        // console.log(this.auth.getLoggedInUserName());
+        // this.p.getUserPost(this.auth.getLoggedInUserName()).subscribe(
+        //     data=>{
+        //       console.log("tttt",data.msg[0]);
+        //       this.currPost=data.msg[0];
 
-    initStep(){
-        return this._fb.group({
-            stepNumber:[''],
-            description:['']
-        })
-    }
-    initimage(){
-        return this._fb.group({
-            img:['']
-        })
-    }
-
-    initIng() {
-        return this._fb.group({
-            name: ['', Validators.required],
-            amount: ['']
-        });
-    }
-
-    addIng() {
-        const control = <FormArray>this.myForm.controls['ingridients'];
-        control.push(this.initIng());
-    }
-
-    removeIng(i: number) {
-        const control = <FormArray>this.myForm.controls['ingridients'];
-        control.removeAt(i);
-    }
-
-
-    
-
-    addImg() {
-        const control = <FormArray>this.myForm.controls['photos'];
-        control.push(this.initimage());
-        this.pics.push({img:""});
-    }
-
-    removeImg(i: number) {
-        const control = <FormArray>this.myForm.controls['photos'];
-        control.removeAt(i);
-        this.pics.splice(i,1);
+        //     },
+        //     err=>{console.log(err);}
+        //   );
         
     }
-
-
-
-    addStep() {
-        const control = <FormArray>this.myForm.controls['Steps'];
-        control.push(this.initStep());
-    }
-
-    removeStep(i: number) {
-        const control = <FormArray>this.myForm.controls['Steps'];
-        control.removeAt(i);
-    }
-    setId(i){
-        return "photo"+i;
-    }
-    publish(myForm) {
-        let formPost=myForm.value;
-        
-
-        let thisUser=JSON.parse(localStorage.getItem('user'));
-        for(var i=0;i<formPost.Steps.length;i++){
-            formPost.Steps[i].stepNumber=i+1;
-        }
-    
-        let post={
-            time:new Date(),
-            first_name:thisUser.first_name,
-            last_name:thisUser.last_name,
-            user_id:thisUser.id,
-            recipe_title:formPost.recepie_title,
-            category:"desserts",
-            main_img:"",
-            user_img:thisUser.img_url,
-            description:formPost.description,
-            co_author: [],
-            ingredients: formPost.ingridients,
-            instructions: formPost.Steps
-        }
-        console.log(post);
-
-         this.publisher.publish(post).subscribe(
-      data=>{
-        console.log(data.msg.post_id);
-        this.addPhotos(data.msg.post_id);
-      },
-      err=>{
-        console.log(err);
-      });
-
-    }
-
-    onChange(e,i){
-        if(e.target.files.length>0)
-            console.log(i);
-            this.pics[i]=e.target.files[0];
-
-    }
-    
-    public addPhotos(postId:String){
-        let formData = new FormData();
-            for(var i=0;i<this.pics.length;i++){
-                formData.append('photos',this.pics[i]);
-            }
-            this.publisher.addPhotos(formData,postId).subscribe( data=>{
-            console.log(data);
-            },err=>{alert(err)});
-    }
-
-
 
 
 
