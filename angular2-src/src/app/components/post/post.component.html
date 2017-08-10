@@ -6,7 +6,7 @@
               <img class="media-object img-circle" src={{api}}{{thisPost.user_img}} width="50px" height="50px" style="margin-right:8px; margin-top:-5px;">
           </a>
         </div>
-    <h4><a href="#" style="text-decoration:none;"><strong>{{thisPost.first_name}} {{thisPost.last_name}}</strong></a> – <small><small><a  style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> {{thisPost.time | amCalendar}}</i></a></small></small></h4>
+    <h4><a [routerLink]="['/profile',thisPost.user_name]" style="text-decoration:none;"><strong>{{thisPost.first_name}} {{thisPost.last_name}}</strong></a> – <small><small><a  style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> {{thisPost.time | amCalendar}}</i></a></small></small></h4>
 
     <hr>
     <h3>{{thisPost.recipe_title}}</h3>

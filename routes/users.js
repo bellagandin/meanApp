@@ -400,6 +400,7 @@ router.post('/upload/:user_id', function (req, res) {
                                 followers: user.followers,
                                 liked_posts: user.liked_posts,
                                 rate: user.rate,
+                                user_name:user.user_name,
                             }
                         });
                         //res.json({success: true, msg: req.files[0].path});
@@ -433,123 +434,152 @@ router.post("/search", (req, res) => {
         case "title":
             let title = req.body.value;
             console.log(title);
-            getAllPostOfFollowed(req, (result) => {
-                if (result !== null) {
-                    let arr = result["msg"];
-                    if (arr != []) {
-                        let final_result = arr.filter((post) => {
-                            return (post["recipe_title"].includes(title))
-                        });
-                        //console.log("final_result",final_result);
-                        //count the number of time  text in post
-                        var helper = final_result.map((item) => {
-                            let count = 0;
-                            count += item["recipe_title"].match(title).length;
-                            return [count, item];
-                        });
-
-                        //sort the post according to amount of text in posts
-                        let answer = helper.sort(function (a, b) {
-                            return b[0] - a[0];
-                        });
-                        //console.log("answer",answer);
-                        let fix_answer = [];
-
-                        //delete the count from the posts
-                        for (let i in answer) {
-                            fix_answer.push(answer[i][1]);
-                        }
-                        //console.log("fix_answer",fix_answer);
-                        res.json({success: true, msg: fix_answer});
-                    }
-                    else{
-                        res.json({success: true, msg: []});
-                    }
+            Post.findPostByTitle(title, (err, users) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    console.log("user",users);
+                    res.json({success: true, msg: users});
                 }
-                else {
-                    res.json({success: true, msg: []});
-                }
-
             });
+            // getAllPostOfFollowed(req, (result) => {
+            //     if (result !== null) {
+            //         let arr = result["msg"];
+            //         if (arr != []) {
+            //             let final_result = arr.filter((post) => {
+            //                 return (post["recipe_title"].includes(title))
+            //             });
+            //             //console.log("final_result",final_result);
+            //             //count the number of time  text in post
+            //             var helper = final_result.map((item) => {
+            //                 let count = 0;
+            //                 count += item["recipe_title"].match(title).length;
+            //                 return [count, item];
+            //             });
+            //
+            //             //sort the post according to amount of text in posts
+            //             let answer = helper.sort(function (a, b) {
+            //                 return b[0] - a[0];
+            //             });
+            //             //console.log("answer",answer);
+            //             let fix_answer = [];
+            //
+            //             //delete the count from the posts
+            //             for (let i in answer) {
+            //                 fix_answer.push(answer[i][1]);
+            //             }
+            //             //console.log("fix_answer",fix_answer);
+            //             res.json({success: true, msg: fix_answer});
+            //         }
+            //         else{
+            //             res.json({success: true, msg: []});
+            //         }
+            //     }
+            //     else {
+            //         res.json({success: true, msg: []});
+            //     }
+            //
+            // });
 
 
             break;
         case "text":
             const text = req.body.value;
-            getAllPostOfFollowed(req, (result) => {
-
-                let arr = result["msg"];
-                console.log("result", arr);
-                console.log('text', text);
-                if (result != null) {
-                    let final_result = arr.filter((post) => {
-                        return predicate(post, text)
-                    });
-                    //console.log("final_result",final_result);
-                    //count the number of time  text in post
-                    var helper = final_result.map((item) => {
-                        let count = 0;
-                        if (item["description"].match(text) !== null) {
-                            count += item["description"].match(text).length;
-                        }
-                        item["instructions"].forEach(function (entry) {
-                            if (entry["description"].match(text) !== null) {
-                                count += entry["description"].match(text).length;
-                            }
-                        });
-                        if (item["recipe_title"].match(text) !== null) {
-                            count += item["recipe_title"].match(text).length;
-                        }
-                        return [count, item];
-                    });
-
-                    //sort the post according to amount of text in posts
-                    let answer = helper.sort(function (a, b) {
-                        return b[0] - a[0];
-                    });
-                    //console.log("answer",answer);
-                    let fix_answer = [];
-
-                    //delete the count from the posts
-                    for (let i in answer) {
-                        fix_answer.push(answer[i][1]);
-                    }
-                    //console.log("fix_answer",fix_answer);
-
-                    //send it
-                    res.json({success: true, msg: fix_answer});
-                }
-                else {
-                    res.json({success: true, msg: []});
+            console.log(text);
+            Post.findPostByTitle(text, (err, users) => {
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    console.log("user",users);
+                    res.json({success: true, msg: users});
                 }
             });
+            // getAllPostOfFollowed(req, (result) => {
+            //
+            //     let arr = result["msg"];
+            //     console.log("result", arr);
+            //     console.log('text', text);
+            //     if (result != null) {
+            //         let final_result = arr.filter((post) => {
+            //             return predicate(post, text)
+            //         });
+            //         //console.log("final_result",final_result);
+            //         //count the number of time  text in post
+            //         var helper = final_result.map((item) => {
+            //             let count = 0;
+            //             if (item["description"].match(text) !== null) {
+            //                 count += item["description"].match(text).length;
+            //             }
+            //             item["instructions"].forEach(function (entry) {
+            //                 if (entry["description"].match(text) !== null) {
+            //                     count += entry["description"].match(text).length;
+            //                 }
+            //             });
+            //             if (item["recipe_title"].match(text) !== null) {
+            //                 count += item["recipe_title"].match(text).length;
+            //             }
+            //             return [count, item];
+            //         });
+            //
+            //         //sort the post according to amount of text in posts
+            //         let answer = helper.sort(function (a, b) {
+            //             return b[0] - a[0];
+            //         });
+            //         //console.log("answer",answer);
+            //         let fix_answer = [];
+            //
+            //         //delete the count from the posts
+            //         for (let i in answer) {
+            //             fix_answer.push(answer[i][1]);
+            //         }
+            //         //console.log("fix_answer",fix_answer);
+            //
+            //         //send it
+            //         res.json({success: true, msg: fix_answer});
+            //     }
+            //     else {
+            //         res.json({success: true, msg: []});
+            //     }
+            // });
 
             break;
     }
 });
 
 router.post("/LikedPost", (req, res) => {
+    console.log("starttt");
     getAllPostOfFollowed(req, (result) => {
         let arr = result["msg"];
         console.log("result", arr);
-        let arrSorted = arr.sort(function (a, b) {
-            return b["likes"].length - a["likes"].length;
-        });
-        console.log(arrSorted);
-        res.json({success: true, msg: arrSorted});
+        if(arr!==null) {
+            let arrSorted = arr.sort(function (a, b) {
+                return b["likes"].length - a["likes"].length;
+            });
+            console.log(arrSorted);
+            res.json({success: true, msg: arrSorted});
+        }
     });
 
 });
 
 router.post("/LikedUsers", (req, res) => {
     const user_id = req.body.user_id;
-    User.getUserById(user_id, (err, user) => {
+    console.log("user**",user_id);
+    User.gelAllUsers( (err, users) => {
         if (err) {
             res.json({success: false, msg: err});
         }
         else {
-            const followings = user.followings;
-            console.log(followings);
+
+     //   }});
+    // User.getUserById(user_id, (err, user) => {
+    //     if (err) {
+    //         res.json({success: false, msg: err});
+    //     }
+    //     else {
+           // const followings = user.followings;
+            const followings = users;
+            console.log("followings",followings);
             User.findUser(followings, (err, docs) => {
                 if (err) {
                     res.json({success: false, msg: err});
@@ -619,10 +649,11 @@ var add_follower_function = function (user, following_user, res) {
 };
 
 var getAllPostOfFollowed = function (req, callback) {
+    console.log("start",req.body.user_id);
     const user_id = req.body.user_id;
     User.getUserById(user_id, (err, user) => {//callback
         if (user === null || err) {
-            callback({success: false, msg: err});
+            callback({success: false, msg: "cant find user"});
         }
         else {
             console.log("user", user);

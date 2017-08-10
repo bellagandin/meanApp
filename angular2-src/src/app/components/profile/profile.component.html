@@ -32,6 +32,11 @@
               <h3><strong>Number of followers</strong></h3>
               <p>{{user.followers.length}}</p>
               <hr>
+              <h3><strong>Number of my followings</strong></h3>
+              <p>{{user.followings.length}}</p>
+              <hr>
+              <button type="button" class="btn btn-info btn-lg" (click)="showFollowing=true;">Show My followings</button>
+
             </div>
           </div>
         </div>
@@ -53,7 +58,7 @@
               Follow
               </button>
                   <button *ngIf="follow" class="btn btn-success" type="button" id="dropdownMenu2" aria-haspopup="true" (click)="removeFollow()">
-              UNFollow
+              unfollow
               </button>
                   </div>
                 <button *ngIf="auth.checkLogoedInUser(user.user_name)" type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>
@@ -62,7 +67,7 @@
         </div>
       </div>
       <hr>
-      <div *ngIf="!edit">
+      <div *ngIf="!edit||!showFollowing">
         <div class="panel panel-default" *ngFor="let post of myPosts">
           <div class="panel-body">
             <app-post [thisPost]= post></app-post>
@@ -72,12 +77,16 @@
       <!-- here will insert the post compnents. -->
 
       <!--<button type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>-->
-      <div *ngIf="edit">
+      <div *ngIf="edit&&!showFollowing">
           <app-register (updt)="ischildUpdate($event)" [edit]=true [firstName]="user.first_name" [lastName]="user.last_name"
                         [userName]="user.user_name" [email]="user.email" [birthDate]="user.birthday | date:'yyyy-MM-dd'"
                         [gender]="user.gender"  [self_description]="user.self_description">
                       </app-register>
     </div>
+
+      <div *ngIf="showFollowing">
+        <app-user-resault *ngFor="let user of user.follwings" [user]='user'> </app-user-resault>
+      </div>
 
   </div>
 </div>

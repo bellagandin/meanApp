@@ -2,23 +2,36 @@ import { Component, OnInit,ElementRef } from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
 import {AuthenticateService} from '../../services/authenticate.service'
 import {PublishPostService} from '../../services/publish-post.service'
-
+import {Server} from "../../services/socket.service";
 
 @Component({
   moduleId: module.id,
   selector: 'my-NewPostComponent',
   templateUrl: 'new-post.component.html',
+  providers: [Server],
 })
 export class NewPostComponent implements OnInit {
     public myForm: FormGroup;
     public pics=[];
     public ings=[];
+  connection;
 
     constructor(private _fb: FormBuilder,
                 private publisher:PublishPostService,
+                private server: Server,
                 private el: ElementRef) { }
 
+  sendMessage(key) {
+    console.log(key);
+    this.server.sendMessage(key);
+
+  }
+
     ngOnInit() {
+      this.connection = this.server.getMessages('profile').subscribe(message => {
+
+      });
+
         this.myForm = this._fb.group({
             recepie_title: [''],
             description:[''],
@@ -150,6 +163,7 @@ export class NewPostComponent implements OnInit {
             }
             this.publisher.addPhotos(formData,postId).subscribe( data=>{
             console.log(data);
+              this.sendMessage('post');
             },err=>{alert(err)});
     }
 

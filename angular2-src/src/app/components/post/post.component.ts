@@ -38,8 +38,6 @@ export class PostComponent implements OnInit {
 
     ngOnInit() {
       this.connection = this.server.getMessages('profile').subscribe(message => {
-        //console.log("get emit from the server");
-        location.reload();
 
       });
       this.connection = this.server.getMessages('post').subscribe(message => {

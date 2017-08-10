@@ -2,21 +2,29 @@
 <div class="container-fluid well span6">
 	<div class="row-fluid">
         <div class="col-md-3" >
-		    <img src={{api}}{{user.img_url}} class="img-circle">
+		    <img src={{api}}{{user.img_url}} class="img-circle" width="70px" height="70px" style="margin-right:8px; margin-top:40px;">
         </div>
         <div class="col-md-9">
           <div class="row">
-            <div class="span8">
-                <h3>{{user.first_name}} {{user.last_name}}</h3>
+            <div class="span8" [routerLink]="['/profile',user.user_name]">
+              <h4><b>First Name:</b> {{user.first_name}}</h4><h4> Last Name: {{user.last_name}}</h4>
             </div>
-                <h6>Email:{{user.email}}</h6>
-                <h6>User Name: {{user.user_name}}</h6>
+                <h6><b>Email:</b>{{user.email}}</h6>
+                <h6><b>User Name:</b> {{user.user_name}}</h6>
+                <h6><b>gender:</b> {{user.gender}}</h6>
+                <h6><b>Number of Followers:</b> {{user.followers.length}}</h6>
+                <h6><b>rate</b> {{user.rate}}</h6>
+
             </div>
           </div>
-
+    <div *ngIf="!auth.checkLogoedInUser(user.user_name)" >
     <button *ngIf="!follow" class="btn btn-success" type="button" id="dropdownMenu1" aria-haspopup="true" (click)="addFollow()">
       Follow
     </button>
+    <button *ngIf="follow" class="btn btn-success" type="button" id="dropdownMenu2" aria-haspopup="true" (click)="removeFollow()">
+      unfollow
+    </button>
+      </div>
 
 </div>
 </div>

@@ -32,6 +32,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   follow: Boolean = false;
   myPosts: Array<Post>;
   showPst:Array<Post>;
+  showFollowing:Boolean=false;
 
 
   constructor(private auth: AuthenticateService,
@@ -66,6 +67,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
         err => {
           console.log(err);
         });
+    });
+
+    this.connection = this.server.getMessages('post').subscribe(message => {
+    location.reload();
     });
 
     this.uploader.onAfterAddingFile = (file) => {
@@ -152,7 +157,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         (success) => {
           console.log(success.msg);
           this.sendMessage('profile');
-          localStorage.setItem('user',JSON.stringify(success.msg));
+          if(success.msg!=null) {
+            localStorage.setItem('user', JSON.stringify(success.msg));
+          }
           this.showInput = false;
         },
         (error) => alert(error))
@@ -194,7 +201,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       (error) => alert(error))
 
   }
-
 
 
 

@@ -149,5 +149,12 @@ module.exports.getPostsByTitle = function ( title, callback) {
 
 
 module.exports.getPostsByText = function ( text, callback) {
-    Post.find({"username" : {$regex : ".*son.*"}});
+    Post.find({$and:[{recipe_title : {$regex : text}},{description : {$regex : text}}]},callback);
+    //TODO: add search in instruction
+};
+
+
+module.exports.findPostByTitle = function ( text, callback) {
+    console.log("text",text);
+    Post.find({recipe_title : {$regex : text}},callback);
 };

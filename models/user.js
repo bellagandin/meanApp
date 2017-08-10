@@ -221,3 +221,8 @@ module.exports.DecRate = function (user, callback) {
 module.exports.findUserRegex = function (user, callback) {
     User.find({user_name:{$regex:user}},callback);
 };
+
+
+module.exports.gelAllUsers = function (callback) {
+    User.find(callback);
+};

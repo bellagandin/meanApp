@@ -15,10 +15,24 @@ export class SearchResaultComponent implements OnInit {
   searchQuery;
   users=[];
   posts=[];
+  isUser:boolean=false;
+  isPost:Boolean=false;
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.selectedValue = params['selectedValue'];
+      switch (this.selectedValue){
+        case "user":
+          this.isUser=true;
+          this.isPost=false;
+          break;
+        case "title":
+        case "text":
+          this.isUser=false;
+          this.isPost=true;
+          break;
+      }
+      console.log("isUser",this.isUser,"isPost",this.isPost);
       this.searchQuery = params['searchQuery'];
       console.log(this.selectedValue,this.searchQuery);
 
@@ -29,7 +43,12 @@ export class SearchResaultComponent implements OnInit {
         //map the success function and alert the response
         (success) => {
           console.log(success);
-          this.users = success.msg;
+          if(this.isUser) {
+            this.users = success.msg;
+          }
+          else {
+            this.posts = success.msg;
+          }
         },
         (error) => alert(error));
     });
