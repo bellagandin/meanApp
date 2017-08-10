@@ -122,10 +122,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
           console.log("the users",profile.user);
           console.log("me",this.auth.getLogoedInUser());
           if(this.auth.getLogoedInUser()["followings"]!=[]) {
-             if (this.auth.getLogoedInUser()["followings"].indexOf(profile.user["id"]) > -1) {
+            let item_id = this.user["_id"];
+            console.log("this.user",this.user);
+            // console.log("test23",this.auth.getLogoedInUser()["followings"]);
+            let tempo = this.auth.getLogoedInUser()["followings"].filter((item)=>{return item===item_id});
+            //console.log("tempo",tempo);
+            if(tempo.length!==0){
+              //if (this.auth.getLogoedInUser()["followings"].indexOf(this.user["_id"]) > -1) {
               this.follow = true;
-
-             }
+            }
            }
         },
         err => {
@@ -212,6 +217,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   }
 
+  public showFollowingButten(){
+    this.edit=false;
+    this.showFollowing=true;
+    console.log("hello",this.edit,this.showFollowing);
+
+}
 
 
   ngOnDestroy() {

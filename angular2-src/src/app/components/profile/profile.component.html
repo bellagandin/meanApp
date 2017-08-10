@@ -35,8 +35,8 @@
               <h3><strong>Number of my followings</strong></h3>
               <p>{{user.followings.length}}</p>
               <hr>
-              <button type="button" class="btn btn-info btn-lg" (click)="showFollowing=true;">Show My followings</button>
-
+              <!--<button type="button" class="btn btn-info btn-lg" (click)="showFollowing=true;">Show My followings</button>-->
+              <button type="button" class="btn btn-info btn-lg" (click)="showFollowingButten()">Show My followings</button>
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@
         </div>
       </div>
       <hr>
-      <div *ngIf="!edit">
+      <div *ngIf="!edit&&!showFollowing">
         <div class="panel panel-default" *ngFor="let post of myPosts">
           <div class="panel-body">
             <app-post *ngIf="!auth.checkLogoedInUser(user.user_name)" [thisPost]= post></app-post>
