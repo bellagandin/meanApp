@@ -232,3 +232,9 @@ module.exports.gelAllUsers = function (callback) {
 module.exports.getAllUserByUserName = function (ids,callback) {
     User.find(ids,callback);
 };
+
+module.exports.getAllUserByUserIds = function (ids,callback) {
+   // let search = ids.map((item)=>ObjectId(item));
+   // console.log("search",search);
+    User.find({"_id":{"$in":ids}},callback);
+};

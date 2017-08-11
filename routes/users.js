@@ -147,6 +147,19 @@ router.post('/authenticate', (req, res, next) => {
 });
 
 
+router.post("/getMyFollowings", (req,res)=>{
+    let ids= req.body.ids;
+    console.log("ids",ids);
+    User.getAllUserByUserIds(ids, (err,users)=>{
+        if(err)
+        { res.json({success: false, msg: err});}
+        else {
+            res.json({success: true, msg: users});}
+
+    });
+
+});
+
 // Profile
 router.get('/profile/:user_name', passport.authenticate('jwt', {session: false}), (req, res, next) => {
     //res.send('PROFILE');

@@ -61,7 +61,7 @@
               unfollow
               </button>
                   </div>
-                <button *ngIf="auth.checkLogoedInUser(user.user_name)" type="button" class="btn btn-info btn-lg" (click)="edit=true;">Edit</button>
+                <button *ngIf="auth.checkLogoedInUser(user.user_name)" type="button" class="btn btn-info btn-lg" (click)="showEdit()">Edit</button>
               </div>
             </span>
         </div>
@@ -86,7 +86,7 @@
     </div>
 
       <div *ngIf="showFollowing">
-        <app-user-resault *ngFor="let user of user.follwings" [user]='user'> </app-user-resault>
+        <app-user-resault *ngFor="let user of UserFollowings" [user]='user'> </app-user-resault>
       </div>
 
   </div>

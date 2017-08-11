@@ -25,7 +25,7 @@ export class UserResaultComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("test231",this.auth.getLogoedInUser());
+    //console.log("test231",this.auth.getLogoedInUser());
 
     this.connection = this.server.getMessages('profile').subscribe(message => {
       //location.reload();

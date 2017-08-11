@@ -12,6 +12,7 @@ import {FlashMessagesService} from 'angular2-flash-messages';
 import {Server} from "../../services/socket.service";
 import {getPostsService} from '../../services/getPosts.service'
 import {userInfo} from "os";
+import {User} from "../../shared/User";
 
 @Component({
   selector: 'app-profile',
@@ -33,7 +34,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   myPosts: Array<Post>;
   showPst:Array<Post>;
   showFollowing:Boolean=false;
-
+  UserFollowings:Array<User>;
 
   constructor(private auth: AuthenticateService,
               private router: Router,
@@ -217,10 +218,32 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   }
 
+  public showEdit(){
+    this.edit=true;
+    this.showFollowing=false;
+    console.log("hello",this.edit,this.showFollowing);
+
+  }
+
   public showFollowingButten(){
     this.edit=false;
     this.showFollowing=true;
-    console.log("hello",this.edit,this.showFollowing);
+    console.log("hello",this.edit,this.showFollowing, this.auth.getLogoedInUser()["followings"]);
+
+    this.http
+    //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
+      .post('http://127.0.0.1:3001/users/getMyFollowings', {ids:this.auth.getLogoedInUser()["followings"]}).map((res: Response) => res.json()).subscribe(
+      //map the success function and alert the response
+      (success) => {
+        console.log(">>>>>",success);
+        if( success.success){
+          this.UserFollowings=success.msg;
+        }
+
+
+
+      },
+      (error) => alert(error));
 
 }
 
