@@ -264,7 +264,7 @@ router.post("/disLike", (req, res) => {
     Post.getPostById(post_id, (err, post) => {
         if (post===null||err) {
             console.log("2");
-            res.json({success: false, msg: err});
+            res.json({success: false, msg: "post not found"});
         } else {
             //get object user
             console.log("username",username);
@@ -287,7 +287,17 @@ router.post("/disLike", (req, res) => {
                                             console.log("11");
                                             res.json({success: false, msg: "the user not found"});
                                         } else {
-                                            res.json({success: true, msg: user});
+                                            Post.getPostById(post_id, (err,user_post)=>{
+                                                console.log("post for dis like",user_post);
+                                                User.getUserById(user_post['user_id'],(err, user2)=>{
+                                                    User.DecRate(user2, (err, upd)=>{
+                                                        res.json({success: true, msg: user});
+                                                    });
+                                                });
+
+
+                                            });
+
                                         }
                                     });
                                 }

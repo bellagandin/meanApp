@@ -46,10 +46,10 @@ export class PostComponent implements OnInit {
     ngOnInit() {
 
       this.connection = this.server.getMessages('profile').subscribe(message => {
-        location.reload();
+
       });
       this.connection = this.server.getMessages('post').subscribe(message => {
-        location.reload();
+        //location.reload();
         //console.log("get emit from the server");
         let send = {post_id:this.thisPost["_id"]};
         this.http.post('http://127.0.0.1:3001/posts/getSinglePost', send).map((res: Response) => res.json()).subscribe(

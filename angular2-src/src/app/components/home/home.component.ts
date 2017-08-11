@@ -29,10 +29,10 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.connection = this.server.getMessages('post').subscribe(message => {
       console.log("hptpost");
-      location.reload();
+      //location.reload();
     });
     this.connection = this.server.getMessages('profile').subscribe(message => {
-      location.reload();
+      //location.reload();
     });
     //check if the user is logged in
     if (this.auth.loggedIn()) {

@@ -72,7 +72,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this.connection = this.server.getMessages('post').subscribe(message => {
       console.log("get post");
-    location.reload();
+    //location.reload();
     });
 
     this.uploader.onAfterAddingFile = (file) => {

@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import {Http, Response} from '@angular/http';
 import {ActivatedRoute} from '@angular/router';
+import {Server} from "../../services/socket.service";
 
 @Component({
   selector: 'app-search-resault',
   templateUrl: './search-resault.component.html',
-  styleUrls: ['./search-resault.component.css']
+  styleUrls: ['./search-resault.component.css'],
+  providers: [Server],
 })
 export class SearchResaultComponent implements OnInit {
 
-  constructor(private http: Http,private route: ActivatedRoute) { }
+  constructor(private http: Http,private route: ActivatedRoute,  private server: Server,) { }
 
   selectedValue;
   searchQuery;
@@ -17,8 +19,20 @@ export class SearchResaultComponent implements OnInit {
   posts=[];
   isUser:boolean=false;
   isPost:Boolean=false;
+  connection;
+
+  sendMessage(key) {
+    console.log(key);
+    this.server.sendMessage(key);
+
+  }
+
 
   ngOnInit() {
+    this.connection = this.server.getMessages('profile').subscribe(message => {
+
+    });
+    this.connection = this.server.getMessages('post').subscribe(message => {});
     this.route.params.subscribe(params => {
       this.selectedValue = params['selectedValue'];
       switch (this.selectedValue){
@@ -44,9 +58,11 @@ export class SearchResaultComponent implements OnInit {
         (success) => {
           console.log(success);
           if(this.isUser) {
+            this.sendMessage('profile');
             this.users = success.msg;
           }
           else {
+            this.sendMessage('post');
             this.posts = success.msg;
           }
         },
