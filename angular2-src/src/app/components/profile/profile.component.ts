@@ -56,37 +56,44 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    this.connection = this.server.getMessages('profile').subscribe(message => {
-      //console.log("get emit from the server");
-      this.auth.getProfile(this.desiredUser).subscribe(
-        profile => {
-          console.log(profile.user);
-          this.user = profile.user;
-          //this.sendMessage('profile');
-          //let finalString = JSON.stringify(this.user);
-            //localStorage.setItem('user', finalString);
-        },
-        err => {
-          console.log(err);
-        });
-    });
 
-    this.connection = this.server.getMessages('post').subscribe(message => {
-      console.log("get post");
-    //location.reload();
-    });
+    
 
-    this.uploader.onAfterAddingFile = (file) => {
-      file.withCredentials = false;
-    };
-    this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-      console.log("ImageUpload:uploaded:", item, status, response);
-    };
-    this.bgColor = "#e8e8e8";
+    ///subscribe to chenges
     this.route.params.subscribe(params => {
+          this.connection = this.server.getMessages('profile').subscribe(message => {
+          //console.log("get emit from the server");
+          this.auth.getProfile(this.desiredUser).subscribe(
+            profile => {
+              console.log(profile.user);
+              this.user = profile.user;
+              //this.sendMessage('profile');
+              //let finalString = JSON.stringify(this.user);
+                //localStorage.setItem('user', finalString);
+            },
+            err => {
+              console.log(err);
+            });
+        });
+
+        this.connection = this.server.getMessages('post').subscribe(message => {
+          console.log("get post");
+        //location.reload();
+        });
+
+        this.uploader.onAfterAddingFile = (file) => {
+          file.withCredentials = false;
+        };
+        this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+          console.log("ImageUpload:uploaded:", item, status, response);
+        };
+        this.bgColor = "#e8e8e8";
+
+
+
+
       this.desiredUser = params['username'];
-    });
-    this.auth.getProfile(this.desiredUser).subscribe(
+          this.auth.getProfile(this.desiredUser).subscribe(
       profile => {
         console.log(profile.user);
         this.user = profile.user;
@@ -94,6 +101,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
             data=>{
               console.log("userPost",data.msg);
               this.myPosts=data.msg;
+              this.myPosts.sort(function(postA:Post,postB:Post){ 
+                if(postB.time>postA.time)
+                return 1;
+                else if(postB.time<postA.time)
+                  return -1
+                else
+                  return 0;
+              });
 
             },
             err=>{console.log(err);}
@@ -103,42 +118,50 @@ export class ProfileComponent implements OnInit, OnDestroy {
       err => {
         console.log(err);
       });
-    this.changer.changeBackground('#e8e8e8');
-
-    // let myjson=this.http.get('../assets/post.json')
-    // .map(res=>res.json()).subscribe(
-    //   (data)=>{
-    //     this.currPost=JSON.parse(JSON.stringify(data));
-    //     console.log(this.currPost);
-    //   });
 
 
-    console.log("check for edit",this.edit);
-    //check if I follow the user
-    console.log("in profile",this.desiredUser);
-    if (!this.auth.checkLogoedInUser(this.desiredUser)) {
-      console.log("the user is not me!");
-      this.auth.getProfile(this.desiredUser).subscribe(
-        profile => {
-          console.log("the users",profile.user);
-          console.log("me",this.auth.getLogoedInUser());
-          if(this.auth.getLogoedInUser()["followings"]!=[]) {
-            let item_id = this.user["_id"];
-            console.log("this.user",this.user);
-            // console.log("test23",this.auth.getLogoedInUser()["followings"]);
-            let tempo = this.auth.getLogoedInUser()["followings"].filter((item)=>{return item===item_id});
-            //console.log("tempo",tempo);
-            if(tempo.length!==0){
-              //if (this.auth.getLogoedInUser()["followings"].indexOf(this.user["_id"]) > -1) {
-              this.follow = true;
+          this.changer.changeBackground('#e8e8e8');
+
+      // let myjson=this.http.get('../assets/post.json')
+      // .map(res=>res.json()).subscribe(
+      //   (data)=>{
+      //     this.currPost=JSON.parse(JSON.stringify(data));
+      //     console.log(this.currPost);
+      //   });
+
+
+      console.log("check for edit",this.edit);
+      //check if I follow the user
+      console.log("in profile",this.desiredUser);
+      if (!this.auth.checkLogoedInUser(this.desiredUser)) {
+        console.log("the user is not me!");
+        this.auth.getProfile(this.desiredUser).subscribe(
+          profile => {
+            console.log("the users",profile.user);
+            console.log("me",this.auth.getLogoedInUser());
+            if(this.auth.getLogoedInUser()["followings"]!=[]) {
+              let item_id = this.user["_id"];
+              console.log("this.user",this.user);
+              // console.log("test23",this.auth.getLogoedInUser()["followings"]);
+              let tempo = this.auth.getLogoedInUser()["followings"].filter((item)=>{return item===item_id});
+              //console.log("tempo",tempo);
+              if(tempo.length!==0){
+                //if (this.auth.getLogoedInUser()["followings"].indexOf(this.user["_id"]) > -1) {
+                this.follow = true;
+              }
             }
-           }
-        },
-        err => {
-          console.log(err);
-        });
-    }
-  }
+          },
+          err => {
+            console.log(err);
+          });
+      }
+      
+    
+    
+    });//end of subscribe to param
+
+
+  }  ///end of on init
 
   public changePic() {
     this.showInput = true;
@@ -162,7 +185,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       //call the angular http method
       this.http
       //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-        .post('http://127.0.0.1:3001/users/upload/' + this.user["_id"], formData).map((res: Response) => res.json()).subscribe(
+        .post(this.api+'users/upload/' + this.user["_id"], formData).map((res: Response) => res.json()).subscribe(
         //map the success function and alert the response
         (success) => {
           console.log(success.msg);
@@ -182,7 +205,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     console.log(send);
     this.http
     //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-      .post('http://127.0.0.1:3001/users/addFollowing', send).map((res: Response) => res.json()).subscribe(
+      .post(this.api+'users/addFollowing', send).map((res: Response) => res.json()).subscribe(
       //map the success function and alert the response
       (success) => {
         console.log(success);
@@ -206,7 +229,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     console.log(send);
     this.http
     //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-      .post('http://127.0.0.1:3001/users/removeFollowing', send).map((res: Response) => res.json()).subscribe(
+      .post(this.api+'users/removeFollowing', send).map((res: Response) => res.json()).subscribe(
       //map the success function and alert the response
       (success) => {
         console.log(success);
@@ -232,7 +255,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this.http
     //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-      .post('http://127.0.0.1:3001/users/getMyFollowings', {ids:this.auth.getLogoedInUser()["followings"]}).map((res: Response) => res.json()).subscribe(
+      .post(this.api+'users/getMyFollowings', {ids:this.auth.getLogoedInUser()["followings"]}).map((res: Response) => res.json()).subscribe(
       //map the success function and alert the response
       (success) => {
         console.log(">>>>>",success);

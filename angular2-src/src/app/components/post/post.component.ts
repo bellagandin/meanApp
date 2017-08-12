@@ -52,7 +52,7 @@ export class PostComponent implements OnInit {
         //location.reload();
         //console.log("get emit from the server");
         let send = {post_id:this.thisPost["_id"]};
-        this.http.post('http://127.0.0.1:3001/posts/getSinglePost', send).map((res: Response) => res.json()).subscribe(
+        this.http.post(this.api+'posts/getSinglePost', send).map((res: Response) => res.json()).subscribe(
           //map the success function and alert the response
           (success) => {
             console.log(success.msg);
@@ -65,6 +65,7 @@ export class PostComponent implements OnInit {
       });
       this.showPost = false;
       console.log("comment",this.thisPost.comments);
+      console.log("co-authors",this.thisPost.co_author);
       console.log("like",this.auth.getLogoedInUser()["liked_posts"]);
        if (this.auth.getLogoedInUser()["liked_posts"] !== []) {
          let s = ""+this.thisPost["_id"];
@@ -141,7 +142,7 @@ public editLike(){
     console.log("@#",this.thisPost );
     let send = {post_id:this.thisPost["_id"],user_name:this.auth.getLogoedInUser()["user_name"] };
     console.log("send",send);
-    this.http.post('http://127.0.0.1:3001/posts/likedPost', send).map((res: Response) => res.json()).subscribe(
+    this.http.post(this.api+'posts/likedPost', send).map((res: Response) => res.json()).subscribe(
       //map the success function and alert the response
       (success) => {
        if(success.success) {
@@ -170,7 +171,7 @@ public editLike(){
     console.log("@#",this.thisPost );
     let send = {post_id:this.thisPost["_id"],user_name:this.auth.getLogoedInUser()["user_name"]};
     console.log("send",send);
-    this.http.post('http://127.0.0.1:3001/posts/disLike', send).map((res: Response) => res.json()).subscribe(
+    this.http.post(this.api+'posts/disLike', send).map((res: Response) => res.json()).subscribe(
       //map the success function and alert the response
       (success) => {
         if(success.success) {
@@ -200,7 +201,7 @@ public editLike(){
 public delPost(){
   let send = {post_id:this.thisPost["_id"],user_name:this.auth.getLogoedInUser()["user_name"]};
   console.log("delPost",send);
-  this.http.post('http://127.0.0.1:3001/posts/removePost', send).map((res: Response) => res.json()).subscribe(
+  this.http.post(this.api+'posts/removePost', send).map((res: Response) => res.json()).subscribe(
     //map the success function and alert the response
     (success) => {
       if(success.success) {

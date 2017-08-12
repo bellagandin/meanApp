@@ -193,7 +193,7 @@ export class NewPostComponent implements OnInit {
         return "photo"+i;
     }
     publish(myForm) {
-        if(this.pics.length<1 && this.edit){
+        if(this.pics.length<1 && !this.edit){
             alert("At least one picture is mandatory");
             return;
         }

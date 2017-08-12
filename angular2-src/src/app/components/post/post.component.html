@@ -9,12 +9,14 @@
     <div *ngIf="edit" class="pull-right"><h5><a href="javascript:void(0)" (click)="delPost()">delete post</a></h5>  </div>
     <br><br>
     <div *ngIf="edit" class="pull-right"><h5><a href="javascript:void(0)" (click)="editPost()">edit post</a></h5>  </div>
-    <h4><a href="#" style="text-decoration:none;"><strong>{{thisPost.first_name}} {{thisPost.last_name}}</strong></a> – <small><small><a  style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> {{thisPost.time | amCalendar}}</i></a></small></small></h4>
+    <h4><a href="#" [routerLink]="['/profile',thisPost.user_name]" style="text-decoration:none;"><strong>{{thisPost.first_name}} {{thisPost.last_name}}</strong></a> – <small><small><a  style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> {{thisPost.time | amCalendar}}</i></a></small></small></h4>
     <hr>
     <h3>{{thisPost.recipe_title}}</h3>
+    <div style="margin-bottom:50px" >category : {{thisPost.category}}</div>
+
     <br>
     <div id="post-header" class="row" style="height:50px;">
-        <div class="col-md-9" align="center">
+        <div class="col-md-9" style="font-size:20px">
             {{thisPost.description}}
         </div>
         <div class="col-md-3" >
@@ -73,6 +75,12 @@
         </div>
         <hr>
     </div>
+    <div style="display: inline">
+            <p style="display:inline">Co-Authors: </p>
+            <ul id="hList">
+                <a *ngFor="let co of thisPost.co_author" [routerLink]="['/profile/',co.user_name]"> {{co.user_name}} </a><br />
+            </ul>
+    </div>
     <div class="media">
         <div class="pull-left">
             <a href="#">
@@ -80,7 +88,7 @@
             </a>
         </div>
         <div class="media-body input-group">
-            <textarea class="form-control" rows="1" [(ngModel)]="commentIn" placeholder="Comment" style="width:93%;"></textarea>
+            <textarea class="form-control" rows="1" [(ngModel)]="commentIn" placeholder="Comment" style="width:90%;"></textarea>
             <span class="input-group-btn">
                 <button class="btn btn-primary" id="addCommentBtn" (click)="addComment()">Add</button>
             </span>

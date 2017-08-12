@@ -37,7 +37,7 @@
         <li *ngIf='auth.loggedIn()' [routerLinkActive]="['active']"><a><strong>Connected as:
           {{getLoggedInUSer().user_name}}</strong></a></li>
 
-        <li *ngIf='auth.loggedIn()' [routerLinkActive]="['active']" [routerLink]="['/newPost']"><a><strong>Publish New
+        <li *ngIf='auth.loggedIn()' [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" ><a [routerLink]="['/newPost']"><strong>Publish New
           Recipe</strong></a></li>
 
         <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['/']">Home</a>

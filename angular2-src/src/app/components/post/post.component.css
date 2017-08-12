@@ -84,3 +84,6 @@ body {
 #addCommentBtn{
     border:1px solid black;
 }
+ul#hList li {
+    display:inline;
+}
