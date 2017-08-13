@@ -61,6 +61,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     ///subscribe to chenges
     this.route.params.subscribe(params => {
+          this.showFollowing=false;
           this.connection = this.server.getMessages('profile').subscribe(message => {
           //console.log("get emit from the server");
           this.auth.getProfile(this.desiredUser).subscribe(

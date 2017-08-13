@@ -150,6 +150,10 @@ module.exports.getPostsByTitle = function ( title, callback) {
     Post.find({"recipe_title":title}, callback);
 };
 
+module.exports.getAllPosts=function (callback) {
+    Post.find(callback);
+}
+
 
 module.exports.getPostsByText = function ( text, callback) {
     Post.find({$and:[{recipe_title : {$regex : text}},{description : {$regex : text}},{category : {$regex : text}}]},callback);

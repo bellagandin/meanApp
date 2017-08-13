@@ -73,6 +73,14 @@ router.post('/getSinglePost', (req, res) => {
     });
 });
 
+router.get('/getAllPosts', (req, res) => {
+    Post.getAllPosts((err, posts) => {
+        if (err) throw err;
+        res.json({success: true, msg: posts});
+    });
+});
+
+
 // Update Post
 router.post('/editPost', (req, res) => {
     console.log(req.body);

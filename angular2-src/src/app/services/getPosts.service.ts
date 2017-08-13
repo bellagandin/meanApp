@@ -33,6 +33,14 @@ export class getPostsService {
       .map(res=>res.json());
   }
 
+    public getAllPosts(){
+    let headers=new Headers();
+    headers.append('Content-Type','application/json');
+    return this.http.get(AppConfig.API_ENDPOINT+'posts/getAllPosts',{headers: headers})
+      .map(res=>res.json());
+  }
+
+
   public addComment(comment){
     let headers=new Headers();
     headers.append('Content-Type','application/json');
