@@ -130,6 +130,8 @@ router.post('/editPost', (req, res) => {
 router.post("/removePost", (req, res) => {
     const post_id = req.body.post_id;
     const user_name = req.body.user_name;
+    
+
     Post.removePost(post_id, (err, post) => {
         if (err) {
             res.json({success: false, msg: err});
@@ -191,8 +193,11 @@ router.post('/getSinglePost', (req, res) => {
 });
 
 router.post("/removeComment", (req, res) => {
+    console.log('remove',req.body.post_id);
+    console.log('remove',req.body.comment_id);
     const post_id = req.body.post_id;
     const comment_id = req.body.comment_id;
+    
     Post.getPostById(post_id, (err, post) => {
         if (err) {
             res.json({success: false, msg: err});

@@ -57,8 +57,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-
-
     ///subscribe to changes
     this.route.params.subscribe(params => {
           this.showFollowing=false;
