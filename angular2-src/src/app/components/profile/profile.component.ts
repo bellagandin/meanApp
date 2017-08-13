@@ -57,9 +57,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    
 
-    ///subscribe to chenges
+
+    ///subscribe to changes
     this.route.params.subscribe(params => {
           this.showFollowing=false;
           this.connection = this.server.getMessages('profile').subscribe(message => {
@@ -78,10 +78,36 @@ export class ProfileComponent implements OnInit, OnDestroy {
         });
 
         this.connection = this.server.getMessages('post').subscribe(message => {
-          console.log("get post");
-        //location.reload();
+          this.auth.getProfile(this.user["user_name"]).subscribe(
+            profile => {
+              console.log(profile.user);
+              this.user = profile.user;
+              //this.sendMessage('profile');
+              //let finalString = JSON.stringify(this.user);
+              //localStorage.setItem('user', finalString);
+            },
+            err => {
+              console.log(err);
+            });
+
         });
 
+      this.connection = this.server.getMessages('profile').subscribe(message => {
+        //console.log("get post");
+        //location.reload();
+        this.auth.getProfile(this.user["user_name"]).subscribe(
+          profile => {
+            console.log(profile.user);
+            this.user = profile.user;
+            //this.sendMessage('profile');
+            //let finalString = JSON.stringify(this.user);
+            //localStorage.setItem('user', finalString);
+          },
+          err => {
+            console.log(err);
+          });
+
+      });
         this.uploader.onAfterAddingFile = (file) => {
           file.withCredentials = false;
         };
@@ -102,7 +128,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             data=>{
               console.log("userPost",data.msg);
               this.myPosts=data.msg;
-              this.myPosts.sort(function(postA:Post,postB:Post){ 
+              this.myPosts.sort(function(postA:Post,postB:Post){
                 if(postB.time>postA.time)
                 return 1;
                 else if(postB.time<postA.time)
@@ -156,9 +182,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
             console.log(err);
           });
       }
-      
-    
-    
+
+
+
     });//end of subscribe to param
 
 
@@ -191,6 +217,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         (success) => {
           console.log(success.msg);
             this.sendMessage('profile');
+          this.sendMessage('post');
           if(success.msg!=null) {
             localStorage.setItem('user', JSON.stringify(success.msg));
           }

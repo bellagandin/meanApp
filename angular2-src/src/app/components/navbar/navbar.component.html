@@ -51,6 +51,9 @@
         </li>
         <li *ngIf='auth.loggedIn()' [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a
           [routerLink]="['/profile',getLoggedInUSer().user_name]">Profile</a></li>
+        <li *ngIf='auth.loggedIn()' [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a
+          [routerLink]="['/dashboard']">Feeds</a></li>
+
 
 
       </ul>

@@ -167,3 +167,10 @@ module.exports.findPostByTitle = function (text, callback) {
     console.log("text", text);
     Post.find({recipe_title: {$regex: text}}, callback);
 };
+
+
+module.exports.updateUsersPost = function (posts,first_name,last_name,img, callback) {
+    let ids = posts.map((item)=>{return item["_id"]});
+    console.log("try",ids,posts);
+    Post.update({"_id":{$in:ids}},{$set:{"first_name":first_name,"last_name":last_name,"user_img":img}},callback);
+};

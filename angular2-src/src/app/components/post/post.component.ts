@@ -21,11 +21,11 @@ export class PostComponent implements OnInit {
   edit;
   postDescription: Array<String>=[];
   api=AppConfig.API_ENDPOINT;
-  myImg=this.auth.getLoggedInUser().img_url;
   commentIn: String;
   like:boolean=false;
   showComment: boolean=false;
   connection;
+  myImg;
 
   description: Array<string>=[];
   showPost: boolean;
@@ -46,6 +46,7 @@ export class PostComponent implements OnInit {
     ngOnInit() {
 
       this.connection = this.server.getMessages('profile').subscribe(message => {
+        this.myImg=this.auth.getLoggedInUser().img_url;
 
       });
       this.connection = this.server.getMessages('post').subscribe(message => {
@@ -57,7 +58,7 @@ export class PostComponent implements OnInit {
           (success) => {
             console.log(success.msg);
             this.thisPost=success.msg;
-            location.reload();
+            //location.reload();
           },
           (error) => alert(error));
 

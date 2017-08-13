@@ -48,9 +48,10 @@ const appRoutes: Routes = [
   {path:'test',component:TesterComponent},
   {path:'EditPost/:post_id',component:EditPostComponent},
   {path:'searchResault/:searchQuery/:selectedValue',component:SearchResaultComponent},
-  {path:'newPost',component:NewPostComponent,canActivate:[AuthGuard]}
+  {path:'newPost',component:NewPostComponent,canActivate:[AuthGuard]},
+  {path:'dashboard',component:NewPostComponent,canActivate:[AuthGuard]}
 
-]
+];
 
 @NgModule({
   declarations: [

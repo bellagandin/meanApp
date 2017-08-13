@@ -10,20 +10,25 @@ const multer = require('multer');
 // Create Post
 router.post('/createPost', (req, res, next) => {
     let coauth = [];
-    console.log("req.body.co_author",req.body.co_author);
-    User.getAllUserByUserName(req.body.co_author, (err, users)=>{
-        if(err) throw err;
-        console.log("users",users);
-        let temp = users.map((item)=> {return item["user_name"];});
-        coauth = req.body.co_author.filter((item)=>{console.log(item,temp, temp.indexOf(item));return temp.indexOf(item)>-1});
-        console.log("coauth",coauth);
+    console.log("req.body.co_author", req.body.co_author);
+    User.getAllUserByUserName(req.body.co_author, (err, users) => {
+        if (err) throw err;
+        console.log("users", users);
+        let temp = users.map((item) => {
+            return item["user_name"];
+        });
+        coauth = req.body.co_author.filter((item) => {
+            console.log(item, temp, temp.indexOf(item));
+            return temp.indexOf(item) > -1
+        });
+        console.log("coauth", coauth);
         let newPost = new Post({
             time: req.body.time,
             recipe_title: req.body.recipe_title,
             first_name: req.body.first_name,
-            last_name:req.body.last_name,
-            user_id:req.body.user_id,
-            user_img:req.body.user_img,
+            last_name: req.body.last_name,
+            user_id: req.body.user_id,
+            user_img: req.body.user_img,
             category: req.body.category,
             co_author: coauth,
             main_img: '',
@@ -67,7 +72,7 @@ router.post('/createPost', (req, res, next) => {
 
 router.post('/getSinglePost', (req, res) => {
     const post_id = req.body.post_id;
-    Post.getPostById(post_id ,(err, post) => {
+    Post.getPostById(post_id, (err, post) => {
         if (err) throw err;
         res.json({success: true, msg: post});
     });
@@ -83,24 +88,42 @@ router.get('/getAllPosts', (req, res) => {
 
 // Update Post
 router.post('/editPost', (req, res) => {
-    console.log(req.body);
+    console.log("edit post",req.body);
     console.log(req.body._id);
     const post_id = req.body._id;
-    Post.getPostById(post_id, (err, post) => {
-        if (err) throw err;
-        if (!post) {
-            return res.json({success: false, msg: 'Post not found'});
-        }
+    // if(req.body.co_author)
+    // let co_auther = [];
+    // console.log("req.body.co_author", req.body.co_author);
+    // User.getAllUserByUserName(req.body.co_author, (err, users) => {
+    //     if (err) throw err;
+    //     console.log("users", users);
+    //     let temp = users.map((item) => {
+    //         return item["user_name"];
+    //     });
+    //     co_auther = req.body.co_author.filter((item) => {
+    //         console.log(item, temp, temp.indexOf(item));
+    //         return temp.indexOf(item) > -1
+    //     });
+    //     console.log("co_auther", co_auther);
 
-        Post.updatePost(post, req.body, (err, post) => {//callback
-            if (err) {
-                res.json({success: false, msg: err});
-            } else {
-                res.json({success: true, msg: post});
+        Post.getPostById(post_id, (err, post) => {
+            if (err) throw err;
+            if (!post) {
+                return res.json({success: false, msg: 'Post not found'});
             }
+             let update=req.body+{co_author: co_auther};
+            console.log("update",update);
+            Post.updatePost(post, req.body, (err, post) => {//callback
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    res.json({success: true, msg: post});
+                }
 
+            });
         });
-    });
+//    });
+
 });
 
 
@@ -134,17 +157,17 @@ router.post("/removePost", (req, res) => {
 router.post("/addComment", (req, res) => {
     const post_id = req.body.post_id;
     Post.getPostById(post_id, (err, post) => {
-        if (post===null||err) {
+        if (post === null || err) {
             res.json({success: false, msg: err});
         } else {
             let comment = {
                 comment_id: post.id_generator,
-                time:req.body.time,
+                time: req.body.time,
                 content: req.body.content,
                 first_name: req.body.first_name,
-                last_name:req.body.last_name,
-                img_url:req.body.img_url,
-                user_name:req.body.user_name,
+                last_name: req.body.last_name,
+                img_url: req.body.img_url,
+                user_name: req.body.user_name,
                 likes: 0
             };
             Post.addCommentToPost(comment, post, (err, udp) => {
@@ -161,7 +184,7 @@ router.post("/addComment", (req, res) => {
 
 router.post('/getSinglePost', (req, res) => {
     const post_id = req.body.post_id;
-    Post.getPostById(post_id ,(err, post) => {
+    Post.getPostById(post_id, (err, post) => {
         if (err) throw err;
         res.json({success: true, msg: post});
     });
@@ -208,7 +231,7 @@ router.post("/editComment", (req, res) => {
 router.post("/likedPost", (req, res) => {
     const post_id = req.body.post_id;
     const username = req.body.user_name;
-    console.log("post_id",post_id);
+    //console.log("post_id", post_id);
     //Get object post
     Post.getPostById(post_id, (err, post) => {
         if (post === null || err) {
@@ -216,8 +239,8 @@ router.post("/likedPost", (req, res) => {
         } else {
             //get object user
             User.getUserByUserName(username, (err, user) => {
-                if (user===null||err) {
-                    console.log("22",username);
+                if (user === null || err) {
+                    //console.log("22", username);
                     res.json({success: false, msg: err});
                 } else {
                     //add like to post
@@ -225,13 +248,13 @@ router.post("/likedPost", (req, res) => {
                         if (err) {
                             res.json({success: false, msg: err});
                         } else {
-                            console.log("post.user_id",post.user_id);
+                            //console.log("post.user_id", post.user_id);
                             User.getUserById(post.user_id, (err, user_post) => {
-                                if (user_post===null ||err) {
-                                    console.log("user_post",user_post);
+                                if (user_post === null || err) {
+                                    //console.log("user_post", user_post);
                                     res.json({success: false, msg: err});
                                 } else {
-                                    console.log("user_post",user_post);
+                                    //console.log("user_post", user_post);
                                     User.IncRate(user_post, (err, _) => {
                                         if (err) {
                                             res.json({success: false, msg: err});
@@ -242,7 +265,7 @@ router.post("/likedPost", (req, res) => {
                                                 } else {
                                                     User.getUserByUserName(username, (err, user) => {
                                                         if (user === null || err) {
-                                                            console.log("11");
+                                                            //console.log("11");
                                                             res.json({success: false, msg: "the user not found"});
                                                         } else {
                                                             res.json({success: true, msg: user});
@@ -260,9 +283,8 @@ router.post("/likedPost", (req, res) => {
                 }
             });
         }
+    });
 });
-});
-
 
 
 router.post("/disLike", (req, res) => {
@@ -270,15 +292,15 @@ router.post("/disLike", (req, res) => {
     const username = req.body.user_name;
     //Get object post
     Post.getPostById(post_id, (err, post) => {
-        if (post===null||err) {
-            console.log("2");
+        if (post === null || err) {
+           // console.log("2");
             res.json({success: false, msg: "post not found"});
         } else {
             //get object user
-            console.log("username",username);
+            //console.log("username", username);
             User.getUserByUserName(username, (err, user) => {
-                if (user===null||err) {
-                    console.log("1");
+                if (user === null || err) {
+                    //console.log("1");
                     res.json({success: false, msg: "the user not found"});
                 } else {
                     //remove like from post
@@ -292,13 +314,13 @@ router.post("/disLike", (req, res) => {
                                 } else {
                                     User.getUserByUserName(username, (err, user) => {
                                         if (user === null || err) {
-                                            console.log("11");
+                                            //console.log("11");
                                             res.json({success: false, msg: "the user not found"});
                                         } else {
-                                            Post.getPostById(post_id, (err,user_post)=>{
-                                                console.log("post for dis like",user_post);
-                                                User.getUserById(user_post['user_id'],(err, user2)=>{
-                                                    User.DecRate(user2, (err, upd)=>{
+                                            Post.getPostById(post_id, (err, user_post) => {
+                                               // console.log("post for dis like", user_post);
+                                                User.getUserById(user_post['user_id'], (err, user2) => {
+                                                    User.DecRate(user2, (err, upd) => {
                                                         res.json({success: true, msg: user});
                                                     });
                                                 });
@@ -319,78 +341,78 @@ router.post("/disLike", (req, res) => {
 });
 
 
-
-
 router.post("/removeImg", (req, res) => {
-    let post_id=req.body.post_id;
+    let post_id = req.body.post_id;
     let ind = req.body.imgInd;
     console.log(ind);
     console.log(post_id);
 
-    Post.getPostById(post_id,(err,post)=>{
-        if (post===null||err) {
+    Post.getPostById(post_id, (err, post) => {
+        if (post === null || err) {
             res.json({success: false, msg: err});
         }
-        else{
-            let temp=post.photos;
+        else {
+            let temp = post.photos;
             console.log(post.photos);
-            temp.splice(ind,1);
-            let udp={photos:temp};
+            temp.splice(ind, 1);
+            let udp = {photos: temp};
             console.log(udp);
-            Post.updatePost(post,udp,(err,post)=>{
-        if (post===null||err) {
-            res.json({success: false, msg: err});
+            Post.updatePost(post, udp, (err, post) => {
+                if (post === null || err) {
+                    res.json({success: false, msg: err});
+                }
+                else {
+                    res.json({success: true, msg: "Image " + ind + " was deleted secssesfulyy"});
+                }
+            });
         }
-        else{
-            res.json({success: true, msg: "Image "+ind+" was deleted secssesfulyy"});
-        }
-        });
-        }
-   
+
     });
 });
 
 
 router.post('/morePhotos/:postnumber', function (req, res, next) {
-    let postDest='./public/uploads/'+req.param('postnumber');
+    let postDest = './public/uploads/' + req.param('postnumber');
     let storage = multer.diskStorage({
-    destination: postDest,
-    filename: function (req, file, cb) {
-        let extArray = file.mimetype.split("/");
-        let extension = extArray[extArray.length - 1];
-        cb(null, file.fieldname + '-' + Date.now()+ '.' +extension);
-    }
+        destination: postDest,
+        filename: function (req, file, cb) {
+            let extArray = file.mimetype.split("/");
+            let extension = extArray[extArray.length - 1];
+            cb(null, file.fieldname + '-' + Date.now() + '.' + extension);
+        }
     })
 
-    let upload = multer({storage: storage}).array('photos',10);
+    let upload = multer({storage: storage}).array('photos', 10);
     var path = '';
     upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
             res.status(422).send("an Error occured")
         }
-        else{
-        const post_id = req.param('postnumber');
-        Post.getPostById(post_id, (err, post) => {
-                      
-            if (err) {
-                res.json({success: false, msg: err});
-                            } else {
-                                let temp =post.photos;
-                                let files=req.files;
-                                let names = files.map((x)=>{return '/uploads/'+req.param('postnumber')+'/'+x.filename});
-                                let newPhotos=temp.concat(names);
-                                let updateData={photos: newPhotos};
-                                Post.updatePost(post,updateData, (err,udp) => {
-                                    if (err) {
-                                        res.json({success: false, msg: err});
-                                    } 
-                                    else {
-                                        res.json({success:true,msg:"images Added to Post"});
-                                
-                                    }
-                                });
-                            }
+        else {
+            const post_id = req.param('postnumber');
+            Post.getPostById(post_id, (err, post) => {
+
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    let temp = post.photos;
+                    let files = req.files;
+                    let names = files.map((x) => {
+                        return '/uploads/' + req.param('postnumber') + '/' + x.filename
+                    });
+                    let newPhotos = temp.concat(names);
+                    let updateData = {photos: newPhotos};
+                    Post.updatePost(post, updateData, (err, udp) => {
+                        if (err) {
+                            res.json({success: false, msg: err});
+                        }
+                        else {
+                            res.json({success: true, msg: "images Added to Post"});
+
+                        }
+                    });
+                }
             });
 
         }
@@ -399,54 +421,55 @@ router.post('/morePhotos/:postnumber', function (req, res, next) {
 });
 
 
-
 router.post('/uploadMainImg/:postnumber', function (req, res, next) {
-    let postDest='./public/uploads/'+req.param('postnumber');
+    let postDest = './public/uploads/' + req.param('postnumber');
     let storage = multer.diskStorage({
-    destination: postDest,
-    filename: function (req, file, cb) {
-        let extArray = file.mimetype.split("/");
-        let extension = extArray[extArray.length - 1];
-        cb(null, file.fieldname + '-' + Date.now()+ '.' +extension);
-    }
+        destination: postDest,
+        filename: function (req, file, cb) {
+            let extArray = file.mimetype.split("/");
+            let extension = extArray[extArray.length - 1];
+            cb(null, file.fieldname + '-' + Date.now() + '.' + extension);
+        }
     })
 
 
-    let upload = multer({storage: storage}).array('photos',10);
+    let upload = multer({storage: storage}).array('photos', 10);
     var path = '';
     upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
             res.status(422).send("an Error occured")
         }
-        else{
-        let json = {"main_img": path};
-        const post_id = req.param('postnumber');
-        Post.getPostById(post_id, (err, post) => {
-                      
-            if (err) {
+        else {
+            let json = {"main_img": path};
+            const post_id = req.param('postnumber');
+            Post.getPostById(post_id, (err, post) => {
+
+                if (err) {
+                    res.json({success: false, msg: err});
+                } else {
+                    let updateData = {"main_img": '/uploads/' + req.param('postnumber') + '/' + req.files[0].filename};
+                    console.log(updateData);
+                    Post.updatePost(post, updateData, (err, udp) => {
+                        if (err) {
+                            res.json({success: false, msg: err});
+                        } else {
+                            let temp = req.files.slice(1);
+                            let names = temp.map((x) => {
+                                return '/uploads/' + req.param('postnumber') + '/' + x.filename
+                            });
+                            let updateData = {"photos": post.photos.concat(names)};
+                            Post.updatePost(post, updateData, (err, post) => {
+                                if (err) {
                                     res.json({success: false, msg: err});
                                 } else {
-                                    let updateData = {"main_img":'/uploads/'+req.param('postnumber')+'/'+ req.files[0].filename};
-                                    console.log(updateData);
-                                    Post.updatePost(post,updateData, (err,udp) => {
-                                        if (err) {
-                                    res.json({success: false, msg: err});
-                                } else {
-                                    let temp =req.files.slice(1);
-                                    let names = temp.map((x)=>{return '/uploads/'+req.param('postnumber')+'/'+x.filename});
-                                    let updateData = {"photos":post.photos.concat(names)};
-                                     Post.updatePost(post,updateData, (err, post) => {
-                                        if (err) {
-                                    res.json({success: false, msg: err});
-                                } else {
-                                            res.send({success: true, msg: "Upload Completed for " + path});
+                                    res.send({success: true, msg: "Upload Completed for " + path});
                                 }
-                                     });
-                                }
-                                    });
-                                }
-        });
+                            });
+                        }
+                    });
+                }
+            });
 
         }
 

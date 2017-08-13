@@ -66,38 +66,38 @@ router.post('/register', (req, res, next) => {
 });
 
 // Update password
-router.post('/updatePassword', (req, res, next) => {
-
-    const email = req.body.email;
-    const oldPassword = req.body.oldPassword;
-    const newPassword = req.body.newPassword;
-    console.log("old password", oldPassword);
-    User.getUserByEmail(email, (err, user) => {
-        if (err) throw err;
-        if (!user) {
-            return res.json({success: false, msg: 'User not found'});
-        }
-        // Check if the old password is right
-        User.comparePassword(oldPassword, user.password, (err, isMatch) => {
-            if (err) throw err;
-            if (isMatch) {
-                User.updatePassword(user, newPassword, (err, user) => {
-                    if (err) throw err;
-                    if (!user) {
-                        return res.json({success: false, msg: "can't update password "});
-                    }
-                    else {
-                        return res.json({success: true, msg: user});
-                    }
-                });
-            }
-            else {
-                return res.json({success: false, msg: "Old Password not right"});
-            }
-        });
-
-    });
-});
+// router.post('/updatePassword', (req, res, next) => {
+//
+//     const email = req.body.email;
+//     const oldPassword = req.body.oldPassword;
+//     const newPassword = req.body.newPassword;
+//     console.log("old password", oldPassword);
+//     User.getUserByEmail(email, (err, user) => {
+//         if (err) throw err;
+//         if (!user) {
+//             return res.json({success: false, msg: 'User not found'});
+//         }
+//         // Check if the old password is right
+//         User.comparePassword(oldPassword, user.password, (err, isMatch) => {
+//             if (err) throw err;
+//             if (isMatch) {
+//                 User.updatePassword(user, newPassword, (err, user) => {
+//                     if (err) throw err;
+//                     if (!user) {
+//                         return res.json({success: false, msg: "can't update password "});
+//                     }
+//                     else {
+//                         return res.json({success: true, msg: user});
+//                     }
+//                 });
+//             }
+//             else {
+//                 return res.json({success: false, msg: "Old Password not right"});
+//             }
+//         });
+//
+//     });
+// });
 
 
 // Authenticate
@@ -207,7 +207,16 @@ router.post('/updateProfile', (req, res, next) => {
                     User.getUserByEmail(req.body.email, (err, user) => {
                         if (user === null) throw err;
                         if (user !== null) {
-                            res.json({success: true, msg: user});
+                            console.log("user234",user["posts"]);
+                            Post.getPostByIds(user["posts"],(err,posts)=>{
+                                console.log("user2334324",posts);
+                                Post.updateUsersPost(posts,user["first_name"],user["last_name"],user["user_img"],(err,udp)=>{
+                                    console.log("udp",udp);
+                                    res.json({success: true, msg: user});
+                                });
+                            });
+
+
                         }
                     });
                 }
@@ -399,24 +408,33 @@ router.post('/upload/:user_id', function (req, res) {
                         res.json({success: false, msg: err});
                     }
                     else {
-                        res.json({
-                            success: true,
-                            msg: {
-                                _id: user._id,
-                                first_name: user.first_name,
-                                last_name: user.last_name,
-                                email: user.email,
-                                img_url: path[1],
-                                gender: user.gender,
-                                birthday: user.birthday,
-                                self_description: user.self_description,
-                                followers: user.followers,
-                                followings: user.followings,
-                                liked_posts: user.liked_posts,
-                                rate: user.rate,
-                                user_name:user.user_name,
-                            }
+                        console.log("user234",user["posts"]);
+                        Post.getPostByIds(user["posts"],(err,posts)=>{
+                            console.log("user2334324",posts);
+                            Post.updateUsersPost(posts,user["first_name"],user["last_name"], path[1],(err,udp)=>{
+                                console.log("udp",udp);
+                                res.json({
+
+                                    success: true,
+                                    msg: {
+                                        _id: user._id,
+                                        first_name: user.first_name,
+                                        last_name: user.last_name,
+                                        email: user.email,
+                                        img_url: path[1],
+                                        gender: user.gender,
+                                        birthday: user.birthday,
+                                        self_description: user.self_description,
+                                        followers: user.followers,
+                                        followings: user.followings,
+                                        liked_posts: user.liked_posts,
+                                        rate: user.rate,
+                                        user_name:user.user_name,
+                                    }
+                                });
+                            });
                         });
+
                         //res.json({success: true, msg: req.files[0].path});
                     }
                 });

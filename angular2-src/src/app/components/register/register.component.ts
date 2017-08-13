@@ -78,6 +78,7 @@ export class RegisterComponent implements OnInit {
           if (data.success) {
             console.log('send amit updateProfile ');
             this.sendMessage('profile');
+            this.sendMessage('post');
             console.log("1",data.msg);
             localStorage.setItem('user',JSON.stringify(data.msg));
             console.log("2",JSON.stringify(data.msg));

@@ -28,10 +28,50 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.connection = this.server.getMessages('post').subscribe(message => {
-      console.log("hptpost");
+      let send = {user_id: this.auth.getLogoedInUser()["_id"]};
+      console.log("send", send);
+      this.http
+      //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
+        .post('http://127.0.0.1:3001/users/LikedPost/', send).map((res: Response) => res.json()).subscribe(
+        //map the success function and alert the response
+        (success) => {
+          console.log(success.msg);
+          this.mostLikedRecipes = success.msg;
+
+
+          let send2 = {user_id: this.auth.getLogoedInUser()["_id"]};
+          console.log("send", send2);
+          this.http
+          //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
+            .post('http://127.0.0.1:3001/users/LikedUsers', send2).map((res: Response) => res.json()).subscribe(
+            //map the success function and alert the response
+            (success) => {
+              console.log("hello", success.msg, typeof success.msg);
+              this.mostLikeUsers = success.msg;
+
+            },
+            (error) => alert(error));
+
+
+        },
+        (error) => alert(error));
+
       //location.reload();
     });
     this.connection = this.server.getMessages('profile').subscribe(message => {
+      let send2 = {user_id: this.auth.getLogoedInUser()["_id"]};
+      console.log("send", send2);
+      this.http
+      //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
+        .post('http://127.0.0.1:3001/users/LikedUsers', send2).map((res: Response) => res.json()).subscribe(
+        //map the success function and alert the response
+        (success) => {
+          console.log("hello", success.msg, typeof success.msg);
+          this.mostLikeUsers = success.msg;
+
+        },
+        (error) => alert(error));
+
       //location.reload();
     });
     //check if the user is logged in
