@@ -25,7 +25,8 @@ export class PostComponent implements OnInit {
   like:boolean=false;
   showComment: boolean=false;
   connection;
-  myImg;
+  myImg=this.auth.getLoggedInUser().img_url;
+
 
   description: Array<string>=[];
   showPost: boolean;
@@ -52,6 +53,8 @@ export class PostComponent implements OnInit {
       this.connection = this.server.getMessages('post').subscribe(message => {
         //location.reload();
         //console.log("get emit from the server");
+        this.myImg=this.auth.getLoggedInUser().img_url;
+
         let send = {post_id:this.thisPost["_id"]};
         this.http.post(this.api+'posts/getSinglePost', send).map((res: Response) => res.json()).subscribe(
           //map the success function and alert the response
