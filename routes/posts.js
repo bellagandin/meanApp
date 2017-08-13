@@ -17,9 +17,10 @@ router.post('/createPost', (req, res, next) => {
         let temp = users.map((item) => {
             return item["user_name"];
         });
+        console.log(temp)
         coauth = req.body.co_author.filter((item) => {
-            console.log(item, temp, temp.indexOf(item));
-            return temp.indexOf(item) > -1
+            console.log(item, temp, temp.indexOf(item.user_name));
+            return temp.indexOf(item.user_name) > -1
         });
         console.log("coauth", coauth);
         let newPost = new Post({
@@ -111,8 +112,8 @@ router.post('/editPost', (req, res) => {
             if (!post) {
                 return res.json({success: false, msg: 'Post not found'});
             }
-             let update=req.body+{co_author: co_auther};
-            console.log("update",update);
+            //  let update=req.body+{co_author: co_auther};
+            // console.log("update",update);
             Post.updatePost(post, req.body, (err, post) => {//callback
                 if (err) {
                     res.json({success: false, msg: err});
