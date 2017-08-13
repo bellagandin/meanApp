@@ -70,7 +70,8 @@
     <div *ngIf="showPost">
         <hr>
         <h4 align="center">Comments</h4>
-        <div *ngFor="let comment of thisPost.comments">
+        <div *ngFor="let comment of thisPost.comments"style="background-color:#dee1e5; padding:4px;">
+            <a class="pull-right" href="javascript:void(0)" *ngIf="auth.checkLogoedInUser(comment.user_name)" (click)="removeComment(comment.comment_id)" >remove Comment </a>
             <app-comment  [thisComment]=comment></app-comment>
         </div>
         <hr>

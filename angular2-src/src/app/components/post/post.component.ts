@@ -124,6 +124,7 @@ addComment(){
       time: new Date()
     };
 
+
     this.getP.addComment(comment).subscribe(
       data=>{
         if(data.success)
@@ -135,6 +136,17 @@ addComment(){
 
   }
 }
+
+removeComment(commentId){
+      this.editP.removeComment(commentId,this.thisPost._id).subscribe(
+        data=>{
+          console.log(data);
+          this.sendMessage("post");
+
+        },
+        err=>{console.log(err)}
+      )
+    }
 
 public editLike(){
   if (!this.like)
