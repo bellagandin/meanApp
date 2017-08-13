@@ -501,8 +501,8 @@ router.post("/search", (req, res) => {
             break;
         case "text":
             const text = req.body.value;
-            console.log(text);
-            Post.findPostByTitle(text, (err, users) => {
+            console.log("text",text);
+            Post.getPostsByText(text, (err, users) => {
                 if (err) {
                     res.json({success: false, msg: err});
                 } else {

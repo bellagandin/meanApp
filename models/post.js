@@ -38,7 +38,7 @@ const PostSchema = mongoose.Schema({
     main_img: {
         type: String,
     },
-    description:{
+    description: {
         type: String,
         required: true
     },
@@ -50,11 +50,11 @@ const PostSchema = mongoose.Schema({
         type: Array,
         required: true
     },
-    user_img:{
-        type:String
+    user_img: {
+        type: String
     },
-    photos:{
-      type: Array,
+    photos: {
+        type: Array,
     },
     likes: {
         type: Array,
@@ -71,7 +71,7 @@ const ObjectId = mongoose.Schema.ObjectId;
 const Post = module.exports = mongoose.model('Post', PostSchema);
 
 module.exports.getPostById = function (id, callback) {
-    console.log("id",id);
+    console.log("id", id);
     Post.findById(id, callback);
 };
 
@@ -90,11 +90,11 @@ module.exports.addPost = function (newPost, callback) {
 
 module.exports.removePost = function (post_id, callback) {
     var udp = {_id: post_id};
-    Post.remove(udp,callback);//save new post post
+    Post.remove(udp, callback);//save new post post
 };
 
 module.exports.updatePost = function (post, updateData, callback) {
-    console.log("updatedData",updateData);
+    console.log("updatedData", updateData);
     console.log(" ----------------");
     //delete  updateData._id;
     //consol.log(";;;;;;;;;;;;;;;;;",updateData);
@@ -117,7 +117,7 @@ module.exports.removeCommentFromPost = function (comment_id, post, success) {
 
 };
 
-module.exports.addLike = function ( post,user, callback) {
+module.exports.addLike = function (post, user, callback) {
     let addLike = {likes: post.likes.concat(user._id)};
     console.log(addLike);
     post.update({$set: addLike}, callback);
@@ -125,18 +125,18 @@ module.exports.addLike = function ( post,user, callback) {
 };
 
 
-module.exports.removeLike = function ( post,user, callback) {
+module.exports.removeLike = function (post, user, callback) {
     let newCommentList = post.likes.filter((item) => {
-        console.log(item,''+user._id,item != ''+user._id);
-        return item != ''+user._id;
+        console.log(item, '' + user._id, item != '' + user._id);
+        return item != '' + user._id;
     });
-    let update = {likes:newCommentList};
-    console.log("update",update);
+    let update = {likes: newCommentList};
+    console.log("update", update);
     post.update({$set: update}, callback);
 };
 
 
-module.exports.editComment = function ( comment,post, callback) {
+module.exports.editComment = function (comment, post, callback) {
     console.log("comment", comment);
     let newCommentList = post.comments.filter((item) => {
         return item.comment_id !== comment.comment_id;
@@ -146,22 +146,24 @@ module.exports.editComment = function ( comment,post, callback) {
     post.update({$set: editComment}, callback);
 };
 
-module.exports.getPostsByTitle = function ( title, callback) {
-    Post.find({"recipe_title":title}, callback);
+module.exports.getPostsByTitle = function (title, callback) {
+    Post.find({"recipe_title": title}, callback);
 };
 
-module.exports.getAllPosts=function (callback) {
+module.exports.getAllPosts = function (callback) {
     Post.find(callback);
 }
 
 
-module.exports.getPostsByText = function ( text, callback) {
-    Post.find({$and:[{recipe_title : {$regex : text}},{description : {$regex : text}},{category : {$regex : text}}]},callback);
+module.exports.getPostsByText = function (text, callback) {
+    Post.find({$or: [{recipe_title: {$regex: text}}, {description: {$regex: text}},
+        {category: {$regex: text}},{"instructions.description":{$regex: text}}]}, callback);
+
     //TODO: add search in instruction
 };
 
 
-module.exports.findPostByTitle = function ( text, callback) {
-    console.log("text",text);
-    Post.find({recipe_title : {$regex : text}},callback);
+module.exports.findPostByTitle = function (text, callback) {
+    console.log("text", text);
+    Post.find({recipe_title: {$regex: text}}, callback);
 };
